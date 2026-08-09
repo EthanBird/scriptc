@@ -5311,6 +5311,39 @@ export function lowerNew(L: Lowerer, expr: ts.NewExpression): IrExpr {
               // Any other lowered kind falls through to the named fence
               // below — never a mistyped seed into the validator.
             }
+
+            // A readonly tuple (`const names = ["a", "b"] as const`) is
+            // represented as a fixed record, not an Array, but it is still
+            // an Iterable accepted by Set. Snapshot its positional fields
+            // into a fresh homogeneous array and reuse setNew. Keep this
+            // deliberately narrow: every tuple slot must already have the
+            // Set element representation, and the lowered receiver must be
+            // pure so reusing the record reference for positional reads
+            // cannot duplicate source effects. General iterables and
+            // structural-record identity stay fenced.
+            if (argIr?.kind === "record") {
+              const tupleShape = L.shapes.get(argIr.shapeId);
+              if (tupleShape?.tuple) {
+                const receiver = L.lowerExpr(argNode);
+                const byIndex = [...tupleShape.fields].sort((a, b) => Number(a.name) - Number(b.name));
+                if (
+                  receiver.type.kind === "record" &&
+                  pureReemittable(receiver) &&
+                  byIndex.every((field) => typeEquals(field.type, mapped.elem))
+                ) {
+                  const elems: IrExpr[] = byIndex.map((field) => ({
+                    kind: "recordGet",
+                    obj: receiver,
+                    shapeId: argIr.shapeId,
+                    field: field.name,
+                    type: field.type,
+                    loc,
+                  }));
+                  const seed: IrExpr = { kind: "arrayLit", elems, type: arrayOf(mapped.elem), loc };
+                  return { kind: "setNew", seed, type: mapped, loc };
+                }
+              }
+            }
           }
         }
         // JavaScript's identity-Set idiom: `new Set([setTimeout, atob,
