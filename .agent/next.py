@@ -2,18 +2,36 @@ from pathlib import Path
 import os
 import subprocess
 
+SOURCE = 'packages/compiler/src/frontend/lowering/lower-containers.ts'
+CORPUS = 'tests/corpus/3003-object-entries-forof.ts'
+LOG = []
+
 
 def replace_once(path: str, old: str, new: str) -> None:
     p = Path(path)
     text = p.read_text(encoding='utf-8')
     count = text.count(old)
     if count != 1:
-        raise SystemExit(f'{path}: expected one match, found {count}')
+        raise RuntimeError(f'{path}: expected one match, found {count}')
     p.write_text(text.replace(old, new, 1), encoding='utf-8')
 
 
-path = 'packages/compiler/src/frontend/lowering/lower-containers.ts'
-old = '''    const recT = iterable.type;
+def run(args, *, env=None, timeout=1800):
+    LOG.append('$ ' + ' '.join(args))
+    try:
+        cp = subprocess.run(args, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=timeout)
+        out = cp.stdout or ''
+        lines = out.splitlines()
+        LOG.extend(lines[-240:])
+        LOG.append(f'[exit {cp.returncode}]')
+        return cp.returncode == 0
+    except Exception as e:
+        LOG.append(f'[exception {type(e).__name__}: {e}]')
+        return False
+
+
+try:
+    old = '''    const recT = iterable.type;
     const iv = shape.indexValue;
     const keysT = arrayOf(STRING);
     const isLet = (list.flags & ts.NodeFlags.Let) !== 0;
@@ -88,7 +106,7 @@ old = '''    const recT = iterable.type;
         loc,
       };
 '''
-new = '''    const recT = iterable.type;
+    new = '''    const recT = iterable.type;
     const iv = shape.indexValue;
     const keysT = arrayOf(STRING);
     const valuesT = arrayOf(iv);
@@ -149,17 +167,15 @@ new = '''    const recT = iterable.type;
               kind: "arrIntrinsic",
               method: "push",
               receiver: ref(values.id, valuesT),
-              args: [
-                {
-                  kind: "recordKeyGet",
-                  obj: ref(src.id, recT),
-                  shapeId: recT.shapeId,
-                  key: keyAt(snapI.id),
-                  overflowOnly: true,
-                  type: iv,
-                  loc,
-                },
-              ],
+              args: [{
+                kind: "recordKeyGet",
+                obj: ref(src.id, recT),
+                shapeId: recT.shapeId,
+                key: keyAt(snapI.id),
+                overflowOnly: true,
+                type: iv,
+                loc,
+              }],
               type: F64,
               loc,
             },
@@ -193,12 +209,7 @@ new = '''    const recT = iterable.type;
         kind: "block",
         body: [
           { kind: "varDecl", localId: src.id, init: iterable, loc },
-          {
-            kind: "varDecl",
-            localId: keys.id,
-            init: { kind: "recordOvfKeys", obj: ref(src.id, recT), shapeId: recT.shapeId, type: keysT, loc },
-            loc,
-          },
+          { kind: "varDecl", localId: keys.id, init: { kind: "recordOvfKeys", obj: ref(src.id, recT), shapeId: recT.shapeId, type: keysT, loc }, loc },
           { kind: "varDecl", localId: values.id, init: { kind: "arrayLit", elems: [], type: valuesT, loc }, loc },
           snapshotLoop,
           loop,
@@ -206,37 +217,49 @@ new = '''    const recT = iterable.type;
         loc,
       };
 '''
-replace_once(path, old, new)
-
-corpus = Path('tests/corpus/3003-object-entries-forof.ts')
-text = corpus.read_text(encoding='utf-8')
-append = '''\n\n// Object.entries snapshots VALUES at call time too. Mutating a later source\n// value during the first loop body must not affect the already-created row.\nconst snapshot: Record<string, string> = {};\nsnapshot["first"] = "A";\nsnapshot["second"] = "B";\nfor (const [key, value] of Object.entries(snapshot)) {\n  console.log("snapshot", key, value);\n  if (key === "first") snapshot["second"] = "CHANGED";\n}\nconsole.log("source-after", snapshot["second"]);\n'''
-if 'source-after' not in text:
-    corpus.write_text(text + append, encoding='utf-8')
+    replace_once(SOURCE, old, new)
+    corpus = Path(CORPUS)
+    text = corpus.read_text(encoding='utf-8')
+    if 'source-after' not in text:
+        corpus.write_text(text + '''\n\n// Object.entries snapshots VALUES at call time too. Mutating a later source\n// value during the first loop body must not affect the already-created row.\nconst snapshot: Record<string, string> = {};\nsnapshot["first"] = "A";\nsnapshot["second"] = "B";\nfor (const [key, value] of Object.entries(snapshot)) {\n  console.log("snapshot", key, value);\n  if (key === "first") snapshot["second"] = "CHANGED";\n}\nconsole.log("source-after", snapshot["second"]);\n''', encoding='utf-8')
+except Exception as e:
+    LOG.append(f'patch failed: {type(e).__name__}: {e}')
+    Path('.agent/object-entries-exact-failure.log').write_text('\n'.join(LOG) + '\n', encoding='utf-8')
+    raise SystemExit(0)
 
 NODE_VERSION = Path('.node-version').read_text(encoding='utf-8').strip()
 NODE_DIR = Path(f'/tmp/node-v{NODE_VERSION}-linux-x64')
 ENV = os.environ.copy()
-
-def run(args, *, env=None):
-    print('+', ' '.join(args), flush=True)
-    subprocess.run(args, check=True, env=env or ENV, timeout=1800)
-
+ok = True
 if not (NODE_DIR / 'bin/node').exists():
     archive = Path(f'/tmp/node-v{NODE_VERSION}-linux-x64.tar.xz')
-    run(['curl', '-fsSL', f'https://nodejs.org/dist/v{NODE_VERSION}/node-v{NODE_VERSION}-linux-x64.tar.xz', '-o', str(archive)])
-    run(['tar', '-xJf', str(archive), '-C', '/tmp'])
+    ok = run(['curl', '-fsSL', f'https://nodejs.org/dist/v{NODE_VERSION}/node-v{NODE_VERSION}-linux-x64.tar.xz', '-o', str(archive)], env=ENV) and ok
+    if ok: ok = run(['tar', '-xJf', str(archive), '-C', '/tmp'], env=ENV) and ok
 ENV['PATH'] = f"{NODE_DIR / 'bin'}:{ENV.get('PATH', '')}"
-run(['node', '--version'])
-run(['corepack', 'enable'])
-run(['corepack', 'prepare', 'pnpm@11.1.3', '--activate'])
-run(['pnpm', 'install', '--frozen-lockfile'])
-run(['pnpm', 'build'])
-run(['pnpm', 'lint'])
-for san in (False, True):
-    e = ENV.copy()
-    if san: e['SCRIPTC_SAN'] = '1'
-    else: e.pop('SCRIPTC_SAN', None)
-    run(['pnpm', 'exec', 'vitest', 'run', 'tests/harness/differential.test.ts', '-t', '3003-object-entries-forof'], env=e)
-    run(['pnpm', 'exec', 'vitest', 'run', 'tests/harness/llvm-differential.test.ts', '-t', '3003-object-entries-forof'], env=e)
-print('OBJECT_ENTRIES_EXACT_VALIDATION_OK', flush=True)
+for cmd in [
+    ['node', '--version'],
+    ['corepack', 'enable'],
+    ['corepack', 'prepare', 'pnpm@11.1.3', '--activate'],
+    ['pnpm', 'install', '--frozen-lockfile'],
+    ['pnpm', 'build'],
+    ['pnpm', 'lint'],
+]:
+    if ok: ok = run(cmd, env=ENV) and ok
+if ok:
+    for san in (False, True):
+        e = ENV.copy()
+        if san: e['SCRIPTC_SAN'] = '1'
+        else: e.pop('SCRIPTC_SAN', None)
+        for testfile in ('tests/harness/differential.test.ts', 'tests/harness/llvm-differential.test.ts'):
+            this = run(['pnpm', 'exec', 'vitest', 'run', testfile, '-t', '3003-object-entries-forof'], env=e)
+            ok = this and ok
+
+if not ok:
+    subprocess.run(['git', 'checkout', '--', SOURCE, CORPUS], check=False)
+    LOG.append('OBJECT_ENTRIES_EXACT_VALIDATION=FAIL; source changes reverted')
+    Path('.agent/object-entries-exact-failure.log').write_text('\n'.join(LOG) + '\n', encoding='utf-8')
+else:
+    LOG.append('OBJECT_ENTRIES_EXACT_VALIDATION=PASS')
+    failure = Path('.agent/object-entries-exact-failure.log')
+    if failure.exists(): failure.unlink()
+    print('OBJECT_ENTRIES_EXACT_VALIDATION_OK', flush=True)
