@@ -1,13 +1,7 @@
-name: Agent apply patch
+name: Agent apply patch (manual fallback)
 
 on:
-  push:
-    branches:
-      - agent/prime-compat-phase1
-
-concurrency:
-  group: agent-apply-patch-prime-compat
-  cancel-in-progress: false
+  workflow_dispatch:
 
 permissions:
   contents: write
