@@ -46,25 +46,45 @@ jobs:
         run: npm ci
 
       - name: ScriptC coverage of Prime Agent CLI
-        id: coverage
         working-directory: .compat/prime-agent
-        continue-on-error: true
         run: |
+          set +e
           set -o pipefail
           node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
             coverage packages/coding-agent/src/cli-main.ts \
             --dynamic 2>&1 | tee "$RUNNER_TEMP/prime-coverage.log"
+          status=${PIPESTATUS[0]}
+          echo "$status" > "$RUNNER_TEMP/prime-coverage.status"
+          exit 0
 
       - name: ScriptC build of Prime Agent CLI
-        id: build
         working-directory: .compat/prime-agent
-        continue-on-error: true
         run: |
+          set +e
           set -o pipefail
           node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
             build packages/coding-agent/src/cli-main.ts \
             --dynamic \
             -o "$RUNNER_TEMP/prime-agent-scriptc" 2>&1 | tee "$RUNNER_TEMP/prime-build.log"
+          status=${PIPESTATUS[0]}
+          echo "$status" > "$RUNNER_TEMP/prime-build.status"
+          exit 0
+
+      - name: Smoke-test compiled Prime Agent
+        working-directory: .compat/prime-agent
+        run: |
+          set +e
+          build_status=$(cat "$RUNNER_TEMP/prime-build.status")
+          if [ "$build_status" -eq 0 ] && [ -x "$RUNNER_TEMP/prime-agent-scriptc" ]; then
+            timeout 20s "$RUNNER_TEMP/prime-agent-scriptc" --help > "$RUNNER_TEMP/prime-smoke.log" 2>&1
+            status=$?
+          else
+            status=125
+            echo "ScriptC build did not produce an executable; smoke test skipped." > "$RUNNER_TEMP/prime-smoke.log"
+          fi
+          echo "$status" > "$RUNNER_TEMP/prime-smoke.status"
+          cat "$RUNNER_TEMP/prime-smoke.log"
+          exit 0
 
       - name: Upload compatibility diagnostics
         if: always()
@@ -73,13 +93,27 @@ jobs:
           name: prime-agent-scriptc-diagnostics
           path: |
             ${{ runner.temp }}/prime-coverage.log
+            ${{ runner.temp }}/prime-coverage.status
             ${{ runner.temp }}/prime-build.log
+            ${{ runner.temp }}/prime-build.status
+            ${{ runner.temp }}/prime-smoke.log
+            ${{ runner.temp }}/prime-smoke.status
           if-no-files-found: warn
 
       - name: Enforce compatibility lane
-        if: steps.coverage.outcome != 'success' || steps.build.outcome != 'success'
+        if: always()
         run: |
-          echo "Prime Agent is not fully compatible with ScriptC yet."
-          echo "coverage outcome: ${{ steps.coverage.outcome }}"
-          echo "build outcome:    ${{ steps.build.outcome }}"
-          exit 1
+          coverage=$(cat "$RUNNER_TEMP/prime-coverage.status" 2>/dev/null || echo 126)
+          build=$(cat "$RUNNER_TEMP/prime-build.status" 2>/dev/null || echo 126)
+          smoke=$(cat "$RUNNER_TEMP/prime-smoke.status" 2>/dev/null || echo 126)
+          echo "Prime Agent compatibility status: coverage=$coverage build=$build smoke=$smoke"
+          if [ "$coverage" -ne 0 ] || [ "$build" -ne 0 ] || [ "$smoke" -ne 0 ]; then
+            echo "Prime Agent is not fully compatible with ScriptC yet."
+            echo "--- smoke tail ---"
+            tail -n 120 "$RUNNER_TEMP/prime-smoke.log" 2>/dev/null || true
+            echo "--- build tail ---"
+            tail -n 120 "$RUNNER_TEMP/prime-build.log" 2>/dev/null || true
+            echo "--- coverage tail ---"
+            tail -n 120 "$RUNNER_TEMP/prime-coverage.log" 2>/dev/null || true
+            exit 1
+          fi
