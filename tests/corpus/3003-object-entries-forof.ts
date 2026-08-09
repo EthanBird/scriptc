@@ -25,3 +25,15 @@ const colors: Record<string, string | number> = {};
 colors["accent"] = "#fff";
 colors["level"] = 7;
 console.log(JSON.stringify(copyColors(colors)));
+
+
+// Object.entries snapshots values before iteration begins. The second row
+// must retain "B" even though the first body changes the source to "CHANGED".
+const snapshotSource: Record<string, string> = {};
+snapshotSource["first"] = "A";
+snapshotSource["second"] = "B";
+for (const [key, value] of Object.entries(snapshotSource)) {
+  console.log("snapshot-row", key, value);
+  if (key === "first") snapshotSource["second"] = "CHANGED";
+}
+console.log("snapshot-source-after", snapshotSource["second"]);

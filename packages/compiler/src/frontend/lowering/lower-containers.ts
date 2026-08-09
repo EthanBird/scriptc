@@ -4503,42 +4503,83 @@ const ITER_TERMINALS = new Set(["toArray", "forEach", "reduce", "some", "every",
     const recT = iterable.type;
     const iv = shape.indexValue;
     const keysT = arrayOf(STRING);
+    const valuesT = arrayOf(iv);
     const isLet = (list.flags & ts.NodeFlags.Let) !== 0;
     L.scopes.push(new Map());
     try {
       const src = L.declareHiddenLocal("%objEntriesSrc", recT);
       const keys = L.declareHiddenLocal("%objEntriesKeys", keysT);
+      const values = L.declareHiddenLocal("%objEntriesValues", valuesT);
+      const snapI = L.declareHiddenLocal("%objEntriesSnapIndex", F64);
       const i = L.declareHiddenLocal("%objEntriesIndex", F64);
+      snapI.mutable = true;
       i.mutable = true;
       const ref = (localId: string, type: IrType): IrExpr => ({ kind: "varRef", localId, type, loc });
       const num = (value: number): IrExpr => ({ kind: "numLit", value, type: F64, loc });
-      const keyRead = (): IrExpr => ({
+      const keyAt = (indexLocalId: string): IrExpr => ({
         kind: "arrayGet",
         arr: ref(keys.id, keysT),
-        index: ref(i.id, F64),
+        index: ref(indexLocalId, F64),
         type: STRING,
+        loc,
+      });
+      const keyRead = (): IrExpr => keyAt(i.id);
+      const valueRead = (): IrExpr => ({
+        kind: "arrayGet",
+        arr: ref(values.id, valuesT),
+        index: ref(i.id, F64),
+        type: iv,
         loc,
       });
       const k = L.declareLocal(els[0]!.name, els[0]!.name.text, STRING, isLet);
       const v = L.declareLocal(els[1]!.name, els[1]!.name.text, iv, isLet);
-      const kRef: IrExpr = { kind: "varRef", localId: k.id, type: STRING, loc };
       const binds: IrStmt[] = [
         { kind: "varDecl", localId: k.id, init: keyRead(), loc },
-        {
-          kind: "varDecl",
-          localId: v.id,
-          init: {
-            kind: "recordKeyGet",
-            obj: ref(src.id, recT),
-            shapeId: recT.shapeId,
-            key: kRef,
-            overflowOnly: true,
-            type: iv,
+        { kind: "varDecl", localId: v.id, init: valueRead(), loc },
+      ];
+      // Object.entries creates its complete entries array before the
+      // consumer iterates. Snapshot values now, not lazily in the user
+      // loop, so mutating a later property inside an earlier iteration
+      // cannot change an already-created [key, value] pair.
+      const snapshotLoop: IrStmt = {
+        kind: "for",
+        init: { kind: "varDecl", localId: snapI.id, init: num(0), loc },
+        cond: {
+          kind: "bin",
+          op: "<",
+          left: ref(snapI.id, F64),
+          right: { kind: "arrIntrinsic", method: "length", receiver: ref(keys.id, keysT), args: [], type: F64, loc },
+          type: BOOL,
+          loc,
+        },
+        update: {
+          kind: "assign",
+          localId: snapI.id,
+          value: { kind: "bin", op: "+", left: ref(snapI.id, F64), right: num(1), type: F64, loc },
+          loc,
+        },
+        body: [{
+          kind: "exprStmt",
+          expr: {
+            kind: "arrIntrinsic",
+            method: "push",
+            receiver: ref(values.id, valuesT),
+            args: [{
+              kind: "recordKeyGet",
+              obj: ref(src.id, recT),
+              shapeId: recT.shapeId,
+              key: keyAt(snapI.id),
+              overflowOnly: true,
+              type: iv,
+              loc,
+            }],
+            type: F64,
             loc,
           },
           loc,
-        },
-      ];
+        }],
+        loc,
+      };
       const body = L.inCtl("loop", () => L.lowerScopedBlock(stmt.statement));
       const loop: IrStmt = {
         kind: "for",
@@ -4570,6 +4611,8 @@ const ITER_TERMINALS = new Set(["toArray", "forEach", "reduce", "some", "every",
             init: { kind: "recordOvfKeys", obj: ref(src.id, recT), shapeId: recT.shapeId, type: keysT, loc },
             loc,
           },
+          { kind: "varDecl", localId: values.id, init: { kind: "arrayLit", elems: [], type: valuesT, loc }, loc },
+          snapshotLoop,
           loop,
         ],
         loc,
