@@ -2391,15 +2391,32 @@ function lowerOptionalDefaultArg(
     // `Array.from(s)` on a STRING: the string iterator's code-point walk
     // into a fresh string[] (astral characters stay whole, where a
     // charAt/index walk would truncate the surrogate halves) — the same
-    // interned helper `[...s]` lowers through.
+    // interned helper `[...s]` lowers through. A Set<T> is the other direct
+    // iterable with a native snapshot operation: toArray drains its current
+    // insertion order into a fresh T[] (later Set mutations cannot affect
+    // the returned Array, exactly Array.from's materialization semantics).
     if (args.length === 1 && !ts.isObjectLiteralExpression(args[0]!)) {
       const src = L.lowerExpr(args[0]!);
       if (src.type.kind === "string") return strCharsCall(L, src, loc);
+      if (src.type.kind === "set") {
+        const resultT = L.mapTypeOf(L.typeOf(call));
+        if (resultT?.kind !== "array" || !typeEquals(resultT.elem, src.type.elem)) {
+          L.badType(call, L.typeOf(call));
+        }
+        return {
+          kind: "setIntrinsic",
+          method: "toArray",
+          receiver: src,
+          args: [],
+          type: arrayOf(src.type.elem),
+          loc,
+        };
+      }
       L.noLowering(
         "Array.from with this argument shape",
         call,
-        "Array.from({ length: n }, (v, i) => ...) and Array.from(aString) are the lowered " +
-          "forms — copy arrays with [...a] and drain Map/Set iterators where they are made",
+        "Array.from({ length: n }, (v, i) => ...), Array.from(aString), and Array.from(aSet) " +
+          "are the lowered forms — copy arrays with [...a] and keep general iterator objects explicit",
       );
     }
     const n =
