@@ -4,16 +4,16 @@ on:
   push:
     branches:
       - agent/prime-compat-phase1
-  pull_request:
-    branches:
-      - main
+
+concurrency:
+  group: agent-apply-patch-prime-compat
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
   apply:
-    if: github.head_ref == '' || github.head_ref == 'agent/prime-compat-phase1'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
