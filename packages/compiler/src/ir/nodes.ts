@@ -393,16 +393,17 @@ export function isSupportedMapKey(t: IrType): boolean {
 
 /** The Set ELEMENT fence — Map's scalar key fence plus values whose
  * JavaScript object identity is exactly their stable runtime pointer.
- * class instances and promises need strong-key cycle tracing (a member can
- * point back at the Set); server handles and symbols are acyclic identity
- * values. Structural records/unions and dyn/jsval wrappers stay fenced:
- * their lowering may copy/rebox, so pointer identity is not yet a proof of
- * JavaScript identity. */
+ * Class instances, promises, and closures need strong-key cycle tracing (a
+ * member/capture can point back at the Set); server handles and symbols are
+ * acyclic identity values. Structural records/unions and dyn/jsval wrappers
+ * stay fenced: their lowering may copy/rebox, so pointer identity is not yet
+ * a proof of JavaScript identity. */
 export function isSupportedSetElem(t: IrType): boolean {
   return (
     isSupportedMapKey(t) ||
     t.kind === "object" ||
     t.kind === "promise" ||
+    t.kind === "func" ||
     t.kind === "netServer" ||
     t.kind === "symbol"
   );

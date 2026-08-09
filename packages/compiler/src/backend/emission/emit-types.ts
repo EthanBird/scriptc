@@ -616,7 +616,7 @@ export function mapKeyAccess(key: IrType): "f64" | "str" | "ref" {
   // Map keys proper stay f64/string.
   if (
     key.kind === "netServer" || key.kind === "symbol" ||
-    key.kind === "object" || key.kind === "promise"
+    key.kind === "object" || key.kind === "promise" || key.kind === "func"
   ) return "ref";
   throw new Error(`emitter bug: map key of ${key.kind} (frontend rejects these)`);
 }

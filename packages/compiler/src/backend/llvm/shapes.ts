@@ -631,7 +631,7 @@ export function mapKeyAccess(key: IrType): "f64" | "str" | "ref" {
   if (key.kind === "string") return "str";
   if (key.kind === "symbol") return "ref";
   if (key.kind === "netServer") return "ref"; // handle identity (Set<Server>)
-  if (key.kind === "object" || key.kind === "promise") return "ref";
+  if (key.kind === "object" || key.kind === "promise" || key.kind === "func") return "ref";
   throw new LlvmUnsupportedError(`mapKey:${key.kind}`);
 }
 
