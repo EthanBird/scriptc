@@ -4495,9 +4495,14 @@ const ITER_TERMINALS = new Set(["toArray", "forEach", "reduce", "some", "every",
       ts.isBindingElement(el) && el.name !== undefined && ts.isIdentifier(el.name) && !el.initializer && !el.dotDotDotToken;
     if (!decl.name.elements.every(isPlainIdent)) return null;
     const els = decl.name.elements as readonly (ts.BindingElement & { name: ts.Identifier })[];
-    const keyTsT = L.mapTypeOf(L.checker.getTypeAtLocation(els[0]!.name));
-    const valueTsT = L.mapTypeOf(L.checker.getTypeAtLocation(els[1]!.name));
-    if (keyTsT?.kind !== "string" || !valueTsT || !typeEquals(valueTsT, shape.indexValue)) return null;
+    // The stdlib Object.entries overload over a pure string index signature
+    // guarantees `[string, V]` regardless of how richly V is spelled in the
+    // checker (template-literal unions such as Prime's KeyId can be too large
+    // or contextual to map a second time at the binding node). The source
+    // record already mapped V successfully as shape.indexValue, so that is
+    // the one authoritative runtime representation for the yielded value.
+    // Do not require an independent checker->IR remap of the two binding
+    // identifiers here; TypeScript has already typechecked the destructure.
 
     const loc = locOf(stmt);
     const recT = iterable.type;
