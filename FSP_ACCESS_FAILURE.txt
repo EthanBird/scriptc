@@ -1,0 +1,53 @@
+$ curl -fsSL https://nodejs.org/dist/v24.15.0/node-v24.15.0-linux-x64.tar.xz -o /tmp/node-v24.15.0-linux-x64.tar.xz
+[exit 0]
+$ tar -xJf /tmp/node-v24.15.0-linux-x64.tar.xz -C /tmp
+[exit 0]
+$ node --version
+v24.15.0
+[exit 0]
+$ corepack enable
+[exit 0]
+$ corepack prepare pnpm@11.1.3 --activate
+Preparing pnpm@11.1.3 for immediate activation...
+[exit 0]
+$ pnpm install --frozen-lockfile
+Scope: all 4 workspace projects
+? Verifying lockfile against supply-chain policies (544 entries)...
+✓ Lockfile passes supply-chain policies (544 entries in 2.3s)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +402
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 402, reused 0, downloaded 255, added 215
+Progress: resolved 402, reused 0, downloaded 402, added 402, done
+.../esbuild@0.27.0/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+.../esbuild@0.27.0/node_modules/esbuild postinstall: Done
+
+devDependencies:
++ @types/node 24.13.3
++ eslint 9.39.5
++ tsx 4.23.0
++ typescript 5.9.3
++ typescript-eslint 8.63.0
++ vercel 58.1.0
++ vitest 3.2.7
+
+Done in 5.2s using pnpm v11.1.3
+[exit 0]
+$ pnpm build
+$ pnpm -r --filter "./packages/*" run build
+Scope: 3 of 4 workspace projects
+packages/runtime build$ true
+packages/runtime build: Done
+packages/compiler build$ node node_modules/typescript5/bin/tsc -p tsconfig.json
+packages/compiler build: src/backend/emission/emit-exprs.ts(6685,19): error TS2322: Type '"fsp.access"' is not assignable to type 'never'.
+packages/compiler build: src/ir/validate.ts(85,14): error TS2741: Property '"fsp.access"' is missing in type '{ "fetch.start": { argTypes: IrType[]; result: { kind: "promise"; inner: IrType; }; }; "fetch.responseNew": { argTypes: IrType[]; result: IrType; }; "fetch.responseJson": { ...; }; ... 802 more ...; "string.raw": { ...; }; }' but required in type 'Record<IrLibFn, { argTypes: (IrType | null)[]; result: IrType; }>'.
+packages/compiler build: Failed
+/home/runner/work/scriptc/scriptc/packages/compiler:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @scriptc/compiler@0.0.22 build: `node node_modules/typescript5/bin/tsc -p tsconfig.json`
+Exit status 2
+[ELIFECYCLE] Command failed with exit code 2.
+[exit 2]
+FSP_ACCESS=FAIL; source/corpus reverted
