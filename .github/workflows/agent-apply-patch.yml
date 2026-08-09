@@ -1,0 +1,33 @@
+name: Agent apply patch
+
+on:
+  push:
+    branches:
+      - agent/prime-compat-phase1
+    paths:
+      - .agent/next.patch
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/prime-compat-phase1
+          fetch-depth: 0
+
+      - name: Apply staged compiler patch
+        run: |
+          set -euo pipefail
+          test -f .agent/next.patch || exit 0
+          git apply --check .agent/next.patch
+          git apply .agent/next.patch
+          rm .agent/next.patch
+          git config user.name "scriptc-compat-bot"
+          git config user.email "scriptc-compat-bot@users.noreply.github.com"
+          git add -A
+          git commit -m "Advance Prime Agent compatibility"
+          git push origin HEAD:agent/prime-compat-phase1
