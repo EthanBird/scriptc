@@ -2105,6 +2105,7 @@ double scr_stats_mtime_ms(ScrStats *s); /* ms with the ns fraction */
  * scr_lib.c without the fiber slice). */
 ScrPromise *scr_fsp_read_file(ScrStr *path);
 ScrPromise *scr_fsp_write_file(ScrStr *path, ScrStr *data);
+ScrPromise *scr_fsp_access(ScrStr *path, double mode);
 ScrPromise *scr_fsp_mkdir(ScrStr *path);
 ScrPromise *scr_fsp_mkdir_mode(ScrStr *path, double mode);
 ScrPromise *scr_fsp_mkdir_recursive(ScrStr *path);

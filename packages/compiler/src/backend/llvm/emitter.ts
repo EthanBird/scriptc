@@ -493,6 +493,7 @@ const LIB_FN_SYMS: Record<string, string> = {
   // so it is special-cased in emitLibCall (the fs.readFileSync pattern).
   "fsp.readFileBytes": "scr_fsp_read_file_bytes",
   "fsp.writeFile": "scr_fsp_write_file",
+  "fsp.access": "scr_fsp_access",
   "fsp.mkdir": "scr_fsp_mkdir",
   "fsp.mkdirMode": "scr_fsp_mkdir_mode",
   "fsp.mkdirRecursive": "scr_fsp_mkdir_recursive",

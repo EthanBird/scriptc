@@ -1441,6 +1441,11 @@ ScrPromise *scr_fsp_write_file(ScrStr *path, ScrStr *data) {
   return scr_promise_settled_void();
 }
 
+ScrPromise *scr_fsp_access(ScrStr *path, double mode) {
+  scr_fs_access(path, mode);
+  return scr_promise_settled_void();
+}
+
 ScrPromise *scr_fsp_mkdir(ScrStr *path) {
   scr_fs_mkdir(path);
   return scr_promise_settled_void();

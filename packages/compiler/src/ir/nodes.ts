@@ -2868,6 +2868,7 @@ export type IrLibFn =
   | "process.stderrWriteBytes"
   | "fsp.readFile"
   | "fsp.writeFile"
+  | "fsp.access"
   | "fsp.mkdir"
   /** The fs/promises option/member tail the certs pipeline uses: mkdir's
    * literal { recursive?, mode? } options (the mkdirSync matrix behind

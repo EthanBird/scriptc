@@ -1269,6 +1269,20 @@ function optionMember(p: ts.ObjectLiteralElementLike): { name: string; value: ts
         : { kind: "numLit", value: 0, type: F64, loc };
       return { kind: "libCall", fn: "fs.accessSync", args: [path, mode], type: VOID, loc };
     }
+    // fs.promises.access(path, mode?): accessSync's promise twin.
+    // Run the same permission probe, but scr_promise_settled_void converts
+    // a pending fs exception into a rejected Promise before returning.
+    if (bi.module === "fs/promises" && bi.member === "access") {
+      if (expr.arguments.length < 1 || expr.arguments.length > 2) {
+        L.noLowering(`fs.promises.access with ${expr.arguments.length} arguments`, expr);
+      }
+      const path = L.lowerExprExpecting(expr.arguments[0]!, STRING);
+      const mode: IrExpr = expr.arguments[1]
+        ? L.lowerExprExpecting(expr.arguments[1], F64)
+        : { kind: "numLit", value: 0, type: F64, loc };
+      const type: IrType = { kind: "promise", inner: VOID };
+      return { kind: "libCall", fn: "fsp.access", args: [path, mode], type, loc };
+    }
     // fs.promises.writeFile(path, string, "utf8" | "utf-8"):
     // the third argument only selects the encoding the existing
     // fsp.writeFile runtime already writes. Prove the literal encoding and
