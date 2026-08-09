@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - agent/prime-compat-phase1
-    paths:
-      - .agent/next.patch
 
 permissions:
   contents: write
@@ -22,7 +20,10 @@ jobs:
       - name: Apply staged compiler patch
         run: |
           set -euo pipefail
-          test -f .agent/next.patch || exit 0
+          if [ ! -f .agent/next.patch ]; then
+            echo "No staged compiler patch."
+            exit 0
+          fi
           git apply --check .agent/next.patch
           git apply .agent/next.patch
           rm .agent/next.patch
