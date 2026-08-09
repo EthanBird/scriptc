@@ -43,23 +43,40 @@ jobs:
           echo "claimed=true" >> "$GITHUB_OUTPUT"
 
       - name: Execute claimed task
+        id: execute
         if: steps.claim.outputs.claimed == 'true'
+        continue-on-error: true
         run: python3 /tmp/scriptc-next.py
 
       - name: Publish validated result
-        if: steps.claim.outputs.claimed == 'true'
+        if: always() && steps.claim.outputs.claimed == 'true'
         shell: bash
         run: |
           set -euo pipefail
           git add -A
           git diff --cached --check
           if git diff --cached --quiet; then
-            echo "Task produced no tracked result."
-            exit 0
+            if [ "${{ steps.execute.outcome }}" != "success" ]; then
+              printf '%s\n' \
+                "claimed compatibility task exited nonzero before producing tracked diagnostics" \
+                "execute outcome: ${{ steps.execute.outcome }}" \
+                "claim commit: $(git rev-parse HEAD)" \
+                > FAST_LANE_EXECUTION_FAILURE.txt
+              git add FAST_LANE_EXECUTION_FAILURE.txt
+            else
+              echo "Task produced no tracked result."
+              exit 0
+            fi
           fi
           git commit -m "Advance Prime Agent compatibility"
-          # A stale diagnostic/probe runner may have published while this
-          # task was executing. Rebase the validated result rather than
-          # overwriting it; a real source conflict fails loudly.
+          # A diagnostic/oracle commit may have landed while the task was
+          # executing. Rebase the validated result instead of overwriting it;
+          # a real source conflict fails loudly and leaves the branch intact.
           git pull --rebase origin agent/prime-compat-phase1
           git push origin HEAD:agent/prime-compat-phase1
+
+      - name: Enforce task execution
+        if: always() && steps.claim.outputs.claimed == 'true'
+        shell: bash
+        run: |
+          test "${{ steps.execute.outcome }}" = success
