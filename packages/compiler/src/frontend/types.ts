@@ -3102,7 +3102,13 @@ function mapRecordTypeInner(widened: ts.Type, ctx: TypeMapperCtx): IrType | Reco
   // the proxy's forwarded-header build (`{ ...req.headers }` into an
   // outgoing literal) a plain copy instead of an arm-wise re-tag the
   // merge machinery cannot do.
-  if (indexValue?.kind === "union") {
+  // Do not canonicalize a declaration-free Record<string, V> merely
+  // because V contains string[]. Header interfaces/spread results carry
+  // declared well-known header properties; a pure Record does not. Without
+  // this guard, Record<string, string | string[] | undefined> was silently
+  // widened with a number arm from OutgoingHttpHeaders.
+  const headerProps = checker.getPropertiesOfType(widened);
+  if (indexValue?.kind === "union" && headerProps.length > 0) {
     const slotDef = ctx.unions.get(indexValue.unionId);
     const armOk = (a: IrType): boolean =>
       a.kind === "f64" || a.kind === "string" || a.kind === "undefinedT" ||
@@ -3123,7 +3129,7 @@ function mapRecordTypeInner(widened: ts.Type, ctx: TypeMapperCtx): IrType | Reco
         }
         return armOk(t);
       };
-      if (checker.getPropertiesOfType(widened).every((p) => fits(mapType(checker.getTypeOfSymbol(p), ctx)))) {
+      if (headerProps.every((p) => fits(mapType(checker.getTypeOfSymbol(p), ctx)))) {
         return { kind: "record", shapeId: shapes.intern([], false, canonical, []) };
       }
     }
