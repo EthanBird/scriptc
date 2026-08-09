@@ -45,6 +45,10 @@ jobs:
         working-directory: .compat/prime-agent
         run: npm ci
 
+      - name: Build Prime Agent workspace baseline
+        working-directory: .compat/prime-agent
+        run: npm run build
+
       - name: ScriptC coverage of Prime Agent CLI
         working-directory: .compat/prime-agent
         run: |
