@@ -843,24 +843,24 @@ function mapTypeInner(type: ts.Type, ctx: TypeMapperCtx): IrType | null {
       return hasStr ? STRING : F64;
     }
   }
-  // Types DECLARED by a shipped .d.ts — an npm package's, or a LOCAL
-  // declaration file describing sibling JS the program loads dynamically
-  // (an Emscripten factory's .d.mts): the .d.ts is trusted as the type
-  // surface, but the values behind it live in the embedded engine — under
-  // --dynamic they are island handles (jsval), and every operation on them
-  // rides the engine ops with validated exits at typed boundaries.
-  // Primitives/arrays/etc. REACHED THROUGH such types keep their
-  // structural mapping (they were handled above or recurse normally); this
-  // rule fires only when the type's own identity is declaration-file-
-  // declared — interfaces, classes, type literals, and aliases from the
-  // .d.ts. The standard library's declaration files are carved out (their
-  // surfaces have static lowerings), as are declarations explicitly mapped
-  // by --external-types: those describe project-owned structural data while
-  // the Lowerer fences their imported runtime bindings. The program's own
-  // compiled modules are never declaration files. Without --dynamic this
-  // stays unmapped; badType reports the per-package requires-dynamic
-  // diagnostic for node_modules types and the generic story otherwise.
-  const npmSym = widened.getAliasSymbol() ?? widened.getSymbol();
+  // Types with a RUNTIME identity declared by a shipped .d.ts — an npm
+  // package's, or a LOCAL declaration file describing sibling JS the
+  // program loads dynamically — are island handles under --dynamic. The
+  // runtime provenance must come from the UNDERLYING type symbol, however,
+  // not from an erased TypeScript alias name. A declaration-file alias such
+  // as `type Config = Record<string, string>` has no runtime object of its
+  // own: local Config values are ordinary static data, and package-produced
+  // Config values can cross the island through the normal validated data
+  // boundary. Conversely `type X = PackageClass` still has the class as its
+  // underlying symbol and remains a jsval handle. This separation of TYPE
+  // provenance from VALUE execution domain is essential for monorepos whose
+  // workspace packages publish structural aliases in dist/*.d.ts.
+  //
+  // Primitives/arrays/etc. reached through these types already structurally
+  // map above/below. Standard-library declarations and --external-types are
+  // carved out exactly as before. Without --dynamic, runtime-identity .d.ts
+  // symbols remain unmapped and produce the package-specific diagnostic.
+  const npmSym = widened.getSymbol();
   const npmDecls = npmSym ? checker.declarationsOf(npmSym) : undefined;
   if (
     npmDecls &&
