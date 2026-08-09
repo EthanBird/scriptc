@@ -107,6 +107,8 @@ export function computeTraced(mod: IrModule): { shapes: Set<string>; unions: Set
         return tracedUnions.has(t.unionId);
       case "map":
         return cycleCapable(t.value);
+      case "set":
+        return cycleCapable(t.elem);
       case "array":
         return cycleCapable(t.elem);
       default:
@@ -456,6 +458,10 @@ export function traceAdapter(host: ShapeHost, t: IrType): string | null {
       if (traceAdapter(host, t.value) === null) return null;
       host.declare(`declare void @scr_map_trace_v(ptr, ptr, ptr)`);
       return "@scr_map_trace_v";
+    case "set":
+      if (traceAdapter(host, t.elem) === null) return null;
+      host.declare(`declare void @scr_map_trace_v(ptr, ptr, ptr)`);
+      return "@scr_map_trace_v";
     case "array":
       if (traceAdapter(host, t.elem) === null) return null;
       host.declare(`declare void @scr_arr_trace_v(ptr, ptr, ptr)`);
@@ -625,6 +631,7 @@ export function mapKeyAccess(key: IrType): "f64" | "str" | "ref" {
   if (key.kind === "string") return "str";
   if (key.kind === "symbol") return "ref";
   if (key.kind === "netServer") return "ref"; // handle identity (Set<Server>)
+  if (key.kind === "object" || key.kind === "promise") return "ref";
   throw new LlvmUnsupportedError(`mapKey:${key.kind}`);
 }
 

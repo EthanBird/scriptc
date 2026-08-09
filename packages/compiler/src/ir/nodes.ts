@@ -49,11 +49,14 @@ export type IrType =
   | { kind: "map"; key: IrType; value: IrType }
   /** ES `Set<T>` — heap, refcounted, insertion-ordered. Map's sibling with
    * the value slot removed: ONE runtime representation (the backend lowers
-   * sets onto the map runtime with a constant unit value), elements are
-   * exactly Map's KEY types — f64 or string, SameValueZero. Same container
-   * fences as map (no union arms, no array elements, no map values, no sets
-   * of sets, not JSON-safe) and never cycle-capable: elements are scalars
-   * or strings, which cannot point back. */
+   * sets onto the map runtime with a constant unit value). Primitive keys
+   * use SameValueZero (f64/string); selected heap values whose JS identity
+   * is their stable runtime pointer (class instances, promises, server
+   * handles, symbols) use SCR_MAP_KEY_REF. A ref-key set is cycle-capable
+   * exactly when its element type is: the runtime traces key edges just as
+   * ref-valued Maps trace value edges. Other identity worlds (records,
+   * unions, dyn/jsval wrappers) remain fenced until their identity model is
+   * proven stable. Sets remain non-JSON and outside union/array slots. */
   | { kind: "set"; elem: IrType }
   /** A regular expression — heap, refcounted, IMMUTABLE. No lastIndex
    * statefulness exists: /g and /y are supported only inside
@@ -388,18 +391,21 @@ export function isSupportedMapKey(t: IrType): boolean {
   return t.kind === "f64" || t.kind === "string";
 }
 
-/** The Set ELEMENT fence — Map's key fence plus the refcounted HANDLE
- * kinds stored under identity hashing (SameValueZero for JS objects IS
- * reference identity, so a Set of server handles — portless's auxiliary-
- * server registry — is honest hashed storage; SCR_MAP_KEY_REF in the
- * runtime). netServer is the one handle admitted so far: it drops its
- * listener closures at close, so a set-in-listener cycle is temporary —
- * the child precedent's story. Symbols are identity values by DESIGN —
- * SameValueZero on a symbol IS pointer identity, so a Set of symbols (the
- * sentinel-registry idiom) is the same honest hashed storage with no
- * cycle risk at all (symbols hold only strings). */
+/** The Set ELEMENT fence — Map's scalar key fence plus values whose
+ * JavaScript object identity is exactly their stable runtime pointer.
+ * class instances and promises need strong-key cycle tracing (a member can
+ * point back at the Set); server handles and symbols are acyclic identity
+ * values. Structural records/unions and dyn/jsval wrappers stay fenced:
+ * their lowering may copy/rebox, so pointer identity is not yet a proof of
+ * JavaScript identity. */
 export function isSupportedSetElem(t: IrType): boolean {
-  return isSupportedMapKey(t) || t.kind === "netServer" || t.kind === "symbol";
+  return (
+    isSupportedMapKey(t) ||
+    t.kind === "object" ||
+    t.kind === "promise" ||
+    t.kind === "netServer" ||
+    t.kind === "symbol"
+  );
 }
 
 /** The Map VALUE fence: scalars plus every refcounted kind EXCEPT

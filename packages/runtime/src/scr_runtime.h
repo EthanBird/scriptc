@@ -1052,9 +1052,12 @@ typedef struct ScrMap {
   void *(*val_retain)(void *);
   void (*val_release)(void *);
   ScrTraceFn val_trace;
-  /* SCR_MAP_KEY_REF only (scr_set_new_ref); NULL otherwise. */
+  /* SCR_MAP_KEY_REF only (scr_set_new_ref); NULL otherwise. A non-NULL
+   * key_trace means the key type carries a cycle header, so ref-key Sets
+   * allocate with the collector header and trace every live key edge. */
   void *(*key_retain)(void *);
   void (*key_release)(void *);
+  ScrTraceFn key_trace;
   size_t nentries; /* dense entries used, tombstones included */
   size_t nlive;    /* live entries (Map.size) */
   size_t ecap;     /* entries capacity */
@@ -1139,7 +1142,8 @@ ScrArr *scr_set_to_arr_ref(const ScrMap *s);
 /* REF-element Set construction: a set-shaped map whose keys are refcounted
  * pointers under identity hashing (see SCR_MAP_KEY_REF above). The element
  * type's `_v` adapters arrive once, the scr_arr_new_ref technique. */
-ScrMap *scr_set_new_ref(void *(*elem_retain)(void *), void (*elem_release)(void *));
+ScrMap *scr_set_new_ref(void *(*elem_retain)(void *), void (*elem_release)(void *),
+                            ScrTraceFn elem_trace);
 
 /* The live STRING keys of a map in JS OWN-KEY ORDER (Object.keys/values/
  * entries over an index-signature record's overflow): canonical array
