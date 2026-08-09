@@ -17,9 +17,9 @@ The last fully inspected diagnostic artifact reported:
 - `coverage = 0`
 - `build = 1`
 - `smoke = 125` (no executable because native build still has blockers)
-- 46 native-build diagnostics, down from the earlier 66 → 57 → 55 → 53 → ~48 frontier.
+- 46 native-build diagnostics.
 
-That 46-diagnostic run already contained the header-family type fix, exact `Object.entries` value snapshots, and readonly-tuple Set support. It did **not** yet contain the subsequently validated `fs/promises.writeFile(..., "utf8" | "utf-8")` source commit nor the Prime-style template-`KeyId` Object.entries binding fix. A newer Prime oracle is running over the current source; do not claim a lower number until its raw artifact is inspected.
+The net count stayed at 46 while the blocker composition changed: readonly-tuple Set failures and the three-argument UTF-8 `fs.promises.writeFile` failure disappeared, while downstream failures such as `fs.promises.access` became visible. This is expected for poison-based whole-program lowering: capability closure exposes code that was previously skipped.
 
 ## Validated capabilities landed
 
@@ -35,8 +35,10 @@ That 46-diagnostic run already contained the header-family type fix, exact `Obje
 - Prime-style template-literal `KeyId | KeyId[] | undefined` Object.entries bindings use the already-proven index-signature runtime representation instead of requiring a redundant second type mapping
 - `new Set(readonlyTuple)` for homogeneous readonly tuples such as `const NAMES = [...] as const`, preserving insertion order and duplicate collapse
 - `node:fs/promises.writeFile(path, string, "utf8" | "utf-8")` through the existing promise write runtime, with fallback declaration support
+- function-identity Sets: `Set<() => void>` uses REF identity with closure retain/release/trace callbacks; the sanitized corpus includes a real `Holder → Set → closure → Holder` cycle
+- `node:fs/promises.access(path, mode?)`: reuses `fs.access` semantics but settles/rejects through a Promise, including C/LLVM emitter and validator wiring
 
-Each of the recent source increments above was retained only after:
+Each retained recent source increment passed:
 
 - `pnpm build`
 - `pnpm lint`
@@ -45,33 +47,26 @@ Each of the recent source increments above was retained only after:
 - LLVM differential test
 - LLVM differential with `SCRIPTC_SAN=1`
 
-## Current work item
+## Object.entries Prime probe
 
-The next targeted Prime blocker is `Set<() => void>` in the kernel lifecycle code. This is only safe to enable if closure values use stable pointer identity and the REF-key Set path owns and traces them correctly.
+A temporary compiler probe was run against the real `EthanBird/prime-agent` workspace and then automatically removed from ScriptC source. Its tracked result is `PRIME_OBJECT_ENTRIES_PROBE.txt`.
 
-The existing infrastructure already strongly suggests this is a small missing gate rather than a new container implementation:
+The probe established two different problems rather than one:
 
-- closures are refcounted (`ScrClosure *`)
-- C has closure retain/release adapters and `scr_closure_trace_v`
-- Set REF keys already receive retain/release/trace callbacks
-- the C/LLVM cycle-capability fixpoints already classify closures as cycle-capable
-- LLVM has closure `_v` retain/release adapters
+### Theme path
 
-Before enabling the type, verify the LLVM key classifier and trace adapter, then add a regression that exercises both identity and a real `Holder → Set<closure> → closure capture → Holder` cycle. The sanitized RC audit must reclaim it.
+`resolveThemeColors` is instantiated into a **fixed 55-field record** whose fields are all `number | string`; it has `index=none`. Therefore trying to recover the original generic `Record<string, ...>` index signature is the wrong model. The correct compatibility capability is direct head-consumed `Object.entries` iteration over a fixed record, snapshotting its declared keys and values without materializing `Array<[string,V]>`.
 
-## Remaining high-yield frontier
+### Extension runner path
 
-After function-identity Sets, prioritize by measured Prime closure rate rather than feature count:
+The `runner.ts` call did **not** reach the probe inside the `recT` branch at all. Therefore its `resolvedKeybindings` source currently maps/probes to something other than a record. A second, shallower probe must log the checker type, index infos, `mapType(arg)`, and `probeLower(arg)` even when `recT` is null. Do not broaden Object.entries based on guesses before that probe.
 
-1. generic `Object.entries` / generic Record instance recovery in the theme path
-2. Promise covariance/widening needed by `Promise<void>` → `Promise<unknown>`
-3. record/index-signature width capture used by keybindings/theme configuration
-4. module namespace objects as first-class values
-5. WeakMap/WeakSet semantics
-6. common Array/Object surfaces (`Array.from`, computed `in`, spread-call shapes)
-7. external-class/overloaded-function records
-8. Proxy / Intl.Segmenter where required
-9. native providers/addon interop (ZeroMQ, clipboard, photon) after the static/runtime core closes enough of the graph
+## Next work
+
+1. Run the shallow runner probe and identify why `KeybindingsConfig` is not producing a record representation.
+2. Independently add fixed-record direct `for...of Object.entries(...)` for homogeneous/convertible declared fields, which should close the theme blocker.
+3. Re-run the Prime raw oracle after these changes and measure the new frontier.
+4. Continue with high-closure items such as Promise widening, record/index-signature width capture, module namespace values, `Array.from(Set)`, and weak containers.
 
 Keep `Buffer.isBuffer(Uint8Array)` fenced until Buffer branding is represented: Buffer is a Uint8Array subclass, but a plain Uint8Array is not a Buffer, so returning a constant based on the shared bytes representation would be wrong.
 
