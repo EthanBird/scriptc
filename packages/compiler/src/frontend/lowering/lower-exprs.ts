@@ -9648,7 +9648,11 @@ export function lowerBinary(L: Lowerer, expr: ts.BinaryExpression): IrExpr {
       return null;
     }
     if (value.type.kind !== "union") {
-      throw new Error("lowerer bug: union-typed receiver lowered to a non-union");
+      L.unsupported(
+        "SC1090",
+        expr,
+        `property access on a checker-union receiver whose lowered runtime representation is '${L.fmt(value.type)}' (${NARROW_FIRST})`,
+      );
     }
     const def = L.unions.get(value.type.unionId);
     if (!def) throw new Error(`lowerer bug: unknown union ${value.type.unionId}`);
