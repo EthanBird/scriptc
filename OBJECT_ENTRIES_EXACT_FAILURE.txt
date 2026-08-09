@@ -18,7 +18,7 @@ Lockfile is up to date, resolution step is skipped
 Progress: resolved 1, reused 0, downloaded 0, added 0
 Packages: +402
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Progress: resolved 402, reused 0, downloaded 269, added 236
+Progress: resolved 402, reused 0, downloaded 240, added 172
 Progress: resolved 402, reused 0, downloaded 402, added 402, done
 .../esbuild@0.27.0/node_modules/esbuild postinstall$ node install.js
 .../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
@@ -34,7 +34,7 @@ devDependencies:
 + vercel 58.1.0
 + vitest 3.2.7
 
-Done in 4.9s using pnpm v11.1.3
+Done in 5s using pnpm v11.1.3
 [exit 0]
 $ pnpm build
 $ pnpm -r --filter "./packages/*" run build
@@ -50,86 +50,6 @@ $ pnpm lint
 $ eslint packages/compiler/src packages/cli/src
 [exit 0]
 $ pnpm exec vitest run tests/harness/differential.test.ts -t 3003-object-entries-forof
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2577-builtin-global-destructuring.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2578-jsval-into-unknown-rows.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2579-jsval-object-param-crossing.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2580-jsval-routed-keyed-ops.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2581-jsval-routed-calls.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2582-jsval-object-statics.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2582-jsval-routed-keyed-ops.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2583-dyn-nullish-coalesce.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2583-jsval-routed-calls.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2584-jsval-object-statics.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2584-union-dyn-collapse.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2585-dyn-nullish-coalesce.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2585-unknown-array.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2586-object-assign-spread.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2587-array-entries-forof.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2588-array-entries-chains.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2589-object-create-null.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2590-object-create-dynamic.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2591-ambient-generic-traps.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2592-ambient-trap-uncaught.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2593-generic-inert-bindings.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2594-nullish-generic-bindings.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2595-fs-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2596-net-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2597-dgram-send-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2598-tls-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2599-stream-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2600-dyn-keyed-write-harness.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2601-dyn-keyed-write-ops.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2602-dyn-array-destructure.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2603-island-keyed-write-dyn.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2604-cycle-classes-mutual/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2605-cycle-three-module/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2606-dynamic-import-cycle/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2608-regex-named-groups.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2609-regex-named-replace.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2610-regex-named-matchall.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2611-regex-named-groups-js.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2613-for-init-uninitialized-let.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2614-trap-binding-later-writes.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2615-nullish-field-record-binding.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2616-js-collect-probe-defers.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2617-enum-static-field-import/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2618-ee-emit-override.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2619-ee-override-chain.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2620-ee-override-once-order.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2621-ee-override-error-throw.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2622-ee-override-filter.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2623-ee-job-queue.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2624-ee-override-js.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2625-bytes-views.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2626-stream-event-names.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2627-stream-ticks-are-nextticks.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2628-stream-push-encodings.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2629-stream-consumers.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2630-stream-consumers-errors.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2631-create-require/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2632-dyn-jsval-iterate.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2633-island-promise-crossing.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2634-stream-pipeline-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2635-trap-binding-unmappable-written.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2636-trap-binding-ambient-rooted-rewrite.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2637-create-require-bare/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2638-http-dyn-res-compat.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2639-http-dyn-req-pause.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2640-net-dyn-socket-compat.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2641-http-agent-surface.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2642-http-agent-maxsockets.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2643-or-default-retag.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2644-http-client-url-argument.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2645-https-client-url-argument.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2646-top-level-await.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2647-top-level-await-modules/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2648-top-level-await-rejection.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2649-top-level-await-pending.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2650-top-level-await-self-import.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2651-top-level-await-pending-unhandled.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2652-top-level-await-dynamic/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2653-top-level-await-rejection-stops-loop.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2654-top-level-await-unrelated-rejection.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2655-top-level-await-cycle/main.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2656-top-level-await-cycle-order/main.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m2657-top-level-await-cycle-dynamic/main.ts
@@ -157,7 +77,7 @@ $ pnpm exec vitest run tests/harness/differential.test.ts -t 3003-object-entries
    [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m300-if-else.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m3001-set-ref-identity.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs)[2m > [22m3002-import-meta-url.ts
-[31m   [31m×[31m differential corpus (1065 programs)[2m > [22m3003-object-entries-forof.ts[39m[33m 417[2mms[22m[39m[33m (retry x1)[39m
+[31m   [31m×[31m differential corpus (1065 programs)[2m > [22m3003-object-entries-forof.ts[39m[33m 397[2mms[22m[39m[33m (retry x1)[39m
 [31m     → corpus program failed to compile:
 SC1090: Object.entries over '{ [key: string]: string[] | number | string | undefined }' (the index signature's 'string[] | number | string | undefined' value cannot flow into the 'string[] | string | undefined' result element) is not supported yet[39m
 [31m     → corpus program failed to compile:
@@ -343,8 +263,8 @@ SC1090: Object.entries over '{ [key: string]: string[] | number | string | undef
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m1064 skipped[39m[90m (1065)[39m
-[2m   Start at [22m 14:43:00
-[2m   Duration [22m 3.96s[2m (transform 2.26s, setup 0ms, collect 3.16s, tests 423ms, environment 0ms, prepare 59ms)[22m
+[2m   Start at [22m 14:47:56
+[2m   Duration [22m 4.03s[2m (transform 2.31s, setup 0ms, collect 3.25s, tests 403ms, environment 0ms, prepare 72ms)[22m
 
 
 ::error file=/home/runner/work/scriptc/scriptc/tests/harness/differential.test.ts,title=tests/harness/differential.test.ts > differential corpus (1065 programs) > 3003-object-entries-forof.ts,line=357,column=11::Error: corpus program failed to compile:%0ASC1090: Object.entries over '{ [key: string]: string[] | number | string | undefined }' (the index signature's 'string[] | number | string | undefined' value cannot flow into the 'string[] | string | undefined' result element) is not supported yet%0A ❯ compileAndRun tests/harness/differential.test.ts:357:11%0A ❯ tests/harness/differential.test.ts:375:36%0A%0A
@@ -352,86 +272,6 @@ SC1090: Object.entries over '{ [key: string]: string[] | number | string | undef
 ::error file=/home/runner/work/scriptc/scriptc/tests/harness/differential.test.ts,title=tests/harness/differential.test.ts > differential corpus (1065 programs) > 3003-object-entries-forof.ts,line=357,column=11::Error: corpus program failed to compile:%0ASC1090: Object.entries over '{ [key: string]: string[] | number | string | undefined }' (the index signature's 'string[] | number | string | undefined' value cannot flow into the 'string[] | string | undefined' result element) is not supported yet%0A ❯ compileAndRun tests/harness/differential.test.ts:357:11%0A ❯ tests/harness/differential.test.ts:375:36%0A%0A
 [exit 1]
 $ pnpm exec vitest run tests/harness/llvm-differential.test.ts -t 3003-object-entries-forof
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2580-jsval-routed-keyed-ops.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2581-jsval-routed-calls.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2582-jsval-object-statics.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2582-jsval-routed-keyed-ops.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2583-dyn-nullish-coalesce.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2583-jsval-routed-calls.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2584-jsval-object-statics.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2584-union-dyn-collapse.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2585-dyn-nullish-coalesce.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2585-unknown-array.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2586-object-assign-spread.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2587-array-entries-forof.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2588-array-entries-chains.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2589-object-create-null.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2590-object-create-dynamic.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2591-ambient-generic-traps.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2592-ambient-trap-uncaught.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2593-generic-inert-bindings.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2594-nullish-generic-bindings.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2595-fs-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2596-net-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2597-dgram-send-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2598-tls-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2599-stream-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2600-dyn-keyed-write-harness.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2601-dyn-keyed-write-ops.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2602-dyn-array-destructure.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2603-island-keyed-write-dyn.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2604-cycle-classes-mutual/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2605-cycle-three-module/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2606-dynamic-import-cycle/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2608-regex-named-groups.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2609-regex-named-replace.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2610-regex-named-matchall.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2611-regex-named-groups-js.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2613-for-init-uninitialized-let.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2614-trap-binding-later-writes.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2615-nullish-field-record-binding.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2616-js-collect-probe-defers.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2617-enum-static-field-import/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2618-ee-emit-override.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2619-ee-override-chain.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2620-ee-override-once-order.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2621-ee-override-error-throw.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2622-ee-override-filter.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2623-ee-job-queue.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2624-ee-override-js.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2625-bytes-views.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2626-stream-event-names.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2627-stream-ticks-are-nextticks.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2628-stream-push-encodings.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2629-stream-consumers.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2630-stream-consumers-errors.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2631-create-require/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2632-dyn-jsval-iterate.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2633-island-promise-crossing.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2634-stream-pipeline-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2635-trap-binding-unmappable-written.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2636-trap-binding-ambient-rooted-rewrite.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2637-create-require-bare/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2638-http-dyn-res-compat.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2639-http-dyn-req-pause.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2640-net-dyn-socket-compat.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2641-http-agent-surface.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2642-http-agent-maxsockets.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2643-or-default-retag.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2644-http-client-url-argument.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2645-https-client-url-argument.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2646-top-level-await.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2647-top-level-await-modules/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2648-top-level-await-rejection.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2649-top-level-await-pending.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2650-top-level-await-self-import.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2651-top-level-await-pending-unhandled.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2652-top-level-await-dynamic/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2653-top-level-await-rejection-stops-loop.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2654-top-level-await-unrelated-rejection.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2655-top-level-await-cycle/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2656-top-level-await-cycle-order/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2657-top-level-await-cycle-dynamic/main.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2658-top-level-await-sync-completion/main.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2659-top-level-await-dynamic-cycle/main.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m2660-top-level-await-cycle-rejection/main.ts
@@ -456,7 +296,7 @@ $ pnpm exec vitest run tests/harness/llvm-differential.test.ts -t 3003-object-en
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m300-if-else.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m3001-set-ref-identity.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m3002-import-meta-url.ts
-[31m   [31m×[31m llvm differential corpus (1065 programs)[2m > [22m3003-object-entries-forof.ts[39m[32m 252[2mms[22m[39m
+[31m   [31m×[31m llvm differential corpus (1065 programs)[2m > [22m3003-object-entries-forof.ts[39m[32m 254[2mms[22m[39m
 [31m     → expected [ 'SC1090' ] to deeply equal [ 'SC3001' ][39m
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m301-while.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs)[2m > [22m302-for.ts
@@ -647,93 +487,13 @@ $ pnpm exec vitest run tests/harness/llvm-differential.test.ts -t 3003-object-en
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m1066 skipped[39m[90m (1067)[39m
-[2m   Start at [22m 14:43:05
-[2m   Duration [22m 3.72s[2m (transform 2.24s, setup 0ms, collect 3.14s, tests 258ms, environment 0ms, prepare 59ms)[22m
+[2m   Start at [22m 14:48:01
+[2m   Duration [22m 3.79s[2m (transform 2.29s, setup 0ms, collect 3.20s, tests 262ms, environment 0ms, prepare 59ms)[22m
 
 
 ::error file=/home/runner/work/scriptc/scriptc/tests/harness/llvm-differential.test.ts,title=tests/harness/llvm-differential.test.ts > llvm differential corpus (1065 programs) > 3003-object-entries-forof.ts,line=246,column=56::AssertionError: expected [ 'SC1090' ] to deeply equal [ 'SC3001' ]%0A%0A- Expected%0A+ Received%0A%0A  [%0A-   "SC3001",%0A+   "SC1090",%0A  ]%0A%0A ❯ tests/harness/llvm-differential.test.ts:246:56%0A%0A
 [exit 1]
 $ pnpm exec vitest run tests/harness/differential.test.ts -t 3003-object-entries-forof
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2577-builtin-global-destructuring.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2578-jsval-into-unknown-rows.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2579-jsval-object-param-crossing.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2580-jsval-routed-keyed-ops.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2581-jsval-routed-calls.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2582-jsval-object-statics.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2582-jsval-routed-keyed-ops.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2583-dyn-nullish-coalesce.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2583-jsval-routed-calls.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2584-jsval-object-statics.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2584-union-dyn-collapse.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2585-dyn-nullish-coalesce.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2585-unknown-array.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2586-object-assign-spread.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2587-array-entries-forof.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2588-array-entries-chains.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2589-object-create-null.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2590-object-create-dynamic.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2591-ambient-generic-traps.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2592-ambient-trap-uncaught.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2593-generic-inert-bindings.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2594-nullish-generic-bindings.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2595-fs-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2596-net-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2597-dgram-send-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2598-tls-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2599-stream-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2600-dyn-keyed-write-harness.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2601-dyn-keyed-write-ops.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2602-dyn-array-destructure.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2603-island-keyed-write-dyn.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2604-cycle-classes-mutual/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2605-cycle-three-module/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2606-dynamic-import-cycle/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2608-regex-named-groups.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2609-regex-named-replace.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2610-regex-named-matchall.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2611-regex-named-groups-js.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2613-for-init-uninitialized-let.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2614-trap-binding-later-writes.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2615-nullish-field-record-binding.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2616-js-collect-probe-defers.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2617-enum-static-field-import/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2618-ee-emit-override.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2619-ee-override-chain.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2620-ee-override-once-order.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2621-ee-override-error-throw.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2622-ee-override-filter.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2623-ee-job-queue.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2624-ee-override-js.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2625-bytes-views.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2626-stream-event-names.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2627-stream-ticks-are-nextticks.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2628-stream-push-encodings.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2629-stream-consumers.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2630-stream-consumers-errors.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2631-create-require/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2632-dyn-jsval-iterate.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2633-island-promise-crossing.js
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2634-stream-pipeline-arg-ladders.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2635-trap-binding-unmappable-written.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2636-trap-binding-ambient-rooted-rewrite.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2637-create-require-bare/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2638-http-dyn-res-compat.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2639-http-dyn-req-pause.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2640-net-dyn-socket-compat.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2641-http-agent-surface.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2642-http-agent-maxsockets.cjs
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2643-or-default-retag.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2644-http-client-url-argument.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2645-https-client-url-argument.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2646-top-level-await.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2647-top-level-await-modules/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2648-top-level-await-rejection.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2649-top-level-await-pending.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2650-top-level-await-self-import.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2651-top-level-await-pending-unhandled.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2652-top-level-await-dynamic/main.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2653-top-level-await-rejection-stops-loop.ts
-   [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2654-top-level-await-unrelated-rejection.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2655-top-level-await-cycle/main.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2656-top-level-await-cycle-order/main.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m2657-top-level-await-cycle-dynamic/main.ts
@@ -761,7 +521,7 @@ $ pnpm exec vitest run tests/harness/differential.test.ts -t 3003-object-entries
    [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m300-if-else.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m3001-set-ref-identity.ts
    [2m[90m↓[39m[22m differential corpus (1065 programs, sanitized)[2m > [22m3002-import-meta-url.ts
-[31m   [31m×[31m differential corpus (1065 programs, sanitized)[2m > [22m3003-object-entries-forof.ts[39m[33m 424[2mms[22m[39m[33m (retry x1)[39m
+[31m   [31m×[31m differential corpus (1065 programs, sanitized)[2m > [22m3003-object-entries-forof.ts[39m[33m 392[2mms[22m[39m[33m (retry x1)[39m
 [31m     → corpus program failed to compile:
 SC1090: Object.entries over '{ [key: string]: string[] | number | string | undefined }' (the index signature's 'string[] | number | string | undefined' value cannot flow into the 'string[] | string | undefined' result element) is not supported yet[39m
 [31m     → corpus program failed to compile:
@@ -947,8 +707,8 @@ SC1090: Object.entries over '{ [key: string]: string[] | number | string | undef
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m1064 skipped[39m[90m (1065)[39m
-[2m   Start at [22m 14:43:09
-[2m   Duration [22m 3.97s[2m (transform 2.27s, setup 0ms, collect 3.16s, tests 430ms, environment 0ms, prepare 62ms)[22m
+[2m   Start at [22m 14:48:06
+[2m   Duration [22m 4.10s[2m (transform 2.36s, setup 0ms, collect 3.31s, tests 398ms, environment 0ms, prepare 72ms)[22m
 
 
 ::error file=/home/runner/work/scriptc/scriptc/tests/harness/differential.test.ts,title=tests/harness/differential.test.ts > differential corpus (1065 programs%2C sanitized) > 3003-object-entries-forof.ts,line=357,column=11::Error: corpus program failed to compile:%0ASC1090: Object.entries over '{ [key: string]: string[] | number | string | undefined }' (the index signature's 'string[] | number | string | undefined' value cannot flow into the 'string[] | string | undefined' result element) is not supported yet%0A ❯ compileAndRun tests/harness/differential.test.ts:357:11%0A ❯ tests/harness/differential.test.ts:375:36%0A%0A
@@ -956,86 +716,6 @@ SC1090: Object.entries over '{ [key: string]: string[] | number | string | undef
 ::error file=/home/runner/work/scriptc/scriptc/tests/harness/differential.test.ts,title=tests/harness/differential.test.ts > differential corpus (1065 programs%2C sanitized) > 3003-object-entries-forof.ts,line=357,column=11::Error: corpus program failed to compile:%0ASC1090: Object.entries over '{ [key: string]: string[] | number | string | undefined }' (the index signature's 'string[] | number | string | undefined' value cannot flow into the 'string[] | string | undefined' result element) is not supported yet%0A ❯ compileAndRun tests/harness/differential.test.ts:357:11%0A ❯ tests/harness/differential.test.ts:375:36%0A%0A
 [exit 1]
 $ pnpm exec vitest run tests/harness/llvm-differential.test.ts -t 3003-object-entries-forof
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2580-jsval-routed-keyed-ops.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2581-jsval-routed-calls.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2582-jsval-object-statics.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2582-jsval-routed-keyed-ops.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2583-dyn-nullish-coalesce.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2583-jsval-routed-calls.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2584-jsval-object-statics.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2584-union-dyn-collapse.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2585-dyn-nullish-coalesce.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2585-unknown-array.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2586-object-assign-spread.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2587-array-entries-forof.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2588-array-entries-chains.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2589-object-create-null.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2590-object-create-dynamic.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2591-ambient-generic-traps.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2592-ambient-trap-uncaught.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2593-generic-inert-bindings.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2594-nullish-generic-bindings.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2595-fs-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2596-net-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2597-dgram-send-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2598-tls-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2599-stream-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2600-dyn-keyed-write-harness.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2601-dyn-keyed-write-ops.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2602-dyn-array-destructure.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2603-island-keyed-write-dyn.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2604-cycle-classes-mutual/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2605-cycle-three-module/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2606-dynamic-import-cycle/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2608-regex-named-groups.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2609-regex-named-replace.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2610-regex-named-matchall.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2611-regex-named-groups-js.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2613-for-init-uninitialized-let.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2614-trap-binding-later-writes.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2615-nullish-field-record-binding.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2616-js-collect-probe-defers.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2617-enum-static-field-import/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2618-ee-emit-override.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2619-ee-override-chain.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2620-ee-override-once-order.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2621-ee-override-error-throw.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2622-ee-override-filter.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2623-ee-job-queue.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2624-ee-override-js.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2625-bytes-views.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2626-stream-event-names.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2627-stream-ticks-are-nextticks.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2628-stream-push-encodings.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2629-stream-consumers.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2630-stream-consumers-errors.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2631-create-require/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2632-dyn-jsval-iterate.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2633-island-promise-crossing.js
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2634-stream-pipeline-arg-ladders.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2635-trap-binding-unmappable-written.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2636-trap-binding-ambient-rooted-rewrite.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2637-create-require-bare/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2638-http-dyn-res-compat.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2639-http-dyn-req-pause.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2640-net-dyn-socket-compat.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2641-http-agent-surface.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2642-http-agent-maxsockets.cjs
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2643-or-default-retag.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2644-http-client-url-argument.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2645-https-client-url-argument.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2646-top-level-await.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2647-top-level-await-modules/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2648-top-level-await-rejection.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2649-top-level-await-pending.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2650-top-level-await-self-import.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2651-top-level-await-pending-unhandled.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2652-top-level-await-dynamic/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2653-top-level-await-rejection-stops-loop.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2654-top-level-await-unrelated-rejection.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2655-top-level-await-cycle/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2656-top-level-await-cycle-order/main.ts
-   [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2657-top-level-await-cycle-dynamic/main.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2658-top-level-await-sync-completion/main.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2659-top-level-await-dynamic-cycle/main.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m2660-top-level-await-cycle-rejection/main.ts
@@ -1060,7 +740,7 @@ $ pnpm exec vitest run tests/harness/llvm-differential.test.ts -t 3003-object-en
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m300-if-else.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m3001-set-ref-identity.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m3002-import-meta-url.ts
-[31m   [31m×[31m llvm differential corpus (1065 programs, sanitized)[2m > [22m3003-object-entries-forof.ts[39m[32m 262[2mms[22m[39m
+[31m   [31m×[31m llvm differential corpus (1065 programs, sanitized)[2m > [22m3003-object-entries-forof.ts[39m[32m 229[2mms[22m[39m
 [31m     → expected [ 'SC1090' ] to deeply equal [ 'SC3001' ][39m
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m301-while.ts
    [2m[90m↓[39m[22m llvm differential corpus (1065 programs, sanitized)[2m > [22m302-for.ts
@@ -1251,10 +931,10 @@ $ pnpm exec vitest run tests/harness/llvm-differential.test.ts -t 3003-object-en
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m1066 skipped[39m[90m (1067)[39m
-[2m   Start at [22m 14:43:14
-[2m   Duration [22m 3.75s[2m (transform 2.25s, setup 0ms, collect 3.16s, tests 269ms, environment 0ms, prepare 57ms)[22m
+[2m   Start at [22m 14:48:11
+[2m   Duration [22m 3.88s[2m (transform 2.36s, setup 0ms, collect 3.31s, tests 236ms, environment 0ms, prepare 62ms)[22m
 
 
 ::error file=/home/runner/work/scriptc/scriptc/tests/harness/llvm-differential.test.ts,title=tests/harness/llvm-differential.test.ts > llvm differential corpus (1065 programs%2C sanitized) > 3003-object-entries-forof.ts,line=246,column=56::AssertionError: expected [ 'SC1090' ] to deeply equal [ 'SC3001' ]%0A%0A- Expected%0A+ Received%0A%0A  [%0A-   "SC3001",%0A+   "SC1090",%0A  ]%0A%0A ❯ tests/harness/llvm-differential.test.ts:246:56%0A%0A
 [exit 1]
-OBJECT_ENTRIES_EXACT_VALIDATION=FAIL; source/corpus reverted
+OBJECT_ENTRIES_NONGENERIC=FAIL; reverted
