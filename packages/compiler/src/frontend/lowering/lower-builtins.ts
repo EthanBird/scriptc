@@ -1269,6 +1269,30 @@ function optionMember(p: ts.ObjectLiteralElementLike): { name: string; value: ts
         : { kind: "numLit", value: 0, type: F64, loc };
       return { kind: "libCall", fn: "fs.accessSync", args: [path, mode], type: VOID, loc };
     }
+    // fs.promises.writeFile(path, string, "utf8" | "utf-8"):
+    // the third argument only selects the encoding the existing
+    // fsp.writeFile runtime already writes. Prove the literal encoding and
+    // string payload, then reuse the two-argument runtime ABI. Everything
+    // else keeps the normal options/arity fence.
+    if (bi.module === "fs/promises" && bi.member === "writeFile" && expr.arguments.length === 3) {
+      const encNode = expr.arguments[2]!;
+      const enc = L.typeOf(encNode);
+      if (
+        enc.isStringLiteralType() &&
+        (enc.value === "utf8" || enc.value === "utf-8") &&
+        L.mapTypeOf(L.typeOf(expr.arguments[1]!))?.kind === "string"
+      ) {
+        const path = L.lowerExprExpecting(expr.arguments[0]!, STRING);
+        const data = L.lowerExprExpecting(expr.arguments[1]!, STRING);
+        const type: IrType = { kind: "promise", inner: VOID };
+        return { kind: "libCall", fn: "fsp.writeFile", args: [path, data], type, loc };
+      }
+      L.noLowering(
+        "fs.promises.writeFile with 3 arguments",
+        encNode,
+        'the supported three-argument form is writeFile(path, stringData, "utf8" | "utf-8")',
+      );
+    }
     if (bi.module === "fs" && bi.member === "writeFileSync" && expr.arguments.length === 2) {
       const dataIr = L.mapTypeOf(L.typeOf(expr.arguments[1]!));
       if (dataIr?.kind === "bytes") {
