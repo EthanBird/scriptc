@@ -20,7 +20,9 @@ for p in Path('.').rglob('*'):
             if j in seen:
                 continue
             seen.add(j)
-            out.append(f'{j + 1}: {lines[j]}')
+            out.append(f'{j + 1}: {lines[j].rstrip()}')
         out.append('')
+while out and out[-1] == '':
+    out.pop()
 Path('.agent/os-wiring.txt').write_text('\n'.join(out) + '\n', encoding='utf-8')
 print(f'wrote {len(out)} report lines')
