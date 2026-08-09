@@ -9,6 +9,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: prime-agent-compat-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -49,18 +53,6 @@ jobs:
         working-directory: .compat/prime-agent
         run: npm run build
 
-      - name: ScriptC coverage of Prime Agent CLI
-        working-directory: .compat/prime-agent
-        run: |
-          set +e
-          set -o pipefail
-          node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
-            coverage packages/coding-agent/src/cli-main.ts \
-            --dynamic 2>&1 | tee "$RUNNER_TEMP/prime-coverage.log"
-          status=${PIPESTATUS[0]}
-          echo "$status" > "$RUNNER_TEMP/prime-coverage.status"
-          exit 0
-
       - name: ScriptC build of Prime Agent CLI
         working-directory: .compat/prime-agent
         run: |
@@ -88,6 +80,18 @@ jobs:
           fi
           echo "$status" > "$RUNNER_TEMP/prime-smoke.status"
           cat "$RUNNER_TEMP/prime-smoke.log"
+          exit 0
+
+      - name: ScriptC coverage of Prime Agent CLI
+        working-directory: .compat/prime-agent
+        run: |
+          set +e
+          set -o pipefail
+          timeout 180s node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
+            coverage packages/coding-agent/src/cli-main.ts \
+            --dynamic 2>&1 | tee "$RUNNER_TEMP/prime-coverage.log"
+          status=${PIPESTATUS[0]}
+          echo "$status" > "$RUNNER_TEMP/prime-coverage.status"
           exit 0
 
       - name: Upload compatibility diagnostics
