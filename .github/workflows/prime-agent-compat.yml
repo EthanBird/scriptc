@@ -1,0 +1,64 @@
+name: Prime Agent compatibility
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - agent/prime-compat-phase1
+
+permissions:
+  contents: read
+
+jobs:
+  prime-agent:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout scriptc
+        uses: actions/checkout@v4
+
+      - name: Checkout Prime Agent oracle
+        uses: actions/checkout@v4
+        with:
+          repository: EthanBird/prime-agent
+          ref: main
+          path: .compat/prime-agent
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install scriptc
+        run: pnpm install --frozen-lockfile
+
+      - name: Build scriptc
+        run: pnpm build
+
+      - name: Install Prime Agent
+        working-directory: .compat/prime-agent
+        run: npm ci
+
+      - name: Typecheck Prime Agent baseline
+        working-directory: .compat/prime-agent
+        run: npm run check -- --no-errors-on-unmatched
+        continue-on-error: true
+
+      - name: ScriptC coverage of Prime Agent CLI
+        working-directory: .compat/prime-agent
+        run: |
+          node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
+            coverage packages/coding-agent/src/cli-main.ts \
+            --dynamic
+
+      - name: ScriptC build of Prime Agent CLI
+        working-directory: .compat/prime-agent
+        run: |
+          node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
+            build packages/coding-agent/src/cli-main.ts \
+            --dynamic \
+            -o "$RUNNER_TEMP/prime-agent-scriptc"
