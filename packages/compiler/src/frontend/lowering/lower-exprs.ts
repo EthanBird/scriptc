@@ -1297,6 +1297,29 @@ function lowerExprInner(L: Lowerer, expr: ts.Expression): IrExpr {
       if (isRequireMainFilename(L, expr)) {
         return { kind: "strLit", value: L.entry.fileName, type: STRING, loc };
       }
+      // `os.cpus().length`: the array ELEMENT shape (CpuInfo) is too rich
+      // for the static IR, but its length is an independent scalar host
+      // observation. Claim the composed expression BEFORE lowering cpus()
+      // itself; any attempt to inspect a CpuInfo row keeps the ordinary
+      // os.cpus surface fence. Provenance comes from the builtin binding,
+      // so a user function/method named cpus never matches.
+      if (
+        expr.name.text === "length" &&
+        !expr.questionDotToken &&
+        ts.isCallExpression(expr.expression) &&
+        !expr.expression.questionDotToken &&
+        expr.expression.arguments.length === 0
+      ) {
+        const callee = expr.expression.expression;
+        const bi = ts.isIdentifier(callee)
+          ? L.builtinImportOf(callee)
+          : ts.isPropertyAccessExpression(callee)
+            ? L.builtinMemberOf(callee)
+            : null;
+        if (bi?.module === "os" && bi.member === "cpus") {
+          return { kind: "libCall", fn: "os.cpuCount", args: [], type: F64, loc };
+        }
+      }
       // Optional chaining `a?.b`: the guard lowers here (a tag test around
       // the plain property lowering below); the handled marker keeps this
       // re-entrant dispatch from looping.

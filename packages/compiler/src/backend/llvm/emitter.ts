@@ -227,6 +227,7 @@ const LIB_FN_SYMS: Record<string, string> = {
   "os.homedir": "scr_os_homedir",
   "os.type": "scr_os_type",
   "os.totalmem": "scr_os_totalmem",
+  "os.cpuCount": "scr_os_cpu_count",
   "os.release": "scr_os_release",
   "os.userName": "scr_os_user_name",
   "os.userShell": "scr_os_user_shell",

@@ -778,6 +778,19 @@ ScrStr *scr_os_tmpdir(void) {
 }
 #endif /* _WIN32 */
 
+double scr_os_cpu_count(void) {
+  /* os.cpus().length only: keep the rich CpuInfo records outside the
+   * static surface while preserving the observable host logical-CPU
+   * count Prime-style concurrency gates consume. */
+#ifdef _WIN32
+  DWORD n = GetActiveProcessorCount(ALL_PROCESSOR_GROUPS);
+  return n > 0 ? (double)n : 1.0;
+#else
+  long n = sysconf(_SC_NPROCESSORS_ONLN);
+  return n > 0 ? (double)n : 1.0;
+#endif
+}
+
 /* ── os.networkInterfaces(): the getifaddrs(3) snapshot ────────────────
  * Row selection and field semantics follow libuv (src/unix/bsd-ifaddrs.c),
  * which Node delegates to: an entry contributes a row iff its interface is

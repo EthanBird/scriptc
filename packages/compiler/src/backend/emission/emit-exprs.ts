@@ -3142,6 +3142,8 @@ export function emitExpr(E: CEmitter, e: IrExpr): Temp {
             return finish(`scr_os_type()`);
           case "os.totalmem":
             return finish(`scr_os_totalmem()`);
+          case "os.cpuCount":
+            return finish(`scr_os_cpu_count()`);
           case "os.release":
             return finish(`scr_os_release()`);
           case "os.userName":

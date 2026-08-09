@@ -2936,6 +2936,9 @@ export type IrLibFn =
   | "os.type"
   /** os.totalmem(): total physical memory in bytes. Never throws. */
   | "os.totalmem"
+  /** os.cpus().length: the host logical CPU count without materializing
+   * CpuInfo[] (the element records remain outside the static surface). */
+  | "os.cpuCount"
   /** net's process-wide happy-eyeballs attempt budget (Node's default
    * 250ms): one runtime double in the core unit, so reading/writing it
    * never forces the net unit into the link. Never throw. */
