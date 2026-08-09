@@ -5252,7 +5252,8 @@ export function lowerNew(L: Lowerer, expr: ts.NewExpression): IrExpr {
             expr,
             `Map values of type '${L.checker.typeToString(targs[1])}' ` +
               `(Map values must be number, string, boolean, records, class instances, ` +
-              `arrays, promises, or unions of those — not functions, Maps, 'unknown', or 'any')`,
+              `arrays, promises, functions, class values, regexes, supported handles, or unions of supported data values — ` +
+              `not nested Maps, 'unknown', or 'any')`,
           );
         }
         L.badType(expr, tsType);

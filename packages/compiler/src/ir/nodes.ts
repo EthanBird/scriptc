@@ -409,11 +409,12 @@ export function isSupportedSetElem(t: IrType): boolean {
   );
 }
 
-/** The Map VALUE fence: scalars plus every refcounted kind EXCEPT
- * func/promise/dyn/jsval (and map itself — no maps of maps).
- * Record/object/union values can point back at the map holding them, which
- * is exactly why ref-valued maps are cycle-capable (see the backend's
- * cycle analysis and docs/memory.md). Shared frontend/validator. */
+/** The Map VALUE fence: scalars plus selected refcounted kinds.
+ * Records/objects/unions, promises, and closures can point back at the map
+ * holding them, which is exactly why ref-valued maps are cycle-capable (see
+ * the backend's cycle fixpoint and trace adapters). dyn/jsval and nested Map
+ * values remain outside this native static Map surface. Shared
+ * frontend/validator. */
 export function isSupportedMapValue(t: IrType): boolean {
   switch (t.kind) {
     case "f64":
@@ -446,6 +447,12 @@ export function isSupportedMapValue(t: IrType): boolean {
     // pending promise whose callbacks capture the map is a cycle only
     // until settlement, and the collector handles the never-settling case.
     case "promise":
+      return true;
+    // Function values use stable ScrClosure pointer identity and ordinary
+    // strong value ownership. scr_closure_trace_v visits captures, so a
+    // registry closure that captures the object/map owning it participates
+    // in the same cycle collector as Record<string, () => void> overflow.
+    case "func":
       return true;
     // A class object (Map<string, typeof Shape> — the registry/factory
     // idiom): an immortal static behind no-op RC adapters — it holds no
