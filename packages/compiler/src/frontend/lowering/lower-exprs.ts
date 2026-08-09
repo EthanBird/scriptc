@@ -6,6 +6,7 @@
  * (FieldTarget). */
 import * as ts from "../ts7/adapter.js";
 import { dirname } from "node:path";
+import { pathToFileURL } from "node:url";
 import type { Lowerer } from "./lowerer.js";
 import { BOOL, CAUGHT, DYN, DYN_HANDLE_KINDS, F64, IrExpr, IrFunction, IrJsOp, IrLocal, IrRecordShape, IrStmt, IrType, JSVAL, NULL_T, REF_TRUTHY_KINDS, REGEX, RUNTIME_ERROR_CLASSES, SEARCH_PARAMS_T, STRING, SrcLoc, UNDEFINED_T, VOID, arrayOf, canAdaptDynFuncTo, canBoxFuncIntoDyn, canDynCheckTo, funcOf, isJsonSafeType, isUnitType, jsOpResultKind, shapeHasAccessorSlots, typeEquals, typeKey, unionFuncSetArmsOk } from "../../ir/nodes.js";
 import { cjsClassExprWholeExportOf, cjsExportAssignmentOf, cjsExportDiscardReason, isCjsExportTableLiteral, isCjsJsFile, isJsSourceFile, isModuleExportsAccess, isNodeEsmFile, locOf } from "../program.js";
@@ -1285,6 +1286,25 @@ function lowerExprInner(L: Lowerer, expr: ts.Expression): IrExpr {
       {
         const en = lowerEnumAccess(L, expr);
         if (en) return en;
+      }
+      // `import.meta.url` in a file-backed ES module is a module constant.
+      // Bake the same file: URL Node constructs from this source file. This is
+      // the ESM twin of our __filename/require.main.filename stance: exact
+      // when the compiled binary runs from the same source tree, with URL
+      // escaping (spaces, #, non-ASCII) delegated to Node's own build-time
+      // pathToFileURL implementation instead of hand-rolling it.
+      if (
+        expr.name.text === "url" &&
+        !expr.questionDotToken &&
+        ts.isMetaProperty(expr.expression) &&
+        expr.expression.keywordToken === ts.SyntaxKind.ImportKeyword
+      ) {
+        return {
+          kind: "strLit",
+          value: pathToFileURL(expr.getSourceFile().fileName).href,
+          type: STRING,
+          loc,
+        };
       }
       // `require.main.filename` / `require.main?.filename` — CommonJS
       // entry-module identity: in a compiled binary require.main IS the
