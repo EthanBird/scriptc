@@ -42,6 +42,25 @@ jobs:
           git push origin HEAD:agent/prime-compat-phase1
           echo "claimed=true" >> "$GITHUB_OUTPUT"
 
+      - uses: actions/setup-node@v4
+        if: steps.claim.outputs.claimed == 'true'
+        with:
+          node-version: '24.15.0'
+
+      - name: Enable pnpm
+        if: steps.claim.outputs.claimed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare pnpm@11.1.3 --activate
+          node --version
+          pnpm --version
+
+      - name: Install compiler dependencies
+        if: steps.claim.outputs.claimed == 'true'
+        run: pnpm install --frozen-lockfile
+
       - name: Execute claimed task
         id: execute
         if: steps.claim.outputs.claimed == 'true'
