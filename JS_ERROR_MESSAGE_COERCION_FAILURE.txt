@@ -1,9 +1,0 @@
-PATCH EXCEPTION: RuntimeError('cemit: expected 1 matches, found 0 for \'  "island.eval": "scr_island_eval",\\n\'')
-Traceback (most recent call last):
-  File "/tmp/scriptc-next.py", line 37, in <module>
-    rep('cemit', '  "island.eval": "scr_island_eval",\n', '  "island.eval": "scr_island_eval",\n  "island.errorMessage": "scr_jsval_error_message",\n', 1)
-  File "/tmp/scriptc-next.py", line 20, in rep
-    if n != count: raise RuntimeError(f'{key}: expected {count} matches, found {n} for {old[:100]!r}')
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-RuntimeError: cemit: expected 1 matches, found 0 for '  "island.eval": "scr_island_eval",\n'
-JS_ERROR_MESSAGE_ABI=FAIL; source/corpus reverted
