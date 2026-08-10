@@ -1,0 +1,24 @@
+$ pnpm build
+$ pnpm -r --filter "./packages/*" run build
+Scope: 3 of 4 workspace projects
+packages/runtime build$ true
+packages/runtime build: Done
+packages/compiler build$ node node_modules/typescript5/bin/tsc -p tsconfig.json
+packages/compiler build: Done
+packages/cli build$ node ../../node_modules/typescript/bin/tsc -p tsconfig.json
+packages/cli build: Done
+[exit 0]
+$ pnpm lint
+$ eslint packages/compiler/src packages/cli/src
+[exit 0]
+$ node /home/runner/work/scriptc/scriptc/packages/cli/dist/main.js build /tmp/set-worker/probe.js --dynamic --loose-js -o /tmp/set-worker/probe-bin
+/tmp/set-worker/probe-bin
+[exit 0]
+$ /tmp/set-worker/probe-bin
+ok
+[exit 0]
+$ node /home/runner/work/scriptc/scriptc/packages/cli/dist/main.js build /tmp/set-worker/probe.js --dynamic -o /tmp/set-worker/strict-bin
+/tmp/set-worker/strict-bin
+[exit 0]
+strict lane unexpectedly accepted Set<any>
+CLASSVAL_SET=FAIL; source reverted
