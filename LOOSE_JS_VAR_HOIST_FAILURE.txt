@@ -1,0 +1,30 @@
+$ pnpm build
+$ pnpm -r --filter "./packages/*" run build
+Scope: 3 of 4 workspace projects
+packages/runtime build$ true
+packages/runtime build: Done
+packages/compiler build$ node node_modules/typescript5/bin/tsc -p tsconfig.json
+packages/compiler build: Done
+packages/cli build$ node ../../node_modules/typescript/bin/tsc -p tsconfig.json
+packages/cli build: Done
+[exit 0]
+$ pnpm lint
+$ eslint packages/compiler/src packages/cli/src
+[exit 0]
+$ node tests/loose-js-var-hoist.js
+G:ok
+[exit 0]
+$ node /home/runner/work/scriptc/scriptc/packages/cli/dist/main.js build tests/loose-js-var-hoist.js --dynamic --loose-js -o /tmp/scriptc-loose-var-hoist
+/tmp/scriptc-loose-var-hoist
+[exit 0]
+$ /tmp/scriptc-loose-var-hoist
+G:ok
+[exit 0]
+$ node /home/runner/work/scriptc/scriptc/packages/cli/dist/main.js build tests/loose-js-var-hoist.js --dynamic -o /tmp/scriptc-strict-var-hoist
+/tmp/scriptc-strict-var-hoist
+[exit 0]
+loose-js var-hoist differential/strict-gate mismatch
+NODE='G:ok\n'
+NATIVE='G:ok\n'
+STRICT_RC=0
+LOOSE_JS_VAR_HOIST=FAIL; reverted
