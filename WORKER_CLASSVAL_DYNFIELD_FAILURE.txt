@@ -1,0 +1,38 @@
+$ pnpm build
+$ pnpm -r --filter "./packages/*" run build
+Scope: 3 of 4 workspace projects
+packages/runtime build$ true
+packages/runtime build: Done
+packages/compiler build$ node node_modules/typescript5/bin/tsc -p tsconfig.json
+packages/compiler build: Done
+packages/cli build$ node ../../node_modules/typescript/bin/tsc -p tsconfig.json
+packages/cli build: Done
+[exit 0]
+$ pnpm lint
+$ eslint packages/compiler/src packages/cli/src
+[exit 0]
+$ node /home/runner/work/scriptc/scriptc/packages/cli/dist/main.js build /tmp/dynfield-worker/probe.js --dynamic --loose-js -o /tmp/dynfield-worker/probe-bin
+/tmp/dynfield-worker/probe-bin
+[exit 0]
+$ /tmp/dynfield-worker/probe-bin
+Uncaught Error: statically-decided 'instanceof' on computed operands (bind the value to a variable first) are not supported yet [SC1090 at /tmp/dynfield-worker/probe.js:7]
+[exit 1]
+probe runtime mismatch
+$ node /home/runner/work/scriptc/scriptc/packages/cli/dist/main.js build /tmp/dynfield-worker/probe.js --dynamic -o /tmp/dynfield-worker/strict-bin
+/tmp/dynfield-worker/probe.js:2:3 - error SC1090: 'unknown'-typed class fields are not supported yet
+
+  1 | class Box {
+  2 |   store = new Map();
+    |   ^~~~~
+  3 |   add(k,v) { this.store.set(k,v); }
+
+/tmp/dynfield-worker/probe.js:6:22 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+
+  5 | }
+  6 | class Holder { box = new Box(); }
+    |                      ^~~~~~~~~
+  7 | console.log(new Holder() instanceof Holder);
+
+2 errors.
+[exit 1]
+CLASSVAL_DYNFIELD=FAIL; source reverted
