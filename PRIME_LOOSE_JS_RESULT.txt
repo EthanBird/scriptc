@@ -1,0 +1,160 @@
+# Prime official bundle with --loose-js
+
+build_status=1
+executable=False
+smoke_status=125
+diagnostic_lines=17
+
+## first diagnostics
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-FOMIIUX7.js:7871:13 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-FOMIIUX7.js:7872:14 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-FOMIIUX7.js:16897:12 - error SC1030: the reference to 'source_default' above its 'var' declaration (a read there would be 'undefined', which the binding's type cannot hold — annotate it '| undefined' or move the declaration up) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-FOMIIUX7.js:39937:24 - error SC1090: Math methods as values (call 'random' directly) are not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:7620:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:8568:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:8782:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:9029:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-UPDAFKL5.js:83:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:25860:13 - error SC1090: bound method references (call 'setOptions' directly) are not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:25861:11 - error SC1100: passing 'unknown' values where '(any, any) => any' is expected is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:25862:17 - error SC1100: passing 'unknown' values where '(any, any) => any' is expected is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:41938:14 - error SC1100: passing 'unknown' values where '{ promise: Promise<any>; reject: (any) => boolean; settle: (any) => boolean }' is expected is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:41939:15 - error SC1100: passing 'unknown' values where '{ promise: Promise<any>; reject: (any) => boolean; settle: (any) => boolean }' is expected is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:41940:15 - error SC1100: passing 'unknown' values where '{ promise: Promise<any>; reject: (any) => boolean; settle: (any) => boolean }' is expected is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:514:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/openai-codex-responses-3QGMT4GQ.js:504:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+
+## build tail
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-FOMIIUX7.js:7871:13 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+
+  7870 |   hasWalkedCache;
+  7871 |   matches = new he();
+       |             ^~~~~~~~
+  7872 |   subwalks = new ae();
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-FOMIIUX7.js:7872:14 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+
+  7871 |   matches = new he();
+  7872 |   subwalks = new ae();
+       |              ^~~~~~~~
+  7873 |   patterns;
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-FOMIIUX7.js:16897:12 - error SC1030: the reference to 'source_default' above its 'var' declaration (a read there would be 'undefined', which the binding's type cannot hold — annotate it '| undefined' or move the declaration up) is not supported yet
+
+  16896 |   isStreaming = false;
+  16897 |   prompt = source_default.green("prime-agent> ");
+        |            ^~~~~~~~~~~~~~
+  16898 |   constructor(client, activeSessionId) {
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-FOMIIUX7.js:39937:24 - error SC1090: Math methods as values (call 'random' directly) are not supported yet
+
+  39936 |   previousId;
+  39937 |   constructor(random = Math.random) {
+        |                        ^~~~~~~~~~~
+  39938 |     this.random = random;
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:7620:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+
+  7619 |   constructor(source, value, errors) {
+  7620 |     super(source);
+       |           ^~~~~~
+  7621 |     Object.defineProperty(this, "cause", {
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:8568:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+
+  8567 |   constructor(type, message) {
+  8568 |     super(message);
+       |           ^~~~~~~
+  8569 |     this.type = type;
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:8782:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+
+  8781 |   constructor(message) {
+  8782 |     super(message);
+       |           ^~~~~~~
+  8783 |   }
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:9029:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+
+  9028 |   constructor(context, type, value, message) {
+  9029 |     super(message);
+       |           ^~~~~~~
+  9030 |     this.context = context;
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-UPDAFKL5.js:83:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+
+  82 |   constructor(message, info) {
+  83 |     super(message);
+     |           ^~~~~~~
+  84 |     this.name = "StreamFailureError";
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:25860:13 - error SC1090: bound method references (call 'setOptions' directly) are not supported yet
+
+  25859 |   defaults = _getDefaults();
+  25860 |   options = this.setOptions;
+        |             ^~~~~~~~~~~~~~~
+  25861 |   parse = this.parseMarkdown(true);
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:25861:11 - error SC1100: passing 'unknown' values where '(any, any) => any' is expected is not supported yet
+
+  25860 |   options = this.setOptions;
+  25861 |   parse = this.parseMarkdown(true);
+        |           ^~~~~~~~~~~~~~~~~~~~~~~~
+  25862 |   parseInline = this.parseMarkdown(false);
+
+  hint: validate with 'as <type>' first — the cast checks the dynamic value at runtime and throws on mismatch
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:25862:17 - error SC1100: passing 'unknown' values where '(any, any) => any' is expected is not supported yet
+
+  25861 |   parse = this.parseMarkdown(true);
+  25862 |   parseInline = this.parseMarkdown(false);
+        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+  25863 |   Parser = _Parser;
+
+  hint: validate with 'as <type>' first — the cast checks the dynamic value at runtime and throws on mismatch
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:41938:14 - error SC1100: passing 'unknown' values where '{ promise: Promise<any>; reject: (any) => boolean; settle: (any) => boolean }' is expected is not supported yet
+
+  41937 |   ticket;
+  41938 |   accepted = createDeferred();
+        |              ^~~~~~~~~~~~~~~~
+  41939 |   delivered = createDeferred();
+
+  hint: validate with 'as <type>' first — the cast checks the dynamic value at runtime and throws on mismatch
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:41939:15 - error SC1100: passing 'unknown' values where '{ promise: Promise<any>; reject: (any) => boolean; settle: (any) => boolean }' is expected is not supported yet
+
+  41938 |   accepted = createDeferred();
+  41939 |   delivered = createDeferred();
+        |               ^~~~~~~~~~~~~~~~
+  41940 |   completed = createDeferred();
+
+  hint: validate with 'as <type>' first — the cast checks the dynamic value at runtime and throws on mismatch
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/chunk-ZZHOX33M.js:41940:15 - error SC1100: passing 'unknown' values where '{ promise: Promise<any>; reject: (any) => boolean; settle: (any) => boolean }' is expected is not supported yet
+
+  41939 |   delivered = createDeferred();
+  41940 |   completed = createDeferred();
+        |               ^~~~~~~~~~~~~~~~
+  41941 |   constructor(id) {
+
+  hint: validate with 'as <type>' first — the cast checks the dynamic value at runtime and throws on mismatch
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:514:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+
+  513 |   constructor(message) {
+  514 |     super(message);
+      |           ^~~~~~~
+  515 |     this.name = "EncodingError";
+
+/tmp/scriptc-prime-loose-js/packages/coding-agent/dist/bundle/openai-codex-responses-3QGMT4GQ.js:504:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+
+  503 |   constructor(message, options) {
+  504 |     super(message);
+      |           ^~~~~~~
+  505 |     this.name = "WebSocketCloseError";
+
+17 errors.
+
+## smoke tail
+no executable

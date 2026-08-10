@@ -454,8 +454,11 @@ export function loadProgram(
  * module evaluation order: fills load.moduleOrder (the SourceFiles
  * themselves — the lowering consumes them directly) and returns the
  * preflight diagnostics. The lowerer runs only on programs that pass. */
-export function checkPreflight(load: LoadResult): ScrDiagnostic[] {
-  const { diags, moduleOrder, startupCrash } = preflight7(load);
+export function checkPreflight(
+  load: LoadResult,
+  opts: { looseJs?: boolean } = {},
+): ScrDiagnostic[] {
+  const { diags, moduleOrder, startupCrash } = preflight7(load, opts.looseJs ?? false);
   load.moduleOrder = moduleOrder;
   load.startupCrash = startupCrash;
   return diags;
@@ -1574,7 +1577,7 @@ export function checkPreflightTs7(
   }
 }
 
-function preflight7(load: LoadResult): {
+function preflight7(load: LoadResult, looseJs = false): {
   diags: ScrDiagnostic[];
   moduleOrder: ts.SourceFile[];
   startupCrash: StartupCrash | null;
@@ -1758,6 +1761,16 @@ function preflight7(load: LoadResult): {
   };
   const errorsOf = (p: ts.Program): ts.Diagnostic[] => {
     const all = ts.getPreEmitDiagnostics(p);
+    const syntactic = new Set<string>();
+    if (looseJs) for (const d of p.getSyntacticDiagnostics()) syntactic.add(`${d.fileName ?? ""}:${d.pos}:${d.end}:${d.code}`);
+    const looseJsSuppressed = (d: ts.Diagnostic): boolean => {
+      if (!looseJs || d.fileName === undefined || !isJsSourceFileName(d.fileName)) return false;
+      const key = `${d.fileName}:${d.pos}:${d.end}:${d.code}`;
+      if (!syntactic.has(key)) return true;
+      if (d.pos === undefined) return false;
+      const sf = p.getSourceFile(d.fileName);
+      return sf !== undefined && insideBlockComment(sf.text, d.pos);
+    };
     // First pass: every comment-side 2300's (file, name) — the partners
     // the second pass forgives.
     const commentDup = new Set<string>();
@@ -1770,6 +1783,7 @@ function preflight7(load: LoadResult): {
     return all.filter(
       (d) =>
         d.category === ts.DiagnosticCategory.Error &&
+        !looseJsSuppressed(d) &&
         !suppressedJsStrictness7(d) &&
         !npmStaticFileSuppressed(d) &&
         !nodeModulesJsSuppressed(d) &&
