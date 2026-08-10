@@ -1,0 +1,4 @@
+build_status=0
+/tmp/var-forward-narrow-bin
+run_status=1
+'Uncaught Error: class declarations inside functions are not supported yet [SC1090 at /tmp/var-forward-narrow.js:2]\n'
