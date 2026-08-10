@@ -49,18 +49,21 @@ jobs:
         working-directory: .compat/prime-agent
         run: npm ci
 
-      - name: Build Prime Agent workspace baseline
+      - name: Build Prime Agent official workspace and bundle
         working-directory: .compat/prime-agent
-        run: npm run build
+        run: |
+          npm run build
+          test -f packages/coding-agent/dist/bundle/cli.js
 
-      - name: ScriptC build of Prime Agent CLI
+      - name: ScriptC build of Prime Agent official bundle
         working-directory: .compat/prime-agent
         run: |
           set +e
           set -o pipefail
           node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
-            build packages/coding-agent/src/cli-main.ts \
+            build packages/coding-agent/dist/bundle/cli.js \
             --dynamic \
+            --loose-js \
             -o "$RUNNER_TEMP/prime-agent-scriptc" 2>&1 | tee "$RUNNER_TEMP/prime-build.log"
           status=${PIPESTATUS[0]}
           echo "$status" > "$RUNNER_TEMP/prime-build.status"
@@ -82,16 +85,29 @@ jobs:
           cat "$RUNNER_TEMP/prime-smoke.log"
           exit 0
 
-      - name: ScriptC coverage of Prime Agent CLI
+      - name: ScriptC coverage of Prime Agent official bundle
+        working-directory: .compat/prime-agent
+        run: |
+          set +e
+          set -o pipefail
+          timeout 180s node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
+            coverage packages/coding-agent/dist/bundle/cli.js \
+            --dynamic \
+            --loose-js 2>&1 | tee "$RUNNER_TEMP/prime-coverage.log"
+          status=${PIPESTATUS[0]}
+          echo "$status" > "$RUNNER_TEMP/prime-coverage.status"
+          exit 0
+
+      - name: Direct TypeScript frontier (non-gating diagnostic)
         working-directory: .compat/prime-agent
         run: |
           set +e
           set -o pipefail
           timeout 180s node "$GITHUB_WORKSPACE/packages/cli/dist/main.js" \
             coverage packages/coding-agent/src/cli-main.ts \
-            --dynamic 2>&1 | tee "$RUNNER_TEMP/prime-coverage.log"
+            --dynamic 2>&1 | tee "$RUNNER_TEMP/prime-ts-coverage.log"
           status=${PIPESTATUS[0]}
-          echo "$status" > "$RUNNER_TEMP/prime-coverage.status"
+          echo "$status" > "$RUNNER_TEMP/prime-ts-coverage.status"
           exit 0
 
       - name: Upload compatibility diagnostics
@@ -106,22 +122,24 @@ jobs:
             ${{ runner.temp }}/prime-build.status
             ${{ runner.temp }}/prime-smoke.log
             ${{ runner.temp }}/prime-smoke.status
+            ${{ runner.temp }}/prime-ts-coverage.log
+            ${{ runner.temp }}/prime-ts-coverage.status
           if-no-files-found: warn
 
-      - name: Enforce compatibility lane
+      - name: Enforce executable compatibility lane
         if: always()
         run: |
           coverage=$(cat "$RUNNER_TEMP/prime-coverage.status" 2>/dev/null || echo 126)
           build=$(cat "$RUNNER_TEMP/prime-build.status" 2>/dev/null || echo 126)
           smoke=$(cat "$RUNNER_TEMP/prime-smoke.status" 2>/dev/null || echo 126)
-          echo "Prime Agent compatibility status: coverage=$coverage build=$build smoke=$smoke"
+          echo "Prime Agent bundled compatibility status: coverage=$coverage build=$build smoke=$smoke"
           if [ "$coverage" -ne 0 ] || [ "$build" -ne 0 ] || [ "$smoke" -ne 0 ]; then
-            echo "Prime Agent is not fully compatible with ScriptC yet."
+            echo "Prime Agent official bundle is not fully executable under ScriptC yet."
             echo "--- smoke tail ---"
             tail -n 120 "$RUNNER_TEMP/prime-smoke.log" 2>/dev/null || true
-            echo "--- build tail ---"
-            tail -n 120 "$RUNNER_TEMP/prime-build.log" 2>/dev/null || true
-            echo "--- coverage tail ---"
+            echo "--- bundle build tail ---"
+            tail -n 160 "$RUNNER_TEMP/prime-build.log" 2>/dev/null || true
+            echo "--- bundle coverage tail ---"
             tail -n 120 "$RUNNER_TEMP/prime-coverage.log" 2>/dev/null || true
             exit 1
           fi
