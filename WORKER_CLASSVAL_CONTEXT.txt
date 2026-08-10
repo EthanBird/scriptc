@@ -1,0 +1,669 @@
+
+=== BLOCKER 1: /tmp/prime-classval/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:7871 ===
+007836:     let s = t.fullpath(), i = this.store.get(s);
+007837:     i ? i.add(e.globString()) : this.store.set(s, /* @__PURE__ */ new Set([e.globString()]));
+007838:   }
+007839: };
+007840: var he = class {
+007841:   store = /* @__PURE__ */ new Map();
+007842:   add(t, e, s) {
+007843:     let i = (e ? 2 : 0) | (s ? 1 : 0), r = this.store.get(t);
+007844:     this.store.set(t, r === void 0 ? i : i & r);
+007845:   }
+007846:   entries() {
+007847:     return [...this.store.entries()].map(([t, e]) => [t, !!(e & 2), !!(e & 1)]);
+007848:   }
+007849: };
+007850: var ae = class {
+007851:   store = /* @__PURE__ */ new Map();
+007852:   add(t, e) {
+007853:     if (!t.canReaddir()) return;
+007854:     let s = this.store.get(t);
+007855:     s ? s.find((i) => i.globString() === e.globString()) || s.push(e) : this.store.set(t, [e]);
+007856:   }
+007857:   get(t) {
+007858:     let e = this.store.get(t);
+007859:     if (!e) throw new Error("attempting to walk unknown path");
+007860:     return e;
+007861:   }
+007862:   entries() {
+007863:     return this.keys().map((t) => [t, this.store.get(t)]);
+007864:   }
+007865:   keys() {
+007866:     return [...this.store.keys()].filter((t) => t.canReaddir());
+007867:   }
+007868: };
+007869: var Et = class n6 {
+007870:   hasWalkedCache;
+007871:   matches = new he();
+007872:   subwalks = new ae();
+007873:   patterns;
+007874:   follow;
+007875:   dot;
+007876:   opts;
+007877:   constructor(t, e) {
+007878:     this.opts = t, this.follow = !!t.follow, this.dot = !!t.dot, this.hasWalkedCache = e ? e.copy() : new oe();
+007879:   }
+007880:   processPatterns(t, e) {
+007881:     this.patterns = e;
+007882:     let s = e.map((i) => [t, i]);
+007883:     for (let [i, r] of s) {
+007884:       this.hasWalkedCache.storeWalked(i, r);
+007885:       let o = r.root(), h = r.isAbsolute() && this.opts.absolute !== false;
+007886:       if (o) {
+007887:         i = i.resolve(o === "/" && this.opts.root !== void 0 ? this.opts.root : o);
+007888:         let c = r.rest();
+007889:         if (c) r = c;
+007890:         else {
+007891:           this.matches.add(i, true, false);
+007892:           continue;
+007893:         }
+007894:       }
+007895:       if (i.isENOENT()) continue;
+007896:       let a, l, u = false;
+007897:       for (; typeof (a = r.pattern()) == "string" && (l = r.rest()); ) i = i.resolve(a), r = l, u = true;
+007898:       if (a = r.pattern(), l = r.rest(), u) {
+007899:         if (this.hasWalkedCache.hasWalked(i, r)) continue;
+007900:         this.hasWalkedCache.storeWalked(i, r);
+007901:       }
+007902:       if (typeof a == "string") {
+007903:         let c = a === ".." || a === "" || a === ".";
+007904:         this.matches.add(i.resolve(a), h, c);
+007905:         continue;
+007906:       } else if (a === A) {
+identifier=he class_definition_candidates=[7840, 51769]
+--- he definition context 7810-7980 ---
+007810:   }
+007811:   ignored(t) {
+007812:     let e = t.fullpath(), s = `${e}/`, i = t.relative() || ".", r = `${i}/`;
+007813:     for (let o of this.relative) if (o.match(i) || o.match(r)) return true;
+007814:     for (let o of this.absolute) if (o.match(e) || o.match(s)) return true;
+007815:     return false;
+007816:   }
+007817:   childrenIgnored(t) {
+007818:     let e = t.fullpath() + "/", s = (t.relative() || ".") + "/";
+007819:     for (let i of this.relativeChildren) if (i.match(s)) return true;
+007820:     for (let i of this.absoluteChildren) if (i.match(e)) return true;
+007821:     return false;
+007822:   }
+007823: };
+007824: var oe = class n5 {
+007825:   store;
+007826:   constructor(t = /* @__PURE__ */ new Map()) {
+007827:     this.store = t;
+007828:   }
+007829:   copy() {
+007830:     return new n5(new Map(this.store));
+007831:   }
+007832:   hasWalked(t, e) {
+007833:     return this.store.get(t.fullpath())?.has(e.globString());
+007834:   }
+007835:   storeWalked(t, e) {
+007836:     let s = t.fullpath(), i = this.store.get(s);
+007837:     i ? i.add(e.globString()) : this.store.set(s, /* @__PURE__ */ new Set([e.globString()]));
+007838:   }
+007839: };
+007840: var he = class {
+007841:   store = /* @__PURE__ */ new Map();
+007842:   add(t, e, s) {
+007843:     let i = (e ? 2 : 0) | (s ? 1 : 0), r = this.store.get(t);
+007844:     this.store.set(t, r === void 0 ? i : i & r);
+007845:   }
+007846:   entries() {
+007847:     return [...this.store.entries()].map(([t, e]) => [t, !!(e & 2), !!(e & 1)]);
+007848:   }
+007849: };
+007850: var ae = class {
+007851:   store = /* @__PURE__ */ new Map();
+007852:   add(t, e) {
+007853:     if (!t.canReaddir()) return;
+007854:     let s = this.store.get(t);
+007855:     s ? s.find((i) => i.globString() === e.globString()) || s.push(e) : this.store.set(t, [e]);
+007856:   }
+007857:   get(t) {
+007858:     let e = this.store.get(t);
+007859:     if (!e) throw new Error("attempting to walk unknown path");
+007860:     return e;
+007861:   }
+007862:   entries() {
+007863:     return this.keys().map((t) => [t, this.store.get(t)]);
+007864:   }
+007865:   keys() {
+007866:     return [...this.store.keys()].filter((t) => t.canReaddir());
+007867:   }
+007868: };
+007869: var Et = class n6 {
+007870:   hasWalkedCache;
+007871:   matches = new he();
+007872:   subwalks = new ae();
+007873:   patterns;
+007874:   follow;
+007875:   dot;
+007876:   opts;
+007877:   constructor(t, e) {
+007878:     this.opts = t, this.follow = !!t.follow, this.dot = !!t.dot, this.hasWalkedCache = e ? e.copy() : new oe();
+007879:   }
+007880:   processPatterns(t, e) {
+007881:     this.patterns = e;
+007882:     let s = e.map((i) => [t, i]);
+007883:     for (let [i, r] of s) {
+007884:       this.hasWalkedCache.storeWalked(i, r);
+007885:       let o = r.root(), h = r.isAbsolute() && this.opts.absolute !== false;
+007886:       if (o) {
+007887:         i = i.resolve(o === "/" && this.opts.root !== void 0 ? this.opts.root : o);
+007888:         let c = r.rest();
+007889:         if (c) r = c;
+007890:         else {
+007891:           this.matches.add(i, true, false);
+007892:           continue;
+007893:         }
+007894:       }
+007895:       if (i.isENOENT()) continue;
+007896:       let a, l, u = false;
+007897:       for (; typeof (a = r.pattern()) == "string" && (l = r.rest()); ) i = i.resolve(a), r = l, u = true;
+007898:       if (a = r.pattern(), l = r.rest(), u) {
+007899:         if (this.hasWalkedCache.hasWalked(i, r)) continue;
+007900:         this.hasWalkedCache.storeWalked(i, r);
+007901:       }
+007902:       if (typeof a == "string") {
+007903:         let c = a === ".." || a === "" || a === ".";
+007904:         this.matches.add(i.resolve(a), h, c);
+007905:         continue;
+007906:       } else if (a === A) {
+007907:         (!i.isSymbolicLink() || this.follow || r.checkFollowGlobstar()) && this.subwalks.add(i, r);
+007908:         let c = l?.pattern(), d = l?.rest();
+007909:         if (!l || (c === "" || c === ".") && !d) this.matches.add(i, h, c === "" || c === ".");
+007910:         else if (c === "..") {
+007911:           let f = i.parent || i;
+007912:           d ? this.hasWalkedCache.hasWalked(f, d) || this.subwalks.add(f, d) : this.matches.add(f, h, true);
+007913:         }
+007914:       } else a instanceof RegExp && this.subwalks.add(i, r);
+007915:     }
+007916:     return this;
+007917:   }
+007918:   subwalkTargets() {
+007919:     return this.subwalks.keys();
+007920:   }
+007921:   child() {
+007922:     return new n6(this.opts, this.hasWalkedCache);
+007923:   }
+007924:   filterEntries(t, e) {
+007925:     let s = this.subwalks.get(t), i = this.child();
+007926:     for (let r of e) for (let o of s) {
+007927:       let h = o.isAbsolute(), a = o.pattern(), l = o.rest();
+007928:       a === A ? i.testGlobstar(r, o, l, h) : a instanceof RegExp ? i.testRegExp(r, a, l, h) : i.testString(r, a, l, h);
+007929:     }
+007930:     return i;
+007931:   }
+007932:   testGlobstar(t, e, s, i) {
+007933:     if ((this.dot || !t.name.startsWith(".")) && (e.hasMore() || this.matches.add(t, i, false), t.canReaddir() && (this.follow || !t.isSymbolicLink() ? this.subwalks.add(t, e) : t.isSymbolicLink() && (s && e.checkFollowGlobstar() ? this.subwalks.add(t, s) : e.markFollowGlobstar() && this.subwalks.add(t, e)))), s) {
+007934:       let r = s.pattern();
+007935:       if (typeof r == "string" && r !== ".." && r !== "" && r !== ".") this.testString(t, r, s.rest(), i);
+007936:       else if (r === "..") {
+007937:         let o = t.parent || t;
+007938:         this.subwalks.add(o, s);
+007939:       } else r instanceof RegExp && this.testRegExp(t, r, s.rest(), i);
+007940:     }
+007941:   }
+007942:   testRegExp(t, e, s, i) {
+007943:     e.test(t.name) && (s ? this.subwalks.add(t, s) : this.matches.add(t, i, false));
+007944:   }
+007945:   testString(t, e, s, i) {
+007946:     t.isNamed(e) && (s ? this.subwalks.add(t, s) : this.matches.add(t, i, false));
+007947:   }
+007948: };
+007949: var Li = (n7, t) => typeof n7 == "string" ? new ot([n7], t) : Array.isArray(n7) ? new ot(n7, t) : n7;
+007950: var zt = class {
+007951:   path;
+007952:   patterns;
+007953:   opts;
+007954:   seen = /* @__PURE__ */ new Set();
+007955:   paused = false;
+007956:   aborted = false;
+007957:   #t = [];
+007958:   #s;
+007959:   #n;
+007960:   signal;
+007961:   maxDepth;
+007962:   includeChildMatches;
+007963:   constructor(t, e, s) {
+007964:     if (this.patterns = t, this.path = e, this.opts = s, this.#n = !s.posix && s.platform === "win32" ? "\\" : "/", this.includeChildMatches = s.includeChildMatches !== false, (s.ignore || !this.includeChildMatches) && (this.#s = Li(s.ignore ?? [], s), !this.includeChildMatches && typeof this.#s.add != "function")) {
+007965:       let i = "cannot ignore child matches, ignore lacks add() method.";
+007966:       throw new Error(i);
+007967:     }
+007968:     this.maxDepth = s.maxDepth || 1 / 0, s.signal && (this.signal = s.signal, this.signal.addEventListener("abort", () => {
+007969:       this.#t.length = 0;
+007970:     }));
+007971:   }
+007972:   #r(t) {
+007973:     return this.seen.has(t) || !!this.#s?.ignored?.(t);
+007974:   }
+007975:   #o(t) {
+007976:     return !!this.#s?.childrenIgnored?.(t);
+007977:   }
+007978:   pause() {
+007979:     this.paused = true;
+007980:   }
+--- he definition context 51739-51909 ---
+051739:         if (serializedMessages.length === 0) {
+051740:           return void 0;
+051741:         }
+051742:         const prefix = `{"type":"session_snapshot_chunk","activeSessionId":${JSON.stringify(options.activeSessionId)},"snapshotId":${JSON.stringify(options.snapshotId)},"index":${index},"messages":[`;
+051743:         const line = Buffer.from(`${prefix}${serializedMessages.join(",")}]}
+051744: `);
+051745:         serializedMessages = [];
+051746:         serializedBytes = 0;
+051747:         index++;
+051748:         return line;
+051749:       };
+051750:       for (const message of messages) {
+051751:         options.signal?.throwIfAborted();
+051752:         const serialized = JSON.stringify(message);
+051753:         const bytes = Buffer.byteLength(serialized) + (serializedMessages.length > 0 ? 1 : 0);
+051754:         if (serializedMessages.length > 0 && serializedBytes + bytes > targetChunkBytes) {
+051755:           const chunk2 = flush();
+051756:           if (chunk2)
+051757:             yield chunk2;
+051758:         }
+051759:         serializedMessages.push(serialized);
+051760:         serializedBytes += bytes;
+051761:       }
+051762:       options.signal?.throwIfAborted();
+051763:       const chunk = flush();
+051764:       if (chunk)
+051765:         yield chunk;
+051766:     }
+051767:   };
+051768: }
+051769: var SnapshotTranscriptCache = class {
+051770:   options;
+051771:   chunks = [];
+051772:   cacheDirectory;
+051773:   totalBytes = 0;
+051774:   completed = false;
+051775:   readers = 0;
+051776:   disposeRequested = false;
+051777:   disposed = false;
+051778:   failure;
+051779:   chunkWaiters = /* @__PURE__ */ new Map();
+051780:   targetChunkBytes;
+051781:   snapshotId;
+051782:   activeSessionId;
+051783:   constructor(options) {
+051784:     this.options = options;
+051785:     this.targetChunkBytes = options.targetChunkBytes ?? SNAPSHOT_TARGET_CHUNK_BYTES;
+051786:     this.snapshotId = options.snapshotId;
+051787:     this.activeSessionId = options.activeSessionId;
+051788:     if (options.messages) {
+051789:       this.encodeMessages(options.messages);
+051790:       this.completed = true;
+051791:     }
+051792:   }
+051793:   get chunkCount() {
+051794:     return this.chunks.length;
+051795:   }
+051796:   get complete() {
+051797:     return this.completed && !this.failure && !this.disposed;
+051798:   }
+051799:   get bytes() {
+051800:     return this.totalBytes;
+051801:   }
+051802:   get fileBacked() {
+051803:     return this.cacheDirectory !== void 0;
+051804:   }
+051805:   readChunk(index) {
+051806:     const chunk = this.chunks[index];
+051807:     if (!chunk) {
+051808:       throw new Error(`Unknown snapshot transcript chunk: ${index}`);
+051809:     }
+051810:     if (chunk.buffer) {
+051811:       return chunk.buffer;
+051812:     }
+051813:     if (!chunk.path) {
+051814:       throw new Error(`Snapshot transcript chunk ${index} has no backing storage`);
+051815:     }
+051816:     return readFileSync19(chunk.path);
+051817:   }
+051818:   *[Symbol.iterator]() {
+051819:     for (let index = 0; index < this.chunkCount; index++) {
+051820:       yield this.readChunk(index);
+051821:     }
+051822:   }
+051823:   appendEncodedChunk(buffer) {
+051824:     if (this.completed || this.failure || this.disposed) {
+051825:       throw new Error(`Snapshot transcript ${this.snapshotId} is not writable`);
+051826:     }
+051827:     this.storeChunk(buffer);
+051828:   }
+051829:   markComplete() {
+051830:     if (this.completed) {
+051831:       return;
+051832:     }
+051833:     if (this.failure || this.disposed) {
+051834:       throw new Error(`Snapshot transcript ${this.snapshotId} cannot be completed`);
+051835:     }
+051836:     this.completed = true;
+051837:     for (const [index, waiters] of this.chunkWaiters) {
+051838:       if (index < this.chunks.length) {
+051839:         continue;
+051840:       }
+051841:       for (const waiter of waiters) {
+051842:         waiter.resolve(void 0);
+051843:       }
+051844:       this.chunkWaiters.delete(index);
+051845:     }
+051846:   }
+051847:   markFailed(error) {
+051848:     if (this.failure) {
+051849:       return;
+051850:     }
+051851:     this.failure = error;
+051852:     for (const waiters of this.chunkWaiters.values()) {
+051853:       for (const waiter of waiters) {
+051854:         waiter.reject(error);
+051855:       }
+051856:     }
+051857:     this.chunkWaiters.clear();
+051858:   }
+051859:   waitForChunk(index) {
+051860:     if (this.failure) {
+051861:       return Promise.reject(this.failure);
+051862:     }
+051863:     if (index < this.chunks.length) {
+051864:       return Promise.resolve(this.readChunk(index));
+051865:     }
+051866:     if (this.completed) {
+051867:       return Promise.resolve(void 0);
+051868:     }
+051869:     return new Promise((resolve19, reject) => {
+051870:       const waiters = this.chunkWaiters.get(index) ?? [];
+051871:       waiters.push({ resolve: resolve19, reject });
+051872:       this.chunkWaiters.set(index, waiters);
+051873:     });
+051874:   }
+051875:   retain() {
+051876:     if (this.disposed) {
+051877:       throw new Error(`Snapshot transcript ${this.snapshotId} was disposed`);
+051878:     }
+051879:     this.readers++;
+051880:     let released = false;
+051881:     return () => {
+051882:       if (released)
+051883:         return;
+051884:       released = true;
+051885:       this.readers--;
+051886:       if (this.readers === 0 && this.disposeRequested) {
+051887:         this.disposeNow();
+051888:       }
+051889:     };
+051890:   }
+051891:   dispose() {
+051892:     if (this.disposed || this.disposeRequested)
+051893:       return;
+051894:     this.disposeRequested = true;
+051895:     if (this.readers > 0)
+051896:       return;
+051897:     this.disposeNow();
+051898:   }
+051899:   disposeNow() {
+051900:     if (this.disposed)
+051901:       return;
+051902:     this.disposed = true;
+051903:     this.markFailed(new Error(`Snapshot transcript ${this.snapshotId} was disposed`));
+051904:     if (this.cacheDirectory) {
+051905:       rmSync8(this.cacheDirectory, { recursive: true, force: true });
+051906:       this.cacheDirectory = void 0;
+051907:     }
+051908:     this.chunks.length = 0;
+051909:   }
+
+=== BLOCKER 2: /tmp/prime-classval/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:7872 ===
+007837:     i ? i.add(e.globString()) : this.store.set(s, /* @__PURE__ */ new Set([e.globString()]));
+007838:   }
+007839: };
+007840: var he = class {
+007841:   store = /* @__PURE__ */ new Map();
+007842:   add(t, e, s) {
+007843:     let i = (e ? 2 : 0) | (s ? 1 : 0), r = this.store.get(t);
+007844:     this.store.set(t, r === void 0 ? i : i & r);
+007845:   }
+007846:   entries() {
+007847:     return [...this.store.entries()].map(([t, e]) => [t, !!(e & 2), !!(e & 1)]);
+007848:   }
+007849: };
+007850: var ae = class {
+007851:   store = /* @__PURE__ */ new Map();
+007852:   add(t, e) {
+007853:     if (!t.canReaddir()) return;
+007854:     let s = this.store.get(t);
+007855:     s ? s.find((i) => i.globString() === e.globString()) || s.push(e) : this.store.set(t, [e]);
+007856:   }
+007857:   get(t) {
+007858:     let e = this.store.get(t);
+007859:     if (!e) throw new Error("attempting to walk unknown path");
+007860:     return e;
+007861:   }
+007862:   entries() {
+007863:     return this.keys().map((t) => [t, this.store.get(t)]);
+007864:   }
+007865:   keys() {
+007866:     return [...this.store.keys()].filter((t) => t.canReaddir());
+007867:   }
+007868: };
+007869: var Et = class n6 {
+007870:   hasWalkedCache;
+007871:   matches = new he();
+007872:   subwalks = new ae();
+007873:   patterns;
+007874:   follow;
+007875:   dot;
+007876:   opts;
+007877:   constructor(t, e) {
+007878:     this.opts = t, this.follow = !!t.follow, this.dot = !!t.dot, this.hasWalkedCache = e ? e.copy() : new oe();
+007879:   }
+007880:   processPatterns(t, e) {
+007881:     this.patterns = e;
+007882:     let s = e.map((i) => [t, i]);
+007883:     for (let [i, r] of s) {
+007884:       this.hasWalkedCache.storeWalked(i, r);
+007885:       let o = r.root(), h = r.isAbsolute() && this.opts.absolute !== false;
+007886:       if (o) {
+007887:         i = i.resolve(o === "/" && this.opts.root !== void 0 ? this.opts.root : o);
+007888:         let c = r.rest();
+007889:         if (c) r = c;
+007890:         else {
+007891:           this.matches.add(i, true, false);
+007892:           continue;
+007893:         }
+007894:       }
+007895:       if (i.isENOENT()) continue;
+007896:       let a, l, u = false;
+007897:       for (; typeof (a = r.pattern()) == "string" && (l = r.rest()); ) i = i.resolve(a), r = l, u = true;
+007898:       if (a = r.pattern(), l = r.rest(), u) {
+007899:         if (this.hasWalkedCache.hasWalked(i, r)) continue;
+007900:         this.hasWalkedCache.storeWalked(i, r);
+007901:       }
+007902:       if (typeof a == "string") {
+007903:         let c = a === ".." || a === "" || a === ".";
+007904:         this.matches.add(i.resolve(a), h, c);
+007905:         continue;
+007906:       } else if (a === A) {
+007907:         (!i.isSymbolicLink() || this.follow || r.checkFollowGlobstar()) && this.subwalks.add(i, r);
+identifier=ae class_definition_candidates=[7850]
+--- ae definition context 7820-7990 ---
+007820:     for (let i of this.absoluteChildren) if (i.match(e)) return true;
+007821:     return false;
+007822:   }
+007823: };
+007824: var oe = class n5 {
+007825:   store;
+007826:   constructor(t = /* @__PURE__ */ new Map()) {
+007827:     this.store = t;
+007828:   }
+007829:   copy() {
+007830:     return new n5(new Map(this.store));
+007831:   }
+007832:   hasWalked(t, e) {
+007833:     return this.store.get(t.fullpath())?.has(e.globString());
+007834:   }
+007835:   storeWalked(t, e) {
+007836:     let s = t.fullpath(), i = this.store.get(s);
+007837:     i ? i.add(e.globString()) : this.store.set(s, /* @__PURE__ */ new Set([e.globString()]));
+007838:   }
+007839: };
+007840: var he = class {
+007841:   store = /* @__PURE__ */ new Map();
+007842:   add(t, e, s) {
+007843:     let i = (e ? 2 : 0) | (s ? 1 : 0), r = this.store.get(t);
+007844:     this.store.set(t, r === void 0 ? i : i & r);
+007845:   }
+007846:   entries() {
+007847:     return [...this.store.entries()].map(([t, e]) => [t, !!(e & 2), !!(e & 1)]);
+007848:   }
+007849: };
+007850: var ae = class {
+007851:   store = /* @__PURE__ */ new Map();
+007852:   add(t, e) {
+007853:     if (!t.canReaddir()) return;
+007854:     let s = this.store.get(t);
+007855:     s ? s.find((i) => i.globString() === e.globString()) || s.push(e) : this.store.set(t, [e]);
+007856:   }
+007857:   get(t) {
+007858:     let e = this.store.get(t);
+007859:     if (!e) throw new Error("attempting to walk unknown path");
+007860:     return e;
+007861:   }
+007862:   entries() {
+007863:     return this.keys().map((t) => [t, this.store.get(t)]);
+007864:   }
+007865:   keys() {
+007866:     return [...this.store.keys()].filter((t) => t.canReaddir());
+007867:   }
+007868: };
+007869: var Et = class n6 {
+007870:   hasWalkedCache;
+007871:   matches = new he();
+007872:   subwalks = new ae();
+007873:   patterns;
+007874:   follow;
+007875:   dot;
+007876:   opts;
+007877:   constructor(t, e) {
+007878:     this.opts = t, this.follow = !!t.follow, this.dot = !!t.dot, this.hasWalkedCache = e ? e.copy() : new oe();
+007879:   }
+007880:   processPatterns(t, e) {
+007881:     this.patterns = e;
+007882:     let s = e.map((i) => [t, i]);
+007883:     for (let [i, r] of s) {
+007884:       this.hasWalkedCache.storeWalked(i, r);
+007885:       let o = r.root(), h = r.isAbsolute() && this.opts.absolute !== false;
+007886:       if (o) {
+007887:         i = i.resolve(o === "/" && this.opts.root !== void 0 ? this.opts.root : o);
+007888:         let c = r.rest();
+007889:         if (c) r = c;
+007890:         else {
+007891:           this.matches.add(i, true, false);
+007892:           continue;
+007893:         }
+007894:       }
+007895:       if (i.isENOENT()) continue;
+007896:       let a, l, u = false;
+007897:       for (; typeof (a = r.pattern()) == "string" && (l = r.rest()); ) i = i.resolve(a), r = l, u = true;
+007898:       if (a = r.pattern(), l = r.rest(), u) {
+007899:         if (this.hasWalkedCache.hasWalked(i, r)) continue;
+007900:         this.hasWalkedCache.storeWalked(i, r);
+007901:       }
+007902:       if (typeof a == "string") {
+007903:         let c = a === ".." || a === "" || a === ".";
+007904:         this.matches.add(i.resolve(a), h, c);
+007905:         continue;
+007906:       } else if (a === A) {
+007907:         (!i.isSymbolicLink() || this.follow || r.checkFollowGlobstar()) && this.subwalks.add(i, r);
+007908:         let c = l?.pattern(), d = l?.rest();
+007909:         if (!l || (c === "" || c === ".") && !d) this.matches.add(i, h, c === "" || c === ".");
+007910:         else if (c === "..") {
+007911:           let f = i.parent || i;
+007912:           d ? this.hasWalkedCache.hasWalked(f, d) || this.subwalks.add(f, d) : this.matches.add(f, h, true);
+007913:         }
+007914:       } else a instanceof RegExp && this.subwalks.add(i, r);
+007915:     }
+007916:     return this;
+007917:   }
+007918:   subwalkTargets() {
+007919:     return this.subwalks.keys();
+007920:   }
+007921:   child() {
+007922:     return new n6(this.opts, this.hasWalkedCache);
+007923:   }
+007924:   filterEntries(t, e) {
+007925:     let s = this.subwalks.get(t), i = this.child();
+007926:     for (let r of e) for (let o of s) {
+007927:       let h = o.isAbsolute(), a = o.pattern(), l = o.rest();
+007928:       a === A ? i.testGlobstar(r, o, l, h) : a instanceof RegExp ? i.testRegExp(r, a, l, h) : i.testString(r, a, l, h);
+007929:     }
+007930:     return i;
+007931:   }
+007932:   testGlobstar(t, e, s, i) {
+007933:     if ((this.dot || !t.name.startsWith(".")) && (e.hasMore() || this.matches.add(t, i, false), t.canReaddir() && (this.follow || !t.isSymbolicLink() ? this.subwalks.add(t, e) : t.isSymbolicLink() && (s && e.checkFollowGlobstar() ? this.subwalks.add(t, s) : e.markFollowGlobstar() && this.subwalks.add(t, e)))), s) {
+007934:       let r = s.pattern();
+007935:       if (typeof r == "string" && r !== ".." && r !== "" && r !== ".") this.testString(t, r, s.rest(), i);
+007936:       else if (r === "..") {
+007937:         let o = t.parent || t;
+007938:         this.subwalks.add(o, s);
+007939:       } else r instanceof RegExp && this.testRegExp(t, r, s.rest(), i);
+007940:     }
+007941:   }
+007942:   testRegExp(t, e, s, i) {
+007943:     e.test(t.name) && (s ? this.subwalks.add(t, s) : this.matches.add(t, i, false));
+007944:   }
+007945:   testString(t, e, s, i) {
+007946:     t.isNamed(e) && (s ? this.subwalks.add(t, s) : this.matches.add(t, i, false));
+007947:   }
+007948: };
+007949: var Li = (n7, t) => typeof n7 == "string" ? new ot([n7], t) : Array.isArray(n7) ? new ot(n7, t) : n7;
+007950: var zt = class {
+007951:   path;
+007952:   patterns;
+007953:   opts;
+007954:   seen = /* @__PURE__ */ new Set();
+007955:   paused = false;
+007956:   aborted = false;
+007957:   #t = [];
+007958:   #s;
+007959:   #n;
+007960:   signal;
+007961:   maxDepth;
+007962:   includeChildMatches;
+007963:   constructor(t, e, s) {
+007964:     if (this.patterns = t, this.path = e, this.opts = s, this.#n = !s.posix && s.platform === "win32" ? "\\" : "/", this.includeChildMatches = s.includeChildMatches !== false, (s.ignore || !this.includeChildMatches) && (this.#s = Li(s.ignore ?? [], s), !this.includeChildMatches && typeof this.#s.add != "function")) {
+007965:       let i = "cannot ignore child matches, ignore lacks add() method.";
+007966:       throw new Error(i);
+007967:     }
+007968:     this.maxDepth = s.maxDepth || 1 / 0, s.signal && (this.signal = s.signal, this.signal.addEventListener("abort", () => {
+007969:       this.#t.length = 0;
+007970:     }));
+007971:   }
+007972:   #r(t) {
+007973:     return this.seen.has(t) || !!this.#s?.ignored?.(t);
+007974:   }
+007975:   #o(t) {
+007976:     return !!this.#s?.childrenIgnored?.(t);
+007977:   }
+007978:   pause() {
+007979:     this.paused = true;
+007980:   }
+007981:   resume() {
+007982:     if (this.signal?.aborted) return;
+007983:     this.paused = false;
+007984:     let t;
+007985:     for (; !this.paused && (t = this.#t.shift()); ) t();
+007986:   }
+007987:   onResume(t) {
+007988:     this.signal?.aborted || (this.paused ? this.#t.push(t) : t());
+007989:   }
+007990:   async matchCheck(t, e) {
+
+=== ALL CURRENT DIAGNOSTICS IN CLASSVAL CHUNKS ===
+/tmp/prime-classval/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:7871:13 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+/tmp/prime-classval/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:7872:14 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+/tmp/prime-classval/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:16897:12 - error SC1030: the reference to 'source_default' above its 'var' declaration (a read there would be 'undefined', which the binding's type cannot hold — annotate it '| undefined' or move the declaration up) is not supported yet
