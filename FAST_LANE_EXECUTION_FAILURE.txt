@@ -1,3 +1,0 @@
-claimed compatibility task exited nonzero before producing tracked diagnostics
-execute outcome: failure
-claim commit: 9712cc4c10f49806cf079888287cbd3332935aa8
