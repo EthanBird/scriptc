@@ -607,6 +607,7 @@ function runFrontend(
       ),
     lower: (opts) => lowerToIr(finalLoad.program, finalLoad.entry, finalLoad.moduleOrder, {
       ...opts,
+      looseJs,
       startupCrash: finalLoad.startupCrash ?? null,
       externalTypes: finalLoad.externalTypes,
       externalTypeSpecifiersByFile: finalLoad.externalTypeSpecifiersByFile,

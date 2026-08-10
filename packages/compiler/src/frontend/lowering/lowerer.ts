@@ -324,6 +324,11 @@ export interface LowerOptions {
    * (__island_eval) may lower. Off by default — without it they produce a
    * requires-dynamic diagnostic instead. */
   dynamic?: boolean;
+  /** --loose-js: bundled/generated JavaScript may trust the checker's concrete
+   * inferred func/record return shapes instead of intentionally degrading them
+   * to checked-dynamic values. Ordinary JS keeps the historic identity-first
+   * fallback. */
+  looseJs?: boolean;
   /** Coverage: additionally lower the unreached remainder (bodies nothing
    * on the entry path reaches) in a throwaway pass and report its
    * diagnostics and stats under `unreached` — the whole-program analysis
@@ -429,6 +434,7 @@ export function lowerToIr(
   options: LowerOptions = {},
 ): LowerResult {
   const dynamic = options.dynamic ?? false;
+  const looseJs = options.looseJs ?? false;
   const targetPlatform = options.targetPlatform ?? process.platform;
   const startupCrash = options.startupCrash ?? null;
   // --dynamic: modules reachable only through dynamic import() of the
@@ -451,7 +457,7 @@ export function lowerToIr(
   const externalTypes = options.externalTypes ?? new Map<string, string>();
   const externalTypeSpecifiersByFile = options.externalTypeSpecifiersByFile ??
     directExternalTypeSpecifiersByFile(externalTypes);
-  const validation = new Lowerer(program, entry, moduleOrder, dynamic, {
+  const validation = new Lowerer(program, entry, moduleOrder, dynamic, looseJs, {
     targetPlatform,
     ffiImports,
     externalTypes,
@@ -466,7 +472,7 @@ export function lowerToIr(
   // two-pass construction cost.
   const discovery = ffiImports.length === 0
     ? validation
-    : new Lowerer(program, entry, moduleOrder, dynamic, {
+    : new Lowerer(program, entry, moduleOrder, dynamic, looseJs, {
         targetPlatform,
         ffiImports,
         externalTypes,
@@ -474,7 +480,7 @@ export function lowerToIr(
         ffiBindingSymbols: ffiValidation.symbolsByName,
       });
   const reachable = discovery.discover(options.libRoots);
-  const emit = new Lowerer(program, entry, moduleOrder, dynamic, {
+  const emit = new Lowerer(program, entry, moduleOrder, dynamic, looseJs, {
     reachable,
     targetPlatform,
     startupCrash,
@@ -487,7 +493,7 @@ export function lowerToIr(
   for (const d of ffiValidation.diagnostics) emit.pushDiag(d);
   const result = emit.run();
   if (options.coverage !== true) return result;
-  const remainder = new Lowerer(program, entry, moduleOrder, dynamic, {
+  const remainder = new Lowerer(program, entry, moduleOrder, dynamic, looseJs, {
     reachable,
     remainder: true,
     alreadyFlushed: emit.flushedSymbols,
@@ -1258,6 +1264,7 @@ export class Lowerer {
     readonly entry: ts.SourceFile,
     readonly moduleOrder: ts.SourceFile[],
     readonly dynamic: boolean,
+    readonly looseJs: boolean,
     mode: LowererMode = {},
   ) {
     this.reachable = mode.reachable ?? null;

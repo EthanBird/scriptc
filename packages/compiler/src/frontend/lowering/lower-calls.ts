@@ -741,6 +741,7 @@ export interface GenericInstance {
     // value rides its own box, calls go through the boxed thunk (JS
     // arity), and typed slots re-check with dynCheck as usual.
     if (
+      !L.looseJs &&
       isJsSourceFile(decl.getSourceFile()) &&
       decl.type === undefined &&
       L.mapTypeOf(retTsType)?.kind === "func"
@@ -760,6 +761,7 @@ export interface GenericInstance {
     // (a reduce reducer over a typed array) legitimately returns its
     // parameters' records and keeps the static type.
     if (
+      !L.looseJs &&
       isJsSourceFile(decl.getSourceFile()) &&
       decl.type === undefined &&
       L.mapTypeOf(retTsType)?.kind === "record" &&
