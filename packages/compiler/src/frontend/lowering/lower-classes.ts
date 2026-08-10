@@ -4318,6 +4318,7 @@ export function lowerClassMembers(L: Lowerer, info: ClassInfo): IrFunction[] {
       if (!f.initializer) continue;
       L.stats.statementsTotal++;
       L.bumpFileStat(locOf(f.initializer).file, "total");
+      const diagsBefore = L.diags.length;
       try {
         const value = L.lowerExprExpecting(f.initializer, f.type);
         out.push({
@@ -4332,6 +4333,28 @@ export function lowerClassMembers(L: Lowerer, info: ClassInfo): IrFunction[] {
         if (!(e instanceof PoisonError)) throw e;
         L.stats.statementsFailed++;
         L.bumpFileStat(locOf(f.initializer).file, "failed");
+        if (L.looseJs && isJsSourceFile(f.initializer.getSourceFile()) && L.diagSink === null) {
+          const captured = L.diags.slice(diagsBefore);
+          const deferrable = captured.length > 0 && captured.every((d) =>
+            d.code !== "SC9001" && (
+              d.message.includes("into dynamically-executed ('any'-typed) code") ||
+              (d.message.includes("new TextDecoder") && d.message.includes("has no scriptc lowering yet"))
+            )
+          );
+          if (deferrable) {
+            L.diags.splice(diagsBefore);
+            L.runtimeFences.push(...captured);
+            const first = captured[0]!;
+            const fsf = L.program.getSourceFile(first.loc.file) ?? f.initializer.getSourceFile();
+            const pos = ts.getLineAndCharacterOfPosition(fsf, first.loc.start);
+            out.push({
+              kind: "runtimeFence",
+              code: first.code,
+              message: `${first.message} [${first.code} at ${first.loc.file}:${pos.line + 1}]`,
+              loc: locOf(f.initializer),
+            });
+          }
+        }
       }
     }
     return out;

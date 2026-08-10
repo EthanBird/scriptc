@@ -1,0 +1,7 @@
+FIELDINIT_TARGETED=PASS
+prime_build_status=1
+prime_smoke_status=125
+prime_diagnostic_count=1
+--- diagnostics ---
+/tmp/prime-fieldinit-targeted/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:16897:12 - error SC1030: the reference to 'source_default' above its 'var' declaration (a read there would be 'undefined', which the binding's type cannot hold — annotate it '| undefined' or move the declaration up) is not supported yet
+--- smoke ---
