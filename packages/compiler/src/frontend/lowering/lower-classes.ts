@@ -1524,9 +1524,12 @@ export function collectClassShapeInner(L: Lowerer, decl: ts.ClassLikeDeclaration
           if (looseJsDeadMethodAliasField(L, decl, member)) continue;
           const type = L.irTypeOf(member.name);
           if (type.kind === "void") L.badType(member.name, L.typeOf(member.name));
-          // dyn stays out of class fields (KEEP NARROW; record
-          // fields and array elements are unmappable via mapType already).
-          if (type.kind === "dyn") {
+          // Generated/bundled JS may carry intentionally opaque values
+          // (notably untyped `new Map()`) in class fields. In --loose-js
+          // keep the class layout alive with a checked-dynamic slot;
+          // unsupported operations on that value still defer/fence at the
+          // method use site. Regular JS/TS preserves the narrow rule.
+          if (type.kind === "dyn" && !(L.looseJs && isJsSourceFile(decl.getSourceFile()))) {
             L.unsupported("SC1090", member.name, "'unknown'-typed class fields");
           }
           if (fields.has(member.name.text)) {
@@ -5439,6 +5442,17 @@ export function lowerNew(L: Lowerer, expr: ts.NewExpression): IrExpr {
         }
         if (mapped?.kind === "set") return { kind: "setNew", type: mapped, loc };
         const targs = L.checker.getTypeArguments(tsType as ts.TypeReference);
+        // `new Set()` in generated JavaScript infers Set<any>. Mirror the
+        // existing Map<any, any>/WeakSet loose-JS posture: construct an
+        // opaque checked-dynamic identity value so the containing class or
+        // module can compile; reached methods still fence at their use.
+        if (
+          L.looseJs && isJsSourceFile(expr.getSourceFile()) &&
+          (expr.arguments?.length ?? 0) === 0 &&
+          targs.length > 0 && targs.every((t) => (t.flags & ts.TypeFlags.Any) !== 0)
+        ) {
+          return { kind: "dynObjLit", type: DYN, loc };
+        }
         if (targs[0]) {
           L.unsupported(
             "SC1090",

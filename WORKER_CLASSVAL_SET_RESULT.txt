@@ -1,0 +1,10 @@
+CLASSVAL_SET=PASS
+prime_build_status=1
+prime_smoke_status=125
+prime_diagnostic_count=4
+--- diagnostics ---
+/tmp/prime-classval-set/packages/coding-agent/dist/bundle/chunk-DLF27IWD.js:25860:13 - error SC1090: bound method references (call 'setOptions' directly) are not supported yet
+/tmp/prime-classval-set/packages/coding-agent/dist/bundle/chunk-DLF27IWD.js:43946:13 - error SC2020: 'new TextDecoder' is typed by @types/node but has no scriptc lowering yet
+/tmp/prime-classval-set/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:16897:12 - error SC1030: the reference to 'source_default' above its 'var' declaration (a read there would be 'undefined', which the binding's type cannot hold — annotate it '| undefined' or move the declaration up) is not supported yet
+/tmp/prime-classval-set/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:26007:35 - error SC1090: passing a value of type 'm31.%cx930872.' into dynamically-executed ('any'-typed) code (only numbers, strings, booleans, typed arrays, URLs, undefined/null-armed unions, and JSON-safe records/arrays/unions can cross the boundary) is not supported yet
+--- smoke ---
