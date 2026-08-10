@@ -1,0 +1,4 @@
+build_status=0
+/tmp/var-hoist-minimal-bin
+run_status=1
+"Uncaught Error: console.log of 'any' values (wrap it: console.log(`${v}`), or validate with 'as <type>' first) are not supported yet [SC1090 at /tmp/var-hoist-minimal.js:5]\n"
