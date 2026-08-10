@@ -119,6 +119,7 @@ const CLI_OPTIONS = {
   "emit-ir": { type: "boolean", default: false },
   sanitize: { type: "boolean", default: false },
   dynamic: { type: "boolean", default: false },
+  "loose-js": { type: "boolean", default: false },
   ffi: { type: "string" },
   "npm-static": { type: "string", multiple: true },
   "provenance-sources": { type: "boolean", default: false },
@@ -160,7 +161,7 @@ async function main(): Promise<number> {
     if (inputArg) {
       fail("scriptc build --lib takes no input positional: the profile names the entry module");
     }
-    if (values.dynamic || values.backend !== undefined || values.ffi !== undefined || (values["npm-static"] ?? []).length > 0 || externalTypeArgs.length > 0) {
+    if (values.dynamic || values["loose-js"] || values.backend !== undefined || values.ffi !== undefined || (values["npm-static"] ?? []).length > 0 || externalTypeArgs.length > 0) {
       fail(
         "scriptc build --lib takes no --dynamic/--backend/--npm-static/--ffi/--external-types: the profile pins the emission, npm imports are judged automatically, outbound FFI belongs to executable builds, and external type mappings belong to coverage",
       );
@@ -218,6 +219,7 @@ async function main(): Promise<number> {
     }
     externalTypes[specifier] = declarationPath;
   }
+  if (values["loose-js"] && !/\.(?:js|mjs|cjs)$/.test(input)) fail(`--loose-js accepts only JavaScript entry files\n\n${USAGE}`);
   const ffiProfilePath = values.ffi !== undefined ? resolve(values.ffi) : undefined;
   const backend = values.backend;
   if (backend !== undefined && backend !== "c" && backend !== "llvm") {
@@ -254,6 +256,7 @@ async function main(): Promise<number> {
   if (command === "coverage") {
     const { coverage, sourceTexts } = analyze(input, {
       dynamic: values.dynamic,
+      looseJs: values["loose-js"],
       ...(npmStatic !== undefined ? { npmStatic } : {}),
       ...(ffiProfilePath !== undefined ? { ffiProfilePath } : {}),
       ...(Object.keys(externalTypes).length > 0 ? { externalTypes } : {}),
@@ -281,6 +284,7 @@ async function main(): Promise<number> {
       emitIr: values["emit-ir"],
       sanitize: values.sanitize,
       dynamic: values.dynamic,
+      looseJs: values["loose-js"],
       ...(backend !== undefined ? { backend } : {}),
       ...(npmStatic !== undefined ? { npmStatic } : {}),
       ...(ffiProfilePath !== undefined ? { ffiProfilePath } : {}),

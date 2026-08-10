@@ -49,11 +49,14 @@ export type IrType =
   | { kind: "map"; key: IrType; value: IrType }
   /** ES `Set<T>` — heap, refcounted, insertion-ordered. Map's sibling with
    * the value slot removed: ONE runtime representation (the backend lowers
-   * sets onto the map runtime with a constant unit value), elements are
-   * exactly Map's KEY types — f64 or string, SameValueZero. Same container
-   * fences as map (no union arms, no array elements, no map values, no sets
-   * of sets, not JSON-safe) and never cycle-capable: elements are scalars
-   * or strings, which cannot point back. */
+   * sets onto the map runtime with a constant unit value). Primitive keys
+   * use SameValueZero (f64/string); selected heap values whose JS identity
+   * is their stable runtime pointer (class instances, promises, server
+   * handles, symbols) use SCR_MAP_KEY_REF. A ref-key set is cycle-capable
+   * exactly when its element type is: the runtime traces key edges just as
+   * ref-valued Maps trace value edges. Other identity worlds (records,
+   * unions, dyn/jsval wrappers) remain fenced until their identity model is
+   * proven stable. Sets remain non-JSON and outside union/array slots. */
   | { kind: "set"; elem: IrType }
   /** A regular expression — heap, refcounted, IMMUTABLE. No lastIndex
    * statefulness exists: /g and /y are supported only inside
@@ -388,25 +391,30 @@ export function isSupportedMapKey(t: IrType): boolean {
   return t.kind === "f64" || t.kind === "string";
 }
 
-/** The Set ELEMENT fence — Map's key fence plus the refcounted HANDLE
- * kinds stored under identity hashing (SameValueZero for JS objects IS
- * reference identity, so a Set of server handles — portless's auxiliary-
- * server registry — is honest hashed storage; SCR_MAP_KEY_REF in the
- * runtime). netServer is the one handle admitted so far: it drops its
- * listener closures at close, so a set-in-listener cycle is temporary —
- * the child precedent's story. Symbols are identity values by DESIGN —
- * SameValueZero on a symbol IS pointer identity, so a Set of symbols (the
- * sentinel-registry idiom) is the same honest hashed storage with no
- * cycle risk at all (symbols hold only strings). */
+/** The Set ELEMENT fence — Map's scalar key fence plus values whose
+ * JavaScript object identity is exactly their stable runtime pointer.
+ * Class instances, promises, and closures need strong-key cycle tracing (a
+ * member/capture can point back at the Set); server handles and symbols are
+ * acyclic identity values. Structural records/unions and dyn/jsval wrappers
+ * stay fenced: their lowering may copy/rebox, so pointer identity is not yet
+ * a proof of JavaScript identity. */
 export function isSupportedSetElem(t: IrType): boolean {
-  return isSupportedMapKey(t) || t.kind === "netServer" || t.kind === "symbol";
+  return (
+    isSupportedMapKey(t) ||
+    t.kind === "object" ||
+    t.kind === "promise" ||
+    t.kind === "func" ||
+    t.kind === "netServer" ||
+    t.kind === "symbol"
+  );
 }
 
-/** The Map VALUE fence: scalars plus every refcounted kind EXCEPT
- * func/promise/dyn/jsval (and map itself — no maps of maps).
- * Record/object/union values can point back at the map holding them, which
- * is exactly why ref-valued maps are cycle-capable (see the backend's
- * cycle analysis and docs/memory.md). Shared frontend/validator. */
+/** The Map VALUE fence: scalars plus selected refcounted kinds.
+ * Records/objects/unions, promises, and closures can point back at the map
+ * holding them, which is exactly why ref-valued maps are cycle-capable (see
+ * the backend's cycle fixpoint and trace adapters). dyn/jsval and nested Map
+ * values remain outside this native static Map surface. Shared
+ * frontend/validator. */
 export function isSupportedMapValue(t: IrType): boolean {
   switch (t.kind) {
     case "f64":
@@ -439,6 +447,12 @@ export function isSupportedMapValue(t: IrType): boolean {
     // pending promise whose callbacks capture the map is a cycle only
     // until settlement, and the collector handles the never-settling case.
     case "promise":
+      return true;
+    // Function values use stable ScrClosure pointer identity and ordinary
+    // strong value ownership. scr_closure_trace_v visits captures, so a
+    // registry closure that captures the object/map owning it participates
+    // in the same cycle collector as Record<string, () => void> overflow.
+    case "func":
       return true;
     // A class object (Map<string, typeof Shape> — the registry/factory
     // idiom): an immortal static behind no-op RC adapters — it holds no
@@ -1637,6 +1651,7 @@ export type IrLibFn =
   | "fetch.streamFrom"
   | "fetch.readerRead"
   | "island.eval"
+  | "island.errorMessage"
   /** Load an embedded npm package's runtime entry in the island (cached by
    * the engine's module registry) and take one export: args are the entry
    * KEY (an embedded module's key, from IrModule.embedded) and the export
@@ -2861,6 +2876,7 @@ export type IrLibFn =
   | "process.stderrWriteBytes"
   | "fsp.readFile"
   | "fsp.writeFile"
+  | "fsp.access"
   | "fsp.mkdir"
   /** The fs/promises option/member tail the certs pipeline uses: mkdir's
    * literal { recursive?, mode? } options (the mkdirSync matrix behind
@@ -2936,6 +2952,9 @@ export type IrLibFn =
   | "os.type"
   /** os.totalmem(): total physical memory in bytes. Never throws. */
   | "os.totalmem"
+  /** os.cpus().length: the host logical CPU count without materializing
+   * CpuInfo[] (the element records remain outside the static surface). */
+  | "os.cpuCount"
   /** net's process-wide happy-eyeballs attempt budget (Node's default
    * 250ms): one runtime double in the core unit, so reading/writing it
    * never forces the net unit into the link. Never throw. */
@@ -6781,6 +6800,7 @@ export const MAY_THROW_LIB_FNS: ReadonlySet<IrLibFn> = new Set([
   "https.requestFnCb",
   "rl.question",
   "island.eval",
+  "island.errorMessage",
   "island.import",
   "island.castFail",
   "json.parse",

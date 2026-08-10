@@ -6,6 +6,7 @@
  * (FieldTarget). */
 import * as ts from "../ts7/adapter.js";
 import { dirname } from "node:path";
+import { pathToFileURL } from "node:url";
 import type { Lowerer } from "./lowerer.js";
 import { BOOL, CAUGHT, DYN, DYN_HANDLE_KINDS, F64, IrExpr, IrFunction, IrJsOp, IrLocal, IrRecordShape, IrStmt, IrType, JSVAL, NULL_T, REF_TRUTHY_KINDS, REGEX, RUNTIME_ERROR_CLASSES, SEARCH_PARAMS_T, STRING, SrcLoc, UNDEFINED_T, VOID, arrayOf, canAdaptDynFuncTo, canBoxFuncIntoDyn, canDynCheckTo, funcOf, isJsonSafeType, isUnitType, jsOpResultKind, shapeHasAccessorSlots, typeEquals, typeKey, unionFuncSetArmsOk } from "../../ir/nodes.js";
 import { cjsClassExprWholeExportOf, cjsExportAssignmentOf, cjsExportDiscardReason, isCjsExportTableLiteral, isCjsJsFile, isJsSourceFile, isModuleExportsAccess, isNodeEsmFile, locOf } from "../program.js";
@@ -1286,6 +1287,25 @@ function lowerExprInner(L: Lowerer, expr: ts.Expression): IrExpr {
         const en = lowerEnumAccess(L, expr);
         if (en) return en;
       }
+      // `import.meta.url` in a file-backed ES module is a module constant.
+      // Bake the same file: URL Node constructs from this source file. This is
+      // the ESM twin of our __filename/require.main.filename stance: exact
+      // when the compiled binary runs from the same source tree, with URL
+      // escaping (spaces, #, non-ASCII) delegated to Node's own build-time
+      // pathToFileURL implementation instead of hand-rolling it.
+      if (
+        expr.name.text === "url" &&
+        !expr.questionDotToken &&
+        ts.isMetaProperty(expr.expression) &&
+        expr.expression.keywordToken === ts.SyntaxKind.ImportKeyword
+      ) {
+        return {
+          kind: "strLit",
+          value: pathToFileURL(expr.getSourceFile().fileName).href,
+          type: STRING,
+          loc,
+        };
+      }
       // `require.main.filename` / `require.main?.filename` — CommonJS
       // entry-module identity: in a compiled binary require.main IS the
       // entry module (never undefined in a CJS graph, so the chain's guard
@@ -1296,6 +1316,29 @@ function lowerExprInner(L: Lowerer, expr: ts.Expression): IrExpr {
       // compile-time string.
       if (isRequireMainFilename(L, expr)) {
         return { kind: "strLit", value: L.entry.fileName, type: STRING, loc };
+      }
+      // `os.cpus().length`: the array ELEMENT shape (CpuInfo) is too rich
+      // for the static IR, but its length is an independent scalar host
+      // observation. Claim the composed expression BEFORE lowering cpus()
+      // itself; any attempt to inspect a CpuInfo row keeps the ordinary
+      // os.cpus surface fence. Provenance comes from the builtin binding,
+      // so a user function/method named cpus never matches.
+      if (
+        expr.name.text === "length" &&
+        !expr.questionDotToken &&
+        ts.isCallExpression(expr.expression) &&
+        !expr.expression.questionDotToken &&
+        expr.expression.arguments.length === 0
+      ) {
+        const callee = expr.expression.expression;
+        const bi = ts.isIdentifier(callee)
+          ? L.builtinImportOf(callee)
+          : ts.isPropertyAccessExpression(callee)
+            ? L.builtinMemberOf(callee)
+            : null;
+        if (bi?.module === "os" && bi.member === "cpus") {
+          return { kind: "libCall", fn: "os.cpuCount", args: [], type: F64, loc };
+        }
       }
       // Optional chaining `a?.b`: the guard lowers here (a tag test around
       // the plain property lowering below); the handled marker keeps this
@@ -1590,6 +1633,39 @@ function lowerExprInner(L: Lowerer, expr: ts.Expression): IrExpr {
       // A union-typed field read narrows like an identifier when the
       // checker has narrowed this use to one arm.
       if (handled) return L.maybeNarrow(handled, expr);
+      // Representation-first array length: some ambient APIs expose
+      // arrays whose ELEMENT type is intentionally outside the static
+      // structural set (for example node:os CpuInfo[]). The checker type
+      // therefore cannot map as an array even though the call lowerer has
+      // already produced an honest runtime array/island array value. The
+      // container's length does not inspect or materialize any element, so
+      // it is valid to read from the actual lowered representation. This
+      // is the same value-is-truth discipline used by array method calls
+      // and checker-union bridges above.
+      if (expr.name.text === "length" && !expr.questionDotToken) {
+        const recv = L.lowerExpr(expr.expression);
+        if (recv.type.kind === "array") {
+          return {
+            kind: "arrIntrinsic",
+            method: "length",
+            receiver: recv,
+            args: [],
+            type: F64,
+            loc,
+          };
+        }
+        if (recv.type.kind === "jsval") {
+          const read: IrExpr = {
+            kind: "jsOp",
+            op: "getProp",
+            name: "length",
+            args: [recv],
+            type: JSVAL,
+            loc,
+          };
+          return { kind: "jsExit", value: read, type: F64, loc };
+        }
+      }
       // `globalThis.<name>` that no lowering above claimed
       // (globalThis.crypto, globalThis.SubtleCrypto, globalThis.localStorage
       // — the harness's capability-conditional knownGlobals adds): the
@@ -9632,6 +9708,33 @@ export function lowerBinary(L: Lowerer, expr: ts.BinaryExpression): IrExpr {
       const key: IrExpr = { kind: "strLit", value: expr.name.text, type: STRING, loc: locOf(expr.name) };
       return { kind: "dynKeyGet", key, value, type: DYN, loc: locOf(expr) };
     }
+    // A checker-union receiver whose VALUE already lives in the island
+    // (a typed facade over package/any-backed state) reads through the
+    // engine exactly like the ordinary island-property path above. The
+    // checker describes the consumer-facing member type; primitive/bytes
+    // results exit eagerly with validation while identity-bearing composite
+    // values stay handles. This is a representation bridge, not a union
+    // tag dispatch: there is no native union value left to inspect.
+    if (value.type.kind === "jsval") {
+      const loc = locOf(expr);
+      const read: IrExpr = {
+        kind: "jsOp",
+        op: "getProp",
+        name: expr.name.text,
+        args: [value],
+        type: JSVAL,
+        loc,
+      };
+      const declared = L.mapTypeOf(L.typeOf(expr));
+      if (
+        declared &&
+        (declared.kind === "f64" || declared.kind === "bool" || declared.kind === "string" ||
+          (declared.kind === "bytes" && declared.elem === "u8"))
+      ) {
+        return { kind: "jsExit", value: read, type: declared, loc };
+      }
+      return read;
+    }
     if (value.type.kind === "record") {
       const shape = L.shapes.get(value.type.shapeId);
       const f = shape?.fields.find((x) => x.name === expr.name.text);
@@ -9648,7 +9751,11 @@ export function lowerBinary(L: Lowerer, expr: ts.BinaryExpression): IrExpr {
       return null;
     }
     if (value.type.kind !== "union") {
-      throw new Error("lowerer bug: union-typed receiver lowered to a non-union");
+      L.unsupported(
+        "SC1090",
+        expr,
+        `property access on a checker-union receiver whose lowered runtime representation is '${L.fmt(value.type)}' (${NARROW_FIRST})`,
+      );
     }
     const def = L.unions.get(value.type.unionId);
     if (!def) throw new Error(`lowerer bug: unknown union ${value.type.unionId}`);

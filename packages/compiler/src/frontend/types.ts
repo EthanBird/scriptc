@@ -3,6 +3,7 @@ import type { IrRecordShape, IrType, IrUnionDef } from "../ir/nodes.js";
 import { arrayOf, BOOL, bytesOf, canConvertToDyn, CHILD_T, DATE_T, DYN, F64, funcOf, isSupportedIndexValue, isSupportedMapKey, isSupportedMapValue, isSupportedSetElem, isUnitType, JSVAL, mapOf, NULL_T, PROCSTREAM_T, RUNTIME_EMITTER_CLASS, RUNTIME_ERROR_CLASSES, RUNTIME_STREAM_CLASSES, setOf, STRING, SYMBOL_T, typeEquals, typeKey, UNDEFINED_T, VOID } from "../ir/nodes.js";
 
 import { isJsSourceFile, isNodeTypesPath } from "./program.js";
+import { workspacePackageOfPath } from "./shared.js";
 import { accessorSlotProp } from "../ir/nodes.js";
 // typeKey moved to ir/nodes.ts (the backend needs it too, for per-type
 // helper interning); re-exported here so frontend call sites keep their
@@ -843,28 +844,48 @@ function mapTypeInner(type: ts.Type, ctx: TypeMapperCtx): IrType | null {
       return hasStr ? STRING : F64;
     }
   }
-  // Types DECLARED by a shipped .d.ts — an npm package's, or a LOCAL
-  // declaration file describing sibling JS the program loads dynamically
-  // (an Emscripten factory's .d.mts): the .d.ts is trusted as the type
-  // surface, but the values behind it live in the embedded engine — under
-  // --dynamic they are island handles (jsval), and every operation on them
-  // rides the engine ops with validated exits at typed boundaries.
-  // Primitives/arrays/etc. REACHED THROUGH such types keep their
-  // structural mapping (they were handled above or recurse normally); this
-  // rule fires only when the type's own identity is declaration-file-
-  // declared — interfaces, classes, type literals, and aliases from the
-  // .d.ts. The standard library's declaration files are carved out (their
-  // surfaces have static lowerings), as are declarations explicitly mapped
-  // by --external-types: those describe project-owned structural data while
-  // the Lowerer fences their imported runtime bindings. The program's own
-  // compiled modules are never declaration files. Without --dynamic this
-  // stays unmapped; badType reports the per-package requires-dynamic
-  // diagnostic for node_modules types and the generic story otherwise.
-  const npmSym = widened.getAliasSymbol() ?? widened.getSymbol();
+  // Types with a RUNTIME identity declared by a shipped .d.ts — an npm
+  // package's, or a LOCAL declaration file describing sibling JS the
+  // program loads dynamically — are island handles under --dynamic. The
+  // runtime provenance must come from the UNDERLYING type symbol, however,
+  // not from an erased TypeScript alias name. A declaration-file alias such
+  // as `type Config = Record<string, string>` has no runtime object of its
+  // own: local Config values are ordinary static data, and package-produced
+  // Config values can cross the island through the normal validated data
+  // boundary. Conversely `type X = PackageClass` still has the class as its
+  // underlying symbol and remains a jsval handle. This separation of TYPE
+  // provenance from VALUE execution domain is essential for monorepos whose
+  // workspace packages publish structural aliases in dist/*.d.ts.
+  //
+  // Primitives/arrays/etc. reached through these types already structurally
+  // map above/below. Standard-library declarations and --external-types are
+  // carved out exactly as before. Without --dynamic, runtime-identity .d.ts
+  // symbols remain unmapped and produce the package-specific diagnostic.
+  // Erased aliases from EXTERNAL npm packages still describe values whose
+  // implementation lives in the island. Registered WORKSPACE packages are
+  // different: their dist/*.d.ts commonly exports data aliases shared with
+  // the compiled application. Ignore workspace alias provenance and map the
+  // underlying type structurally; keep external aliases dynamic.
+  const npmAliasSym = widened.getAliasSymbol();
+  const npmAliasDecls = npmAliasSym ? checker.declarationsOf(npmAliasSym) : undefined;
+  if (
+    npmAliasDecls && npmAliasDecls.length > 0 &&
+    npmAliasDecls.every((d) => {
+      const sf = d.getSourceFile();
+      return sf.isDeclarationFile && !ctx.isStdlibFile(sf) &&
+        !ctx.isExternalTypeFile(sf) && workspacePackageOfPath(sf.fileName) === null;
+    })
+  ) {
+    return ctx.dynamic ? JSVAL : null;
+  }
+
+  // Runtime-bearing declaration symbols (classes/interfaces/module objects)
+  // keep the existing island rule even for workspace packages. Thus an alias
+  // to a workspace class remains jsval through the underlying class symbol.
+  const npmSym = widened.getSymbol();
   const npmDecls = npmSym ? checker.declarationsOf(npmSym) : undefined;
   if (
-    npmDecls &&
-    npmDecls.length > 0 &&
+    npmDecls && npmDecls.length > 0 &&
     npmDecls.every((d) => {
       const sf = d.getSourceFile();
       return sf.isDeclarationFile && !ctx.isStdlibFile(sf) && !ctx.isExternalTypeFile(sf);
@@ -3102,7 +3123,13 @@ function mapRecordTypeInner(widened: ts.Type, ctx: TypeMapperCtx): IrType | Reco
   // the proxy's forwarded-header build (`{ ...req.headers }` into an
   // outgoing literal) a plain copy instead of an arm-wise re-tag the
   // merge machinery cannot do.
-  if (indexValue?.kind === "union") {
+  // Do not canonicalize a declaration-free Record<string, V> merely
+  // because V contains string[]. Header interfaces/spread results carry
+  // declared well-known header properties; a pure Record does not. Without
+  // this guard, Record<string, string | string[] | undefined> was silently
+  // widened with a number arm from OutgoingHttpHeaders.
+  const headerProps = checker.getPropertiesOfType(widened);
+  if (indexValue?.kind === "union" && headerProps.length > 0) {
     const slotDef = ctx.unions.get(indexValue.unionId);
     const armOk = (a: IrType): boolean =>
       a.kind === "f64" || a.kind === "string" || a.kind === "undefinedT" ||
@@ -3123,7 +3150,7 @@ function mapRecordTypeInner(widened: ts.Type, ctx: TypeMapperCtx): IrType | Reco
         }
         return armOk(t);
       };
-      if (checker.getPropertiesOfType(widened).every((p) => fits(mapType(checker.getTypeOfSymbol(p), ctx)))) {
+      if (headerProps.every((p) => fits(mapType(checker.getTypeOfSymbol(p), ctx)))) {
         return { kind: "record", shapeId: shapes.intern([], false, canonical, []) };
       }
     }

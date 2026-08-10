@@ -1092,7 +1092,12 @@ declare module "fs" {
 declare module "fs/promises" {
   export function readFile(path: string, encoding: "utf8" | "utf-8"): Promise<string>;
   export function readFile(path: string): Promise<Buffer>;
+  export function access(path: string, mode?: number): Promise<void>;
   export function writeFile(path: string, data: string): Promise<void>;
+  /* The explicit UTF-8 spelling is semantically the same write the
+   * runtime performs; other encodings/options remain declared only
+   * by @types/node and fence at lowering. */
+  export function writeFile(path: string, data: string, encoding: "utf8" | "utf-8"): Promise<void>;
   export function mkdir(path: string, options?: { recursive?: boolean; mode?: number }): Promise<void>;
   export function readdir(path: string): Promise<string[]>;
   export function rm(path: string): Promise<void>;

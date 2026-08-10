@@ -1,0 +1,128 @@
+name: Agent compatibility fast lane
+
+on:
+  push:
+    branches:
+      - agent/prime-compat-phase1
+      - agent/prime-worker-**
+
+concurrency:
+  group: agent-fast-lane-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: EthanBird/scriptc
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Claim staged task first
+        id: claim
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f .agent/next.py ]; then
+            echo "claimed=false" >> "$GITHUB_OUTPUT"
+            echo "No staged compiler task."
+            exit 0
+          fi
+          cp .agent/next.py /tmp/scriptc-next.py
+          rm .agent/next.py
+          git config user.name "scriptc-compat-bot"
+          git config user.email "scriptc-compat-bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "Claim staged compatibility task"
+          git push origin "HEAD:${{ github.ref_name }}"
+          echo "claimed=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        if: steps.claim.outputs.claimed == 'true'
+        with:
+          node-version: '24.15.0'
+
+      - name: Enable pnpm
+        id: pnpm
+        if: steps.claim.outputs.claimed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare pnpm@11.1.3 --activate
+          echo "store=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+          node --version
+          pnpm --version
+
+      - name: Restore pnpm store
+        if: steps.claim.outputs.claimed == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm.outputs.store }}
+          key: scriptc-pnpm-${{ runner.os }}-node24-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            scriptc-pnpm-${{ runner.os }}-node24-
+
+      - name: Restore npm package cache
+        if: steps.claim.outputs.claimed == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: prime-npm-${{ runner.os }}-node24-v1
+
+      - name: Install compiler dependencies
+        if: steps.claim.outputs.claimed == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Execute claimed task
+        id: execute
+        if: steps.claim.outputs.claimed == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          python3 /tmp/scriptc-next.py 2>&1 | tee /tmp/scriptc-fast-lane.log
+          status=${PIPESTATUS[0]}
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
+
+      - name: Publish validated result
+        if: always() && steps.claim.outputs.claimed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            if [ "${{ steps.execute.outcome }}" != "success" ]; then
+              {
+                echo "claimed compatibility task exited nonzero before producing tracked diagnostics"
+                echo "worker branch: ${{ github.ref_name }}"
+                echo "execute outcome: ${{ steps.execute.outcome }}"
+                echo "execute status: ${{ steps.execute.outputs.status }}"
+                echo "claim commit: $(git rev-parse HEAD)"
+                echo "--- task log tail ---"
+                tail -n 240 /tmp/scriptc-fast-lane.log 2>/dev/null || true
+              } > FAST_LANE_EXECUTION_FAILURE.txt
+              git add FAST_LANE_EXECUTION_FAILURE.txt
+            else
+              echo "Task produced no tracked result."
+              exit 0
+            fi
+          fi
+          git commit -m "Advance Prime Agent compatibility"
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"
+
+      - name: Enforce task execution
+        if: always() && steps.claim.outputs.claimed == 'true'
+        shell: bash
+        run: |
+          test "${{ steps.execute.outcome }}" = success

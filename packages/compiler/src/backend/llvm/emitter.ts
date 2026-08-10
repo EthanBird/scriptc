@@ -227,6 +227,7 @@ const LIB_FN_SYMS: Record<string, string> = {
   "os.homedir": "scr_os_homedir",
   "os.type": "scr_os_type",
   "os.totalmem": "scr_os_totalmem",
+  "os.cpuCount": "scr_os_cpu_count",
   "os.release": "scr_os_release",
   "os.userName": "scr_os_user_name",
   "os.userShell": "scr_os_user_shell",
@@ -492,6 +493,7 @@ const LIB_FN_SYMS: Record<string, string> = {
   // so it is special-cased in emitLibCall (the fs.readFileSync pattern).
   "fsp.readFileBytes": "scr_fsp_read_file_bytes",
   "fsp.writeFile": "scr_fsp_write_file",
+  "fsp.access": "scr_fsp_access",
   "fsp.mkdir": "scr_fsp_mkdir",
   "fsp.mkdirMode": "scr_fsp_mkdir_mode",
   "fsp.mkdirRecursive": "scr_fsp_mkdir_recursive",
@@ -9244,8 +9246,8 @@ class LlEmitter {
     const s = B.tmp();
     if (kAcc === "ref") {
       const rc = vAdapters(this, e.type.elem);
-      this.declare(`declare ptr @scr_set_new_ref(ptr, ptr)`);
-      B.line(`${s} = call ptr @scr_set_new_ref(ptr ${rc.retain}, ptr ${rc.release})`);
+      this.declare(`declare ptr @scr_set_new_ref(ptr, ptr, ptr)`);
+      B.line(`${s} = call ptr @scr_set_new_ref(ptr ${rc.retain}, ptr ${rc.release}, ptr ${traceArg(this, e.type.elem)})`);
     } else {
       this.declare(`declare ptr @scr_map_new(i32, i32, ptr, ptr, ptr)`);
       B.line(`${s} = call ptr @scr_map_new(i32 ${mapKeyKindNum(e.type.elem)}, i32 0, ptr null, ptr null, ptr null)`);

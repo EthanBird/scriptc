@@ -125,6 +125,8 @@ export interface CompileOptions {
    * island constructs are diagnostics and nothing about codegen or linking
    * changes. */
   dynamic?: boolean;
+  /** Explicit generated/bundled-JS ingestion policy. */
+  looseJs?: boolean;
   /** Code generator for the program TU. Unset (the release default): the
    * LLVM backend emits LLVM IR text (.ll) that rides the SAME clang
    * command line in the program-TU seat, and a program outside the LLVM
@@ -215,6 +217,8 @@ export interface AnalyzeOptions {
   /** Analyze as a --dynamic build (island constructs lower instead of
    * producing requires-dynamic diagnostics). */
   dynamic?: boolean;
+  /** Analyze with generated/bundled-JS ingestion policy. */
+  looseJs?: boolean;
   /** --npm-static (see CompileOptions.npmStatic): the analysis compiles
    * opted-in packages' JS as program modules and the coverage report
    * carries each package's static/fallback status. */
@@ -389,6 +393,7 @@ function runFrontend(
   entryPath: string,
   npmStatic?: readonly string[] | "auto" | "lib",
   externalTypes?: Readonly<Record<string, string>>,
+  looseJs = false,
 ): Frontend {
   const statuses: NpmStaticStatus[] = [];
   const npmSites = new Map<string, SrcLoc>();
@@ -400,7 +405,7 @@ function runFrontend(
     const scout = loadProgram(entryPath, { externalTypes });
     let retained = false;
     try {
-      const scoutPreflight = checkPreflight(scout);
+      const scoutPreflight = checkPreflight(scout, { looseJs });
       requested =
         npmStatic === "lib"
           ? detectAutoPackages(scout, statuses, "lib", judged, npmSites)
@@ -466,7 +471,7 @@ function runFrontend(
   // exactly like auto's — "the user asked for these packages" buys the
   // attempt, not a broken build.
   let load = reusableScout ?? loadProgram(entryPath, { npmStatic: requested, externalTypes });
-  let preflight = reusablePreflight ?? checkPreflight(load);
+  let preflight = reusablePreflight ?? checkPreflight(load, { looseJs });
   // Library mode's fixpoint: the opted-in packages' files joined the
   // program just now, and THEIR bare edges (import statements and
   // top-level requires) name packages the scout could not see. Judge each
@@ -481,7 +486,7 @@ function runFrontend(
       requested = [...requested, ...grown];
       load.dispose();
       load = loadProgram(entryPath, { npmStatic: requested, externalTypes });
-      preflight = checkPreflight(load);
+      preflight = checkPreflight(load, { looseJs });
     }
   }
   const effective = new Set(requested);
@@ -514,7 +519,7 @@ function runFrontend(
     }
     load.dispose();
     load = loadProgram(entryPath, { npmStatic: effective, externalTypes });
-    preflight = checkPreflight(load);
+    preflight = checkPreflight(load, { looseJs });
   }
   // The last resort, ALL modes: an opt-in can change the PROGRAM's OWN
   // typecheck through errors that name no package at all (the inferred
@@ -549,18 +554,18 @@ function runFrontend(
     // that still fail drop everything left.
     for (const p of [...effective]) {
       const probe = loadProgram(entryPath, { npmStatic: [p], externalTypes });
-      const probeDiags = checkPreflight(probe);
+      const probeDiags = checkPreflight(probe, { looseJs });
       probe.dispose();
       if (probeDiags.some((d) => d.code === "SC0001")) dropWithNote(p);
     }
     load.dispose();
     load = loadProgram(entryPath, { npmStatic: effective, externalTypes });
-    preflight = checkPreflight(load);
+    preflight = checkPreflight(load, { looseJs });
     if (preflight.some((d) => d.code === "SC0001") && effective.size > 0) {
       for (const p of [...effective]) dropWithNote(p);
       load.dispose();
       load = loadProgram(entryPath, { npmStatic: effective, externalTypes });
-      preflight = checkPreflight(load);
+      preflight = checkPreflight(load, { looseJs });
     }
   }
   for (const p of requested) {
@@ -602,6 +607,7 @@ function runFrontend(
       ),
     lower: (opts) => lowerToIr(finalLoad.program, finalLoad.entry, finalLoad.moduleOrder, {
       ...opts,
+      looseJs,
       startupCrash: finalLoad.startupCrash ?? null,
       externalTypes: finalLoad.externalTypes,
       externalTypeSpecifiersByFile: finalLoad.externalTypeSpecifiersByFile,
@@ -632,7 +638,7 @@ export function analyze(entryPath: string, opts: AnalyzeOptions = {}): AnalyzeRe
     }
     ffi = loaded.profile;
   }
-  const fe = runFrontend(entryPath, opts.npmStatic, opts.externalTypes);
+  const fe = runFrontend(entryPath, opts.npmStatic, opts.externalTypes, opts.looseJs ?? false);
   try {
     const emptyStats = { statementsTotal: 0, statementsFailed: 0, statementsIsland: 0, functionsSkipped: 0 };
 
@@ -708,7 +714,7 @@ export async function compile(entryPath: string, opts: CompileOptions): Promise<
     }
     ffi = loaded.profile;
   }
-  const fe = runFrontend(entryPath, opts.npmStatic);
+  const fe = runFrontend(entryPath, opts.npmStatic, undefined, opts.looseJs ?? false);
   let lowered: LowerResult;
   let entryText: string;
   let sourceTexts: Map<string, string>;

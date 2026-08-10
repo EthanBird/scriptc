@@ -716,6 +716,53 @@ export function collectClassShape(L: Lowerer, decl: ts.ClassDeclaration): void {
     }
   }
 
+
+/** `--loose-js` whole-program dead field elimination for generated JS
+ * aliases such as Marked's `options = this.setOptions`. A prototype method
+ * read is side-effect-free. Elide only when no property/element access in
+ * the non-declaration program resolves back to this exact field declaration.
+ * A real use disables the optimization and preserves the method-value fence. */
+function looseJsDeadMethodAliasField(
+  L: Lowerer,
+  decl: ts.ClassLikeDeclaration,
+  member: ts.PropertyDeclaration,
+): boolean {
+  if (!L.looseJs || !isJsSourceFile(decl.getSourceFile())) return false;
+  if (!ts.isIdentifier(member.name) || member.initializer === undefined) return false;
+  const fieldName = member.name.text;
+  let init: ts.Expression = member.initializer;
+  while (ts.isParenthesizedExpression(init)) init = init.expression;
+  if (!ts.isPropertyAccessExpression(init) || init.expression.kind !== ts.SyntaxKind.ThisKeyword) return false;
+  const methodSym = L.checker.getSymbolAtLocation(init.name);
+  if (!methodSym) return false;
+  const realOwnMethod = L.checker.declarationsOf(methodSym).some(
+    (d) => ts.isMethodDeclaration(d) && d.parent === decl && !d.modifiers?.some((m) => m.kind === ts.SyntaxKind.StaticKeyword),
+  );
+  if (!realOwnMethod) return false;
+  const isThisField = (sym: ts.Symbol | undefined | null): boolean =>
+    !!sym && L.checker.declarationsOf(sym).some((d) => d === member);
+  let referenced = false;
+  for (const sf of L.program.getSourceFiles()) {
+    if (sf.isDeclarationFile || referenced) continue;
+    ts.walkPreorder(sf, (node) => {
+      if (referenced) return "skip";
+      if (ts.isPropertyAccessExpression(node) && node.name.text === fieldName) {
+        const prop = L.checker.getPropertyOfType(L.typeOf(node.expression), fieldName);
+        if (isThisField(prop)) { referenced = true; return "skip"; }
+      }
+      if (
+        ts.isElementAccessExpression(node) && node.argumentExpression !== undefined &&
+        ts.isStringLiteralLike(node.argumentExpression) && node.argumentExpression.text === fieldName
+      ) {
+        const prop = L.checker.getPropertyOfType(L.typeOf(node.expression), fieldName);
+        if (isThisField(prop)) { referenced = true; return "skip"; }
+      }
+      return undefined;
+    });
+  }
+  return !referenced;
+}
+
 export function collectClassShapeInner(L: Lowerer, decl: ts.ClassLikeDeclaration, jsNameOverride?: string,
     inst?: { family: ClassInfo; name: string; bindings: Map<ts.Symbol, IrType>; typeArgsText: string; ordinal: number },
     /** MIXIN instantiation mode (lower-mixins.ts): the class inside a
@@ -1474,11 +1521,15 @@ export function collectClassShapeInner(L: Lowerer, decl: ts.ClassLikeDeclaration
           // undefined arm (undefFieldInitLineC — Node defines the property
           // as undefined on construction, verified), and reads/writes ride
           // the ordinary undefined-armed union machinery.
+          if (looseJsDeadMethodAliasField(L, decl, member)) continue;
           const type = L.irTypeOf(member.name);
           if (type.kind === "void") L.badType(member.name, L.typeOf(member.name));
-          // dyn stays out of class fields (KEEP NARROW; record
-          // fields and array elements are unmappable via mapType already).
-          if (type.kind === "dyn") {
+          // Generated/bundled JS may carry intentionally opaque values
+          // (notably untyped `new Map()`) in class fields. In --loose-js
+          // keep the class layout alive with a checked-dynamic slot;
+          // unsupported operations on that value still defer/fence at the
+          // method use site. Regular JS/TS preserves the narrow rule.
+          if (type.kind === "dyn" && !(L.looseJs && isJsSourceFile(decl.getSourceFile()))) {
             L.unsupported("SC1090", member.name, "'unknown'-typed class fields");
           }
           if (fields.has(member.name.text)) {
@@ -4668,6 +4719,15 @@ export function lowerClassMembers(L: Lowerer, info: ClassInfo): IrFunction[] {
     if (value.kind === "unitLit" && value.unit === "undefined") {
       return { kind: "strLit", value: "", type: STRING, loc };
     }
+    if (value.kind === "unitLit" && value.unit === "null") {
+      return { kind: "strLit", value: "null", type: STRING, loc };
+    }
+    if (value.type.kind === "f64" || value.type.kind === "bool") {
+      return L.ensureString(value, args[0]!);
+    }
+    if (value.type.kind === "jsval") {
+      return { kind: "libCall", fn: "island.errorMessage", args: [value], type: STRING, loc };
+    }
     L.unsupported(
       "SC1090",
       args[0]!,
@@ -5252,7 +5312,8 @@ export function lowerNew(L: Lowerer, expr: ts.NewExpression): IrExpr {
             expr,
             `Map values of type '${L.checker.typeToString(targs[1])}' ` +
               `(Map values must be number, string, boolean, records, class instances, ` +
-              `arrays, promises, or unions of those — not functions, Maps, 'unknown', or 'any')`,
+              `arrays, promises, functions, class values, regexes, supported handles, or unions of supported data values — ` +
+              `not nested Maps, 'unknown', or 'any')`,
           );
         }
         L.badType(expr, tsType);
@@ -5311,6 +5372,39 @@ export function lowerNew(L: Lowerer, expr: ts.NewExpression): IrExpr {
               // Any other lowered kind falls through to the named fence
               // below — never a mistyped seed into the validator.
             }
+
+            // A readonly tuple (`const names = ["a", "b"] as const`) is
+            // represented as a fixed record, not an Array, but it is still
+            // an Iterable accepted by Set. Snapshot its positional fields
+            // into a fresh homogeneous array and reuse setNew. Keep this
+            // deliberately narrow: every tuple slot must already have the
+            // Set element representation, and the lowered receiver must be
+            // pure so reusing the record reference for positional reads
+            // cannot duplicate source effects. General iterables and
+            // structural-record identity stay fenced.
+            if (argIr?.kind === "record") {
+              const tupleShape = L.shapes.get(argIr.shapeId);
+              if (tupleShape?.tuple) {
+                const receiver = L.lowerExpr(argNode);
+                const byIndex = [...tupleShape.fields].sort((a, b) => Number(a.name) - Number(b.name));
+                if (
+                  receiver.type.kind === "record" &&
+                  pureReemittable(receiver) &&
+                  byIndex.every((field) => typeEquals(field.type, mapped.elem))
+                ) {
+                  const elems: IrExpr[] = byIndex.map((field) => ({
+                    kind: "recordGet",
+                    obj: receiver,
+                    shapeId: argIr.shapeId,
+                    field: field.name,
+                    type: field.type,
+                    loc,
+                  }));
+                  const seed: IrExpr = { kind: "arrayLit", elems, type: arrayOf(mapped.elem), loc };
+                  return { kind: "setNew", seed, type: mapped, loc };
+                }
+              }
+            }
           }
         }
         // JavaScript's identity-Set idiom: `new Set([setTimeout, atob,
@@ -5348,6 +5442,17 @@ export function lowerNew(L: Lowerer, expr: ts.NewExpression): IrExpr {
         }
         if (mapped?.kind === "set") return { kind: "setNew", type: mapped, loc };
         const targs = L.checker.getTypeArguments(tsType as ts.TypeReference);
+        // `new Set()` in generated JavaScript infers Set<any>. Mirror the
+        // existing Map<any, any>/WeakSet loose-JS posture: construct an
+        // opaque checked-dynamic identity value so the containing class or
+        // module can compile; reached methods still fence at their use.
+        if (
+          L.looseJs && isJsSourceFile(expr.getSourceFile()) &&
+          (expr.arguments?.length ?? 0) === 0 &&
+          targs.length > 0 && targs.every((t) => (t.flags & ts.TypeFlags.Any) !== 0)
+        ) {
+          return { kind: "dynObjLit", type: DYN, loc };
+        }
         if (targs[0]) {
           L.unsupported(
             "SC1090",

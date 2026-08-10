@@ -1,0 +1,18 @@
+prime_bundle_probe=current branch
+build_status=1
+smoke_status=125
+diagnostic_count=11
+--- diagnostics ---
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-DLF27IWD.js:25860:13 - error SC1090: bound method references (call 'setOptions' directly) are not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:7871:13 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:7872:14 - error SC1090: constructing through a class value whose class has no lowering (the class declaration itself was rejected — see its own diagnostic) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js:16897:12 - error SC1030: the reference to 'source_default' above its 'var' declaration (a read there would be 'undefined', which the binding's type cannot hold — annotate it '| undefined' or move the declaration up) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:7620:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:8568:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:8782:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-SJRJPSXP.js:9029:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/chunk-UPDAFKL5.js:83:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/mistral-ZYBL5SN4.js:514:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+/tmp/prime-agent-current-frontier/packages/coding-agent/dist/bundle/openai-codex-responses-LGJQGHBA.js:504:11 - error SC1090: Error messages of type 'any' (the message must be a string) is not supported yet
+--- smoke tail ---
+build did not produce executable

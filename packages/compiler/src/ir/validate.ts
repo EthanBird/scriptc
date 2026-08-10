@@ -100,6 +100,7 @@ export const LIB_FN_SIGS: Record<IrLibFn, { argTypes: (IrType | null)[]; result:
   // The chunk/result record depends on ReadableStream<T>; validated below.
   "fetch.readerRead": { argTypes: [DYN], result: VOID },
   "island.eval": { argTypes: [STRING], result: STRING },
+  "island.errorMessage": { argTypes: [JSVAL], result: STRING },
   "island.import": { argTypes: [STRING, STRING, STRING], result: JSVAL },
   "island.importDyn": { argTypes: [STRING], result: JSVAL },
   // Result is the cast's mapped PROMISE target (program-dependent) —
@@ -193,6 +194,7 @@ export const LIB_FN_SIGS: Record<IrLibFn, { argTypes: (IrType | null)[]; result:
   "os.release": { argTypes: [], result: STRING },
   "os.type": { argTypes: [], result: STRING },
   "os.totalmem": { argTypes: [], result: F64 },
+  "os.cpuCount": { argTypes: [], result: F64 },
   "process.umask": { argTypes: [F64], result: F64 },
   "process.chdir": { argTypes: [STRING], result: VOID },
   "process.exiting": { argTypes: [], result: BOOL },
@@ -749,6 +751,7 @@ export const LIB_FN_SIGS: Record<IrLibFn, { argTypes: (IrType | null)[]; result:
   "process.stderrWriteBytes": { argTypes: [BYTES_U8], result: BOOL },
   "fsp.readFile": { argTypes: [STRING, STRING], result: { kind: "promise", inner: STRING } },
   "fsp.writeFile": { argTypes: [STRING, STRING], result: { kind: "promise", inner: VOID } },
+  "fsp.access": { argTypes: [STRING, F64], result: { kind: "promise", inner: VOID } },
   "fsp.mkdir": { argTypes: [STRING], result: { kind: "promise", inner: VOID } },
   "fsp.mkdirMode": { argTypes: [STRING, F64], result: { kind: "promise", inner: VOID } },
   "fsp.mkdirRecursive": { argTypes: [STRING], result: { kind: "promise", inner: VOID } },

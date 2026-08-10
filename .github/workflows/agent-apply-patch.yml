@@ -1,0 +1,33 @@
+name: Agent apply patch (manual fallback)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: EthanBird/scriptc
+          ref: agent/prime-compat-phase1
+          fetch-depth: 0
+
+      - name: Apply staged compiler edit
+        run: |
+          set -euo pipefail
+          if [ ! -f .agent/next.py ]; then
+            echo "No staged compiler edit."
+            exit 0
+          fi
+          python3 .agent/next.py
+          rm .agent/next.py
+          git config user.name "scriptc-compat-bot"
+          git config user.email "scriptc-compat-bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "Advance Prime Agent compatibility"
+          git push origin HEAD:agent/prime-compat-phase1

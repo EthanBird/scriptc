@@ -324,6 +324,11 @@ export interface LowerOptions {
    * (__island_eval) may lower. Off by default — without it they produce a
    * requires-dynamic diagnostic instead. */
   dynamic?: boolean;
+  /** --loose-js: bundled/generated JavaScript may trust the checker's concrete
+   * inferred func/record return shapes instead of intentionally degrading them
+   * to checked-dynamic values. Ordinary JS keeps the historic identity-first
+   * fallback. */
+  looseJs?: boolean;
   /** Coverage: additionally lower the unreached remainder (bodies nothing
    * on the entry path reaches) in a throwaway pass and report its
    * diagnostics and stats under `unreached` — the whole-program analysis
@@ -429,6 +434,7 @@ export function lowerToIr(
   options: LowerOptions = {},
 ): LowerResult {
   const dynamic = options.dynamic ?? false;
+  const looseJs = options.looseJs ?? false;
   const targetPlatform = options.targetPlatform ?? process.platform;
   const startupCrash = options.startupCrash ?? null;
   // --dynamic: modules reachable only through dynamic import() of the
@@ -451,7 +457,7 @@ export function lowerToIr(
   const externalTypes = options.externalTypes ?? new Map<string, string>();
   const externalTypeSpecifiersByFile = options.externalTypeSpecifiersByFile ??
     directExternalTypeSpecifiersByFile(externalTypes);
-  const validation = new Lowerer(program, entry, moduleOrder, dynamic, {
+  const validation = new Lowerer(program, entry, moduleOrder, dynamic, looseJs, {
     targetPlatform,
     ffiImports,
     externalTypes,
@@ -466,7 +472,7 @@ export function lowerToIr(
   // two-pass construction cost.
   const discovery = ffiImports.length === 0
     ? validation
-    : new Lowerer(program, entry, moduleOrder, dynamic, {
+    : new Lowerer(program, entry, moduleOrder, dynamic, looseJs, {
         targetPlatform,
         ffiImports,
         externalTypes,
@@ -474,7 +480,7 @@ export function lowerToIr(
         ffiBindingSymbols: ffiValidation.symbolsByName,
       });
   const reachable = discovery.discover(options.libRoots);
-  const emit = new Lowerer(program, entry, moduleOrder, dynamic, {
+  const emit = new Lowerer(program, entry, moduleOrder, dynamic, looseJs, {
     reachable,
     targetPlatform,
     startupCrash,
@@ -487,7 +493,7 @@ export function lowerToIr(
   for (const d of ffiValidation.diagnostics) emit.pushDiag(d);
   const result = emit.run();
   if (options.coverage !== true) return result;
-  const remainder = new Lowerer(program, entry, moduleOrder, dynamic, {
+  const remainder = new Lowerer(program, entry, moduleOrder, dynamic, looseJs, {
     reachable,
     remainder: true,
     alreadyFlushed: emit.flushedSymbols,
@@ -1258,6 +1264,7 @@ export class Lowerer {
     readonly entry: ts.SourceFile,
     readonly moduleOrder: ts.SourceFile[],
     readonly dynamic: boolean,
+    readonly looseJs: boolean,
     mode: LowererMode = {},
   ) {
     this.reachable = mode.reachable ?? null;
@@ -3647,7 +3654,8 @@ export class Lowerer {
       // width helper. Each declines the other's shapes.
       const helper =
         this.recordWidthHelper(expr.type.shapeId, expected.shapeId, expr.loc) ??
-        lowerRecordOvfCaptureHelper(this, expr.type.shapeId, expected.shapeId, expr.loc);
+        lowerRecordOvfCaptureHelper(this, expr.type.shapeId, expected.shapeId, expr.loc) ??
+        this.indexRecordProjectionHelper(expr.type.shapeId, expected.shapeId, expr.loc);
       if (!helper) return null;
       return { kind: "call", callee: helper, args: [expr], type: expected, loc: expr.loc };
     }
@@ -4143,6 +4151,106 @@ export class Lowerer {
               }
               const get: IrExpr = { kind: "recordGet", obj: r, shapeId: fromId, field: f.name, type: lift.src, loc };
               return { name: f.name, value: this.applyWidthLift(lift.lift, get, f.type, loc) };
+            }),
+            type: toT,
+            loc,
+          },
+          loc,
+        },
+      ],
+      loc,
+    });
+    return name;
+  }
+
+  /** Planning half of an INDEX-SIGNATURE → FIXED-record checked
+   * projection. TypeScript accepts a string-indexed dictionary wherever
+   * every named destination property is covered by that index signature;
+   * the JS value is still one ordinary object. ScriptC's fixed records are
+   * monomorphic structs, so the flow needs a snapshot just like width
+   * subtyping. For each destination field we either read the source's
+   * same-named declared slot or its string-indexed overflow and then apply
+   * the ordinary width-lift relation into the field type.
+   *
+   * A missing dynamic key is NOT silently defaulted: recordKeyGet already
+   * throws the catchable TypeError when its result type has no undefined
+   * arm. If the source index value itself includes undefined, the following
+   * width lift/narrow performs the checked extraction. Thus a lying cast
+   * fails at the projection boundary instead of manufacturing a fixed
+   * record containing a value JavaScript never had. */
+  indexRecordProjectionPlan(
+    fromId: string,
+    toId: string,
+  ): Map<string, { src: IrType; lift: WidthLift; declared: boolean }> | null {
+    const from = this.shapes.get(fromId);
+    const to = this.shapes.get(toId);
+    if (!from?.indexValue || !to || to.indexValue || from.tuple || to.tuple) return null;
+    if (to.fields.some((f) => f.name.startsWith("%"))) return null;
+    const key = `idxproj:${fromId}:${toId}`;
+    // Recursive index-value projections need a named recursive plan before
+    // they can be sound. Prime's config/theme dictionaries are finite data;
+    // keep recursive shapes fenced rather than interning an incomplete map.
+    if (this.widthPlanning.has(key)) return null;
+    this.widthPlanning.add(key);
+    try {
+      const declared = new Map(from.fields.map((f) => [f.name, f] as const));
+      const plan = new Map<string, { src: IrType; lift: WidthLift; declared: boolean }>();
+      for (const tf of to.fields) {
+        const sf = declared.get(tf.name);
+        const src = sf?.type ?? from.indexValue;
+        const lift = this.widthLiftPlan(src, tf.type);
+        if (!lift) return null;
+        plan.set(tf.name, { src, lift, declared: sf !== undefined });
+      }
+      return plan;
+    } finally {
+      this.widthPlanning.delete(key);
+    }
+  }
+
+  /** Interned `%idx.proj.<n>(r)` — materializes the fixed target snapshot
+   * from indexRecordProjectionPlan. Literal overflow reads are marked
+   * overflowOnly when no same-named declared source field exists, avoiding
+   * a needless declared-field switch and making the missing-key trap come
+   * directly from the overflow read. */
+  indexRecordProjectionHelper(fromId: string, toId: string, loc: SrcLoc): string | null {
+    const from = this.shapes.get(fromId);
+    const to = this.shapes.get(toId);
+    if (!from || !to) return null;
+    const plan = this.indexRecordProjectionPlan(fromId, toId);
+    if (!plan) return null;
+    const key = `idxproj:${fromId}:${toId}`;
+    const existing = this.widthHelpers.get(key);
+    if (existing) return existing;
+    const name = `%idx.proj.${this.widthHelpers.size}`;
+    this.widthHelpers.set(key, name);
+    const fromT: IrType = { kind: "record", shapeId: fromId };
+    const toT: IrType = { kind: "record", shapeId: toId };
+    const r: IrExpr = { kind: "varRef", localId: "r.0", type: fromT, loc };
+    this.liftedFns.push({
+      name,
+      params: [{ localId: "r.0", name: "r", type: fromT }],
+      returnType: toT,
+      locals: [{ id: "r.0", name: "r", type: fromT, mutable: true }],
+      body: [
+        {
+          kind: "return",
+          value: {
+            kind: "recordLit",
+            fields: to.fields.map((f) => {
+              const p = plan.get(f.name)!;
+              const read: IrExpr = p.declared
+                ? { kind: "recordGet", obj: r, shapeId: fromId, field: f.name, type: p.src, loc }
+                : {
+                    kind: "recordKeyGet",
+                    obj: r,
+                    shapeId: fromId,
+                    key: { kind: "strLit", value: f.name, type: STRING, loc },
+                    overflowOnly: true,
+                    type: p.src,
+                    loc,
+                  };
+              return { name: f.name, value: this.applyWidthLift(p.lift, read, f.type, loc) };
             }),
             type: toT,
             loc,

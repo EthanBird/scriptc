@@ -1,0 +1,32 @@
+pnpm_build=0
+Scope: 3 of 4 workspace projects
+packages/runtime build$ true
+packages/runtime build: Done
+packages/compiler build$ node node_modules/typescript5/bin/tsc -p tsconfig.json
+packages/compiler build: Done
+packages/cli build$ node ../../node_modules/typescript/bin/tsc -p tsconfig.json
+packages/cli build: Done
+
+$ pnpm -r --filter "./packages/*" run build
+
+
+=== BUILD c rc=0 ===
+stdout='/tmp/error-island-c\n'
+stderr=''
+RUN c rc=1
+stdout=''
+stderr="Uncaught Error: Error messages of type 'number' (the message must be a string) is not supported yet [SC1090 at /tmp/error-island-diag.js:2]\n"
+
+=== BUILD llvm rc=0 ===
+stdout='/tmp/error-island-llvm\n'
+stderr=''
+RUN llvm rc=1
+stdout=''
+stderr="Uncaught Error: Error messages of type 'number' (the message must be a string) is not supported yet [SC1090 at /tmp/error-island-diag.js:2]\n"
+
+=== BUILD default rc=0 ===
+stdout='/tmp/error-island-default\n'
+stderr=''
+RUN default rc=1
+stdout=''
+stderr="Uncaught Error: Error messages of type 'number' (the message must be a string) is not supported yet [SC1090 at /tmp/error-island-diag.js:2]\n"

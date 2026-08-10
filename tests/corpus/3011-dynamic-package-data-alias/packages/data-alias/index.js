@@ -1,0 +1,7 @@
+export function getConfig() {
+  return { alpha: "A", list: ["x", "y"], missing: undefined };
+}
+export class Box {
+  constructor(value) { this._value = value; }
+  value() { return this._value; }
+}

@@ -1928,7 +1928,7 @@ export function emitExpr(E: CEmitter, e: IrExpr): Temp {
         const s = E.newTemp(
           e.type,
           rcAdapters
-            ? `scr_set_new_ref(&${rcAdapters.retain}, &${rcAdapters.release})`
+            ? `scr_set_new_ref(&${rcAdapters.retain}, &${rcAdapters.release}, ${E.traceArgC(e.type.elem)})`
             : `scr_map_new(${mapKeyKindC(e.type.elem)}, SCR_MAP_VAL_F64, NULL, NULL, NULL)`,
         );
         // Seeded construction (`new Set(values)`): one borrowed T[] whose
@@ -2979,6 +2979,8 @@ export function emitExpr(E: CEmitter, e: IrExpr): Temp {
             // the source; returns +1 String(result), or bridges the island
             // exception into the cell (may-throw seed set).
             return finish(`scr_island_eval(${arg(0)})`);
+          case "island.errorMessage":
+            return finish(`scr_jsval_error_message(${arg(0)})`);
           case "island.import":
             // --dynamic builds only. Loads an EMBEDDED npm module (main
             // registered the table before %main ran) through the island's
@@ -3142,6 +3144,8 @@ export function emitExpr(E: CEmitter, e: IrExpr): Temp {
             return finish(`scr_os_type()`);
           case "os.totalmem":
             return finish(`scr_os_totalmem()`);
+          case "os.cpuCount":
+            return finish(`scr_os_cpu_count()`);
           case "os.release":
             return finish(`scr_os_release()`);
           case "os.userName":
@@ -5461,6 +5465,8 @@ export function emitExpr(E: CEmitter, e: IrExpr): Temp {
             return finish(`scr_fsp_read_file(${arg(0)})`);
           case "fsp.writeFile":
             return finish(`scr_fsp_write_file(${arg(0)}, ${arg(1)})`);
+          case "fsp.access":
+            return finish(`scr_fsp_access(${arg(0)}, ${arg(1)})`);
           case "fsp.mkdir":
             return finish(`scr_fsp_mkdir(${arg(0)})`);
           case "fsp.mkdirMode":

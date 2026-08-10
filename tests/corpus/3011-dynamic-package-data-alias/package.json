@@ -1,0 +1,6 @@
+{
+  "name": "scriptc-data-alias-workspace-fixture",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*"]
+}

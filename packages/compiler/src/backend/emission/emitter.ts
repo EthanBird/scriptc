@@ -509,6 +509,8 @@ export class CEmitter {
         // record/union cases read the fixpoint sets.
         case "map":
           return cycleCapable(t.value);
+        case "set":
+          return cycleCapable(t.elem);
         // An array is cycle-capable exactly when its ELEMENT type is —
         // record/object/union elements (and cycle-capable inner arrays)
         // can point back at the array. Terminates: element types are

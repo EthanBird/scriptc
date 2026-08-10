@@ -1,0 +1,632 @@
+# Prime Agent bundled-JS ScriptC probe
+
+Compiles Prime official esbuild output (dist/bundle/cli.js, ~20 chunks) instead of the TypeScript source graph.
+
+## bundle-dynamic
+build_status=1
+executable=False
+smoke_status=125
+diagnostic_lines=432
+codes={'SC0001': 432}
+
+### first diagnostics
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:252:14 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:252:38 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:255:14 - error SC0001: Cannot find name 'EdgeRuntime'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:269:43 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:270:41 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:272:45 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:272:73 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:272:88 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:275:14 - error SC0001: Cannot find name 'EdgeRuntime'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:280:36 - error SC0001: Cannot find name 'EdgeRuntime'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:949:44 - error SC0001: No base constructor has the specified number of type arguments.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:1062:30 - error SC0001: Type 'Awaited<this>' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:2959:33 - error SC0001: Type '_Stream' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:3528:29 - error SC0001: Type 'this' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:5241:33 - error SC0001: Type '_Stream' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:5818:78 - error SC0001: ']' expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:5819:39 - error SC0001: ']' expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:5827:161 - error SC0001: Rest types may only be created from object types.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:36:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:13:96 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:13:121 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:13:134 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:13:236 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:2555:27 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:2556:18 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1329:34 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1329:62 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1330:37 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1369:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1593:68 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2703:44 - error SC0001: The '^' operator is not allowed for boolean types. Consider using '!==' instead.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2704:30 - error SC0001: The '^' operator is not allowed for boolean types. Consider using '!==' instead.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2706:74 - error SC0001: The '^' operator is not allowed for boolean types. Consider using '!==' instead.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2707:35 - error SC0001: The '^' operator is not allowed for boolean types. Consider using '!==' instead.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2739:18 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2739:42 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2740:9 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2747:33 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2747:56 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2747:63 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2747:70 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2800:16 - error SC0001: Type '"null"' is not comparable to type '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3284:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3297:72 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3573:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3598:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3611:72 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3976:20 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3976:46 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3976:74 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3982:36 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3987:9 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4003:33 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4004:30 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4013:33 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4014:30 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4035:36 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4049:33 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4055:16 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4135:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4164:21 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4164:54 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4164:94 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:6914:15 - error SC0001: Expected 1 argument, but got 0. 'new Promise()' needs a JSDoc hint to produce a 'resolve' that can be called without arguments.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:7162:15 - error SC0001: Expected 1 argument, but got 0. 'new Promise()' needs a JSDoc hint to produce a 'resolve' that can be called without arguments.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:7304:22 - error SC0001: Expected 1 argument, but got 0. 'new Promise()' needs a JSDoc hint to produce a 'resolve' that can be called without arguments.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10190:13 - error SC0001: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10193:13 - error SC0001: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10348:13 - error SC0001: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10353:13 - error SC0001: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10630:20 - error SC0001: Type expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10639:20 - error SC0001: Type expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10653:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11013:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11048:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11082:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11105:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11106:19 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:12117:26 - error SC0001: '}' expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:12509:35 - error SC0001: A required parameter cannot follow an optional parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:12556:32 - error SC0001: A required parameter cannot follow an optional parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:12594:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14103:19 - error SC0001: Cannot find namespace 'http'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14103:31 - error SC0001: Cannot find namespace 'https'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14239:18 - error SC0001: Cannot find namespace 'http'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14254:18 - error SC0001: Cannot find namespace 'http'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14306:13 - error SC0001: Spread types may only be created from object types.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14354:18 - error SC0001: Generic type 'Set<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14355:18 - error SC0001: Cannot find namespace 'http'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19580:21 - error SC0001: Subsequent variable declarations must have the same type.  Variable 'p' must be of type 'string', but here has type 'symbol[]'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19603:36 - error SC0001: 'AsyncIterator' only refers to a type, but is being used as a value here.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19603:67 - error SC0001: 'AsyncIterator' only refers to a type, but is being used as a value here.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19888:120 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19898:17 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19904:16 - error SC0001: Variable '_f' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:25668:23 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:25937:17 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:25939:15 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:25993:16 - error SC0001: Variable '_d' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26952:37 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26953:28 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26957:116 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26961:21 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26972:45 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26983:20 - error SC0001: Variable '_f' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26999:19 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27102:113 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27106:62 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27112:21 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27118:20 - error SC0001: Variable '_d2' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27144:113 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27148:61 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27154:21 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27160:20 - error SC0001: Variable '_d2' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29563:14 - error SC0001: Variable '_e' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29643:24 - error SC0001: Class static side 'typeof BaseInteractions' incorrectly extends base class static side 'typeof APIResource'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29693:20 - error SC0001: Class static side 'typeof BaseWebhooks' incorrectly extends base class static side 'typeof APIResource'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29927:102 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29938:25 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29950:20 - error SC0001: Variable '_d' is used before being assigned.
+
+### build tail
+    Type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; } | undefined' is not assignable to type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }'.
+      Type 'undefined' is not assignable to type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }'.
+
+  17210 |           constructor(...e4) {
+  17211 |             super(...e4), this.tsParseInOutModifiers = this.tsParseModifiers.bind(this, { allowedModifiers: ["in", "out"], disallowedModifiers: ["const", "public", "private", "protected", "readonly", "declare", "abstract", "override"], errorTemplate: Z.InvalidModifierOnTypeParameter }), this.tsParseConstModifier = this.tsParseModifiers.bind(this, { allowedModifiers: ["const"], disallowedModifiers: ["in", "out"], errorTemplate: Z.InvalidModifierOnTypeParameterPositions }), this.tsParseInOutConstModifiers = this.tsParseModifiers.bind(this, { allowedModifiers: ["in", "out", "const"], disallowedModifiers: ["public", "private", "protected", "readonly", "declare", "abstract", "override"], errorTemplate: Z.InvalidModifierOnTypeParameter });
+        |                                                                                                                                                                                                                                                                                                                             ^~~~~~~~~~~~~~~~~~~~~
+  17212 |           }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:17211:512 - error SC0001: The 'this' context of type '({ allowedModifiers: e4, disallowedModifiers: t3, stopOnStartOfClassStaticBlock: r3, errorTemplate: n2 }: { allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }, s2: any) => void' is not assignable to method's 'this' of type '(this: this, args_0?: { allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; } | undefined, s2?: any) => void'.
+  Types of parameters '__0' and 'args_0' are incompatible.
+    Type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; } | undefined' is not assignable to type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }'.
+      Type 'undefined' is not assignable to type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }'.
+
+  17210 |           constructor(...e4) {
+  17211 |             super(...e4), this.tsParseInOutModifiers = this.tsParseModifiers.bind(this, { allowedModifiers: ["in", "out"], disallowedModifiers: ["const", "public", "private", "protected", "readonly", "declare", "abstract", "override"], errorTemplate: Z.InvalidModifierOnTypeParameter }), this.tsParseConstModifier = this.tsParseModifiers.bind(this, { allowedModifiers: ["const"], disallowedModifiers: ["in", "out"], errorTemplate: Z.InvalidModifierOnTypeParameterPositions }), this.tsParseInOutConstModifiers = this.tsParseModifiers.bind(this, { allowedModifiers: ["in", "out", "const"], disallowedModifiers: ["public", "private", "protected", "readonly", "declare", "abstract", "override"], errorTemplate: Z.InvalidModifierOnTypeParameter });
+        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^~~~~~~~~~~~~~~~~~~~~
+  17212 |           }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:17246:415 - error SC0001: Cannot find name 'hasOwnProperty'. Did you mean the static member '(Anonymous class).hasOwnProperty'?
+
+  17245 |               if (!o2) break;
+  17246 |               tsIsAccessModifier(o2) ? s2.accessibility ? this.raise(Z.DuplicateAccessibilityModifier, i2, { modifier: o2 }) : (enforceOrder(i2, o2, o2, "override"), enforceOrder(i2, o2, o2, "static"), enforceOrder(i2, o2, o2, "readonly"), s2.accessibility = o2) : tsIsVarianceAnnotations(o2) ? (s2[o2] && this.raise(Z.DuplicateModifier, i2, { modifier: o2 }), s2[o2] = true, enforceOrder(i2, o2, "in", "out")) : (hasOwnProperty.call(s2, o2) ? this.raise(Z.DuplicateModifier, i2, { modifier: o2 }) : (enforceOrder(i2, o2, "static", "readonly"), enforceOrder(i2, o2, "static", "override"), enforceOrder(i2, o2, "override", "readonly"), enforceOrder(i2, o2, "abstract", "override"), incompatible(i2, o2, "declare", "override"), incompatible(i2, o2, "static", "abstract")), s2[o2] = true), null != t3 && t3.includes(o2) && this.raise(n2, i2, { modifier: o2 });
+        |                                                                                                                                                                                                                                                                                                                                                                                                                               ^~~~~~~~~~~~~~
+  17247 |             }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:17919:35 - error SC0001: Type '{ allowedModifiers: string[]; }' is missing the following properties from type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }': disallowedModifiers, stopOnStartOfClassStaticBlock
+
+  17918 |             const r3 = t3.length ? t3[0].loc.start : this.state.startLoc, n2 = {};
+  17919 |             this.tsParseModifiers({ allowedModifiers: ["public", "private", "protected", "override", "readonly"] }, n2);
+        |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  17920 |             const s2 = n2.accessibility, i2 = n2.override, o2 = n2.readonly;
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:20526:13 - error SC0001: Left side of comma operator is unused and has no side effects.
+
+  20525 |             }
+  20526 |             !(function(e4) {
+        |             ^~~~~~~~~~~~~~~~
+  20527 |               if (e4.has("decorators")) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:20526:14 - error SC0001: An expression of type 'void' cannot be tested for truthiness.
+
+  20525 |             }
+  20526 |             !(function(e4) {
+        |              ^~~~~~~~~~~~~~~
+  20527 |               if (e4.has("decorators")) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:22183:21 - error SC0001: Cannot find name 'hasOwnProperty'.
+
+  22182 |               return s2 && Object.keys(s2).forEach((e4) => {
+  22183 |                 if (hasOwnProperty.call(r4, e4)) throw new Error("Unexpected replacement overlap.");
+        |                     ^~~~~~~~~~~~~~
+  22184 |               }), e3.unwrap((0, i.default)(o, s2 ? Object.assign(s2, r4) : r4));
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:22273:18 - error SC0001: Cannot find name 'hasOwnProperty'.
+
+  22272 |           t3 && (e3.placeholders.forEach((e4) => {
+  22273 |             if (!hasOwnProperty.call(t3, e4.name)) {
+        |                  ^~~~~~~~~~~~~~
+  22274 |               const t4 = e4.name;
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:22286:16 - error SC0001: An expression of type 'void' cannot be tested for truthiness.
+
+  22285 |               var n2;
+  22286 |               !(function(e5, t4, r4) {
+        |                ^~~~~~~~~~~~~~~~~~~~~~~
+  22287 |                 e5.isDuplicate && (Array.isArray(r4) ? r4 = r4.map((e6) => i(e6)) : "object" == typeof r4 && (r4 = i(r4)));
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:23109:21 - error SC0001: Cannot find name 'hasOwnProperty'.
+
+  23108 |                     const r6 = t5.node.name;
+  23109 |                     hasOwnProperty.call(i2, r6) && (o2 = i2[r6]);
+        |                     ^~~~~~~~~~~~~~
+  23110 |                   }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:24888:12 - error SC0001: An expression of type 'void' cannot be tested for truthiness.
+
+  24887 |           if (n2.enter || n2.exit) throw new Error("Should not be used with enter/exit visitors.");
+  24888 |           !(function _traverse(e4, t4, i2, l, p, c, u, d) {
+        |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  24889 |             if (!i2) return;
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:27022:13 - error SC0001: Cannot find name 'hasOwnProperty'.
+
+  27021 |           i[e3].forEach((t3) => {
+  27022 |             hasOwnProperty.call(o, t3) || (o[t3] = []), o[t3].push(e3);
+        |             ^~~~~~~~~~~~~~
+  27023 |           });
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:29885:16 - error SC0001: An expression of type 'void' cannot be tested for truthiness.
+
+  29884 |             case "\u2029":
+  29885 |               !(function(e3) {
+        |                ^~~~~~~~~~~~~~~
+  29886 |                 console.warn(`JSON5: '${formatChar(e3)}' in strings is not valid ECMAScript; consider escaping`);
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:31955:49 - error SC0001: The body of an 'if' statement cannot be the empty statement.
+
+  31954 |           var t3, r2 = 1;
+  31955 |           if (this.regexp_eatClassSetRange(e3)) ;
+        |                                                 ^
+  31956 |           else if (t3 = this.regexp_eatClassSetOperand(e3)) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:929:113 - error SC0001: Cannot find name 'window'.
+
+  928 | var webWorkerLike = typeof gt === "object" && gt != null && "importScripts" in gt && typeof gt["importScripts"] === "function";
+  929 | var isBrowserLike = webWorkerLike || typeof navigator !== "undefined" && "serviceWorker" in navigator || typeof window === "object" && typeof window.document !== "undefined";
+      |                                                                                                                 ^~~~~~
+  930 | var ClientSDK = class {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:929:143 - error SC0001: Cannot find name 'window'.
+
+  928 | var webWorkerLike = typeof gt === "object" && gt != null && "importScripts" in gt && typeof gt["importScripts"] === "function";
+  929 | var isBrowserLike = webWorkerLike || typeof navigator !== "undefined" && "serviceWorker" in navigator || typeof window === "object" && typeof window.document !== "undefined";
+      |                                                                                                                                               ^~~~~~
+  930 | var ClientSDK = class {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:1563:47 - error SC0001: Left side of comma operator is unused and has no side effects.
+
+  1562 |       default:
+  1563 |         throw SecurityError.unrecognizedType((spec, type));
+       |                                               ^~~~
+  1564 |     }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:9418:33 - error SC0001: Base constructors must all have the same return type.
+
+  9417 | // ../../node_modules/@mistralai/mistralai/esm/lib/event-streams.js
+  9418 | var EventStream = class extends ReadableStream {
+       |                                 ^~~~~~~~~~~~~~
+  9419 |   constructor(responseBody, parse, opts) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:9455:3 - error SC0001: Property '[Symbol.asyncIterator]' in type 'EventStream' is not assignable to the same property in base type 'ReadableStream<Uint8Array<ArrayBufferLike>>'.
+  Type '() => ReadableStreamAsyncIterator<any> | { next: () => Promise<{ done: boolean; value: undefined; } | { done: boolean; value: Uint8Array<ArrayBufferLike>; }>; throw: (e: any) => Promise<...>; return: () => Promise<...>; [Symbol.asyncIterator](): { ...; }; }' is not assignable to type '() => ReadableStreamAsyncIterator<Uint8Array<ArrayBufferLike>>'.
+    Type 'ReadableStreamAsyncIterator<any> | { next: () => Promise<{ done: boolean; value: undefined; } | { done: boolean; value: Uint8Array<ArrayBufferLike>; }>; throw: (e: any) => Promise<...>; return: () => Promise<...>; [Symbol.asyncIterator](): { ...; }; }' is not assignable to type 'ReadableStreamAsyncIterator<Uint8Array<ArrayBufferLike>>'.
+      Property '[Symbol.asyncDispose]' is missing in type '{ next: () => Promise<{ done: boolean; value: undefined; } | { done: boolean; value: Uint8Array<ArrayBufferLike>; }>; throw: (e: any) => Promise<{ done: boolean; value: undefined; }>; return: () => Promise<...>; [Symbol.asyncIterator](): { ...; }; }' but required in type 'ReadableStreamAsyncIterator<Uint8Array<ArrayBufferLike>>'.
+
+  9454 |   // Polyfill for older browsers
+  9455 |   [Symbol.asyncIterator]() {
+       |   ^~~~~~~~~~~~~~~~~~~~~~
+  9456 |     const fn = ReadableStream.prototype[Symbol.asyncIterator];
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/src-DUDR5FOZ.js:154:31 - error SC0001: Type 'Stream' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+
+  153 |   try {
+  154 |     for await (const chunk of body) {
+      |                               ^~~~
+  155 |       if (data.size > 0 && accumBytes + chunk.length > data.size) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/src-DUDR5FOZ.js:529:8 - error SC0001: Property 'values' in type '_Headers' is not assignable to the same property in base type 'URLSearchParams'.
+  Type '() => Generator<string | null, void, unknown>' is not assignable to type '() => URLSearchParamsIterator<string>'.
+    Type 'Generator<string | null, void, unknown>' is not assignable to type 'URLSearchParamsIterator<string>'.
+      The types returned by 'next(...)' are incompatible between these types.
+        Type 'IteratorResult<string | null, void>' is not assignable to type 'IteratorResult<string, undefined>'.
+          Type 'IteratorReturnResult<void>' is not assignable to type 'IteratorResult<string, undefined>'.
+            Type 'IteratorReturnResult<void>' is not assignable to type 'IteratorReturnResult<undefined>'.
+              Type 'void' is not assignable to type 'undefined'.
+
+  528 |       }
+  529 |       *values() {
+      |        ^~~~~~
+  530 |         for (const name of this.keys()) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/src-DUDR5FOZ.js:537:8 - error SC0001: Property 'entries' in type '_Headers' is not assignable to the same property in base type 'URLSearchParams'.
+  Type '() => IterableIterator<[string, string]>' is not assignable to type '() => URLSearchParamsIterator<[string, string]>'.
+    Type 'IterableIterator<[string, string]>' is missing the following properties from type 'URLSearchParamsIterator<[string, string]>': map, filter, take, drop, and 9 more.
+
+  536 |        */
+  537 |       *entries() {
+      |        ^~~~~~~
+  538 |         for (const name of this.keys()) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/src-DUDR5FOZ.js:542:7 - error SC0001: Property '[Symbol.iterator]' in type '_Headers' is not assignable to the same property in base type 'URLSearchParams'.
+  Type '() => IterableIterator<[string, string]>' is not assignable to type '() => URLSearchParamsIterator<[string, string]>'.
+    Type 'IterableIterator<[string, string]>' is missing the following properties from type 'URLSearchParamsIterator<[string, string]>': map, filter, take, drop, and 9 more.
+
+  541 |       }
+  542 |       [Symbol.iterator]() {
+      |       ^~~~~~~~~~~~~~~~~
+  543 |         return this.entries();
+
+432 errors.
+
+### smoke tail
+no executable
+
+
+## bundle-auto
+build_status=1
+executable=False
+smoke_status=125
+diagnostic_lines=432
+codes={'SC0001': 432}
+
+### first diagnostics
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:252:14 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:252:38 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:255:14 - error SC0001: Cannot find name 'EdgeRuntime'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:269:43 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:270:41 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:272:45 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:272:73 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:272:88 - error SC0001: Cannot find name 'Deno'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:275:14 - error SC0001: Cannot find name 'EdgeRuntime'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:280:36 - error SC0001: Cannot find name 'EdgeRuntime'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:949:44 - error SC0001: No base constructor has the specified number of type arguments.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:1062:30 - error SC0001: Type 'Awaited<this>' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:2959:33 - error SC0001: Type '_Stream' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:3528:29 - error SC0001: Type 'this' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:5241:33 - error SC0001: Type '_Stream' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:5818:78 - error SC0001: ']' expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:5819:39 - error SC0001: ']' expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/anthropic-SYZULBLA.js:5827:161 - error SC0001: Rest types may only be created from object types.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:36:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:13:96 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:13:121 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:13:134 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:13:236 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:2555:27 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-32OM3ZSR.js:2556:18 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1329:34 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1329:62 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1330:37 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1369:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1593:68 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2703:44 - error SC0001: The '^' operator is not allowed for boolean types. Consider using '!==' instead.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2704:30 - error SC0001: The '^' operator is not allowed for boolean types. Consider using '!==' instead.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2706:74 - error SC0001: The '^' operator is not allowed for boolean types. Consider using '!==' instead.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2707:35 - error SC0001: The '^' operator is not allowed for boolean types. Consider using '!==' instead.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2739:18 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2739:42 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2740:9 - error SC0001: Cannot find name 'define'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2747:33 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2747:56 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2747:63 - error SC0001: Cannot find name 'self'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2747:70 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:2800:16 - error SC0001: Type '"null"' is not comparable to type '"bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3284:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3297:72 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3573:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3598:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3611:72 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3976:20 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3976:46 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3976:74 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3982:36 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3987:9 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4003:33 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4004:30 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4013:33 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4014:30 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4035:36 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4049:33 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4055:16 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4135:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4164:21 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4164:54 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4164:94 - error SC0001: Cannot find name 'window'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:6914:15 - error SC0001: Expected 1 argument, but got 0. 'new Promise()' needs a JSDoc hint to produce a 'resolve' that can be called without arguments.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:7162:15 - error SC0001: Expected 1 argument, but got 0. 'new Promise()' needs a JSDoc hint to produce a 'resolve' that can be called without arguments.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:7304:22 - error SC0001: Expected 1 argument, but got 0. 'new Promise()' needs a JSDoc hint to produce a 'resolve' that can be called without arguments.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10190:13 - error SC0001: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10193:13 - error SC0001: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10348:13 - error SC0001: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10353:13 - error SC0001: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10630:20 - error SC0001: Type expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10639:20 - error SC0001: Type expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10653:66 - error SC0001: This condition will always return true since this function is always defined. Did you mean to call it instead?
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11013:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11048:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11082:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11105:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:11106:19 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:12117:26 - error SC0001: '}' expected.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:12509:35 - error SC0001: A required parameter cannot follow an optional parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:12556:32 - error SC0001: A required parameter cannot follow an optional parameter.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:12594:18 - error SC0001: Generic type 'Array<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14103:19 - error SC0001: Cannot find namespace 'http'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14103:31 - error SC0001: Cannot find namespace 'https'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14239:18 - error SC0001: Cannot find namespace 'http'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14254:18 - error SC0001: Cannot find namespace 'http'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14306:13 - error SC0001: Spread types may only be created from object types.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14354:18 - error SC0001: Generic type 'Set<T>' requires 1 type argument(s).
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:14355:18 - error SC0001: Cannot find namespace 'http'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19580:21 - error SC0001: Subsequent variable declarations must have the same type.  Variable 'p' must be of type 'string', but here has type 'symbol[]'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19603:36 - error SC0001: 'AsyncIterator' only refers to a type, but is being used as a value here.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19603:67 - error SC0001: 'AsyncIterator' only refers to a type, but is being used as a value here.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19888:120 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19898:17 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:19904:16 - error SC0001: Variable '_f' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:25668:23 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:25937:17 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:25939:15 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:25993:16 - error SC0001: Variable '_d' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26952:37 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26953:28 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26957:116 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26961:21 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26972:45 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26983:20 - error SC0001: Variable '_f' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:26999:19 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27102:113 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27106:62 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27112:21 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27118:20 - error SC0001: Variable '_d2' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27144:113 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27148:61 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27154:21 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:27160:20 - error SC0001: Variable '_d2' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29563:14 - error SC0001: Variable '_e' is used before being assigned.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29643:24 - error SC0001: Class static side 'typeof BaseInteractions' incorrectly extends base class static side 'typeof APIResource'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29693:20 - error SC0001: Class static side 'typeof BaseWebhooks' incorrectly extends base class static side 'typeof APIResource'.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29927:102 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29938:25 - error SC0001: 'yield' expression implicitly results in an 'any' type because its containing generator lacks a return-type annotation.
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:29950:20 - error SC0001: Variable '_d' is used before being assigned.
+
+### build tail
+    Type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; } | undefined' is not assignable to type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }'.
+      Type 'undefined' is not assignable to type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }'.
+
+  17210 |           constructor(...e4) {
+  17211 |             super(...e4), this.tsParseInOutModifiers = this.tsParseModifiers.bind(this, { allowedModifiers: ["in", "out"], disallowedModifiers: ["const", "public", "private", "protected", "readonly", "declare", "abstract", "override"], errorTemplate: Z.InvalidModifierOnTypeParameter }), this.tsParseConstModifier = this.tsParseModifiers.bind(this, { allowedModifiers: ["const"], disallowedModifiers: ["in", "out"], errorTemplate: Z.InvalidModifierOnTypeParameterPositions }), this.tsParseInOutConstModifiers = this.tsParseModifiers.bind(this, { allowedModifiers: ["in", "out", "const"], disallowedModifiers: ["public", "private", "protected", "readonly", "declare", "abstract", "override"], errorTemplate: Z.InvalidModifierOnTypeParameter });
+        |                                                                                                                                                                                                                                                                                                                             ^~~~~~~~~~~~~~~~~~~~~
+  17212 |           }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:17211:512 - error SC0001: The 'this' context of type '({ allowedModifiers: e4, disallowedModifiers: t3, stopOnStartOfClassStaticBlock: r3, errorTemplate: n2 }: { allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }, s2: any) => void' is not assignable to method's 'this' of type '(this: this, args_0?: { allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; } | undefined, s2?: any) => void'.
+  Types of parameters '__0' and 'args_0' are incompatible.
+    Type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; } | undefined' is not assignable to type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }'.
+      Type 'undefined' is not assignable to type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }'.
+
+  17210 |           constructor(...e4) {
+  17211 |             super(...e4), this.tsParseInOutModifiers = this.tsParseModifiers.bind(this, { allowedModifiers: ["in", "out"], disallowedModifiers: ["const", "public", "private", "protected", "readonly", "declare", "abstract", "override"], errorTemplate: Z.InvalidModifierOnTypeParameter }), this.tsParseConstModifier = this.tsParseModifiers.bind(this, { allowedModifiers: ["const"], disallowedModifiers: ["in", "out"], errorTemplate: Z.InvalidModifierOnTypeParameterPositions }), this.tsParseInOutConstModifiers = this.tsParseModifiers.bind(this, { allowedModifiers: ["in", "out", "const"], disallowedModifiers: ["public", "private", "protected", "readonly", "declare", "abstract", "override"], errorTemplate: Z.InvalidModifierOnTypeParameter });
+        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^~~~~~~~~~~~~~~~~~~~~
+  17212 |           }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:17246:415 - error SC0001: Cannot find name 'hasOwnProperty'. Did you mean the static member '(Anonymous class).hasOwnProperty'?
+
+  17245 |               if (!o2) break;
+  17246 |               tsIsAccessModifier(o2) ? s2.accessibility ? this.raise(Z.DuplicateAccessibilityModifier, i2, { modifier: o2 }) : (enforceOrder(i2, o2, o2, "override"), enforceOrder(i2, o2, o2, "static"), enforceOrder(i2, o2, o2, "readonly"), s2.accessibility = o2) : tsIsVarianceAnnotations(o2) ? (s2[o2] && this.raise(Z.DuplicateModifier, i2, { modifier: o2 }), s2[o2] = true, enforceOrder(i2, o2, "in", "out")) : (hasOwnProperty.call(s2, o2) ? this.raise(Z.DuplicateModifier, i2, { modifier: o2 }) : (enforceOrder(i2, o2, "static", "readonly"), enforceOrder(i2, o2, "static", "override"), enforceOrder(i2, o2, "override", "readonly"), enforceOrder(i2, o2, "abstract", "override"), incompatible(i2, o2, "declare", "override"), incompatible(i2, o2, "static", "abstract")), s2[o2] = true), null != t3 && t3.includes(o2) && this.raise(n2, i2, { modifier: o2 });
+        |                                                                                                                                                                                                                                                                                                                                                                                                                               ^~~~~~~~~~~~~~
+  17247 |             }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:17919:35 - error SC0001: Type '{ allowedModifiers: string[]; }' is missing the following properties from type '{ allowedModifiers: any; disallowedModifiers: any; errorTemplate?: any; stopOnStartOfClassStaticBlock: any; }': disallowedModifiers, stopOnStartOfClassStaticBlock
+
+  17918 |             const r3 = t3.length ? t3[0].loc.start : this.state.startLoc, n2 = {};
+  17919 |             this.tsParseModifiers({ allowedModifiers: ["public", "private", "protected", "override", "readonly"] }, n2);
+        |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  17920 |             const s2 = n2.accessibility, i2 = n2.override, o2 = n2.readonly;
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:20526:13 - error SC0001: Left side of comma operator is unused and has no side effects.
+
+  20525 |             }
+  20526 |             !(function(e4) {
+        |             ^~~~~~~~~~~~~~~~
+  20527 |               if (e4.has("decorators")) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:20526:14 - error SC0001: An expression of type 'void' cannot be tested for truthiness.
+
+  20525 |             }
+  20526 |             !(function(e4) {
+        |              ^~~~~~~~~~~~~~~
+  20527 |               if (e4.has("decorators")) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:22183:21 - error SC0001: Cannot find name 'hasOwnProperty'.
+
+  22182 |               return s2 && Object.keys(s2).forEach((e4) => {
+  22183 |                 if (hasOwnProperty.call(r4, e4)) throw new Error("Unexpected replacement overlap.");
+        |                     ^~~~~~~~~~~~~~
+  22184 |               }), e3.unwrap((0, i.default)(o, s2 ? Object.assign(s2, r4) : r4));
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:22273:18 - error SC0001: Cannot find name 'hasOwnProperty'.
+
+  22272 |           t3 && (e3.placeholders.forEach((e4) => {
+  22273 |             if (!hasOwnProperty.call(t3, e4.name)) {
+        |                  ^~~~~~~~~~~~~~
+  22274 |               const t4 = e4.name;
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:22286:16 - error SC0001: An expression of type 'void' cannot be tested for truthiness.
+
+  22285 |               var n2;
+  22286 |               !(function(e5, t4, r4) {
+        |                ^~~~~~~~~~~~~~~~~~~~~~~
+  22287 |                 e5.isDuplicate && (Array.isArray(r4) ? r4 = r4.map((e6) => i(e6)) : "object" == typeof r4 && (r4 = i(r4)));
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:23109:21 - error SC0001: Cannot find name 'hasOwnProperty'.
+
+  23108 |                     const r6 = t5.node.name;
+  23109 |                     hasOwnProperty.call(i2, r6) && (o2 = i2[r6]);
+        |                     ^~~~~~~~~~~~~~
+  23110 |                   }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:24888:12 - error SC0001: An expression of type 'void' cannot be tested for truthiness.
+
+  24887 |           if (n2.enter || n2.exit) throw new Error("Should not be used with enter/exit visitors.");
+  24888 |           !(function _traverse(e4, t4, i2, l, p, c, u, d) {
+        |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  24889 |             if (!i2) return;
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:27022:13 - error SC0001: Cannot find name 'hasOwnProperty'.
+
+  27021 |           i[e3].forEach((t3) => {
+  27022 |             hasOwnProperty.call(o, t3) || (o[t3] = []), o[t3].push(e3);
+        |             ^~~~~~~~~~~~~~
+  27023 |           });
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:29885:16 - error SC0001: An expression of type 'void' cannot be tested for truthiness.
+
+  29884 |             case "\u2029":
+  29885 |               !(function(e3) {
+        |                ^~~~~~~~~~~~~~~
+  29886 |                 console.warn(`JSON5: '${formatChar(e3)}' in strings is not valid ECMAScript; consider escaping`);
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/jiti-static-UCYGOAUA.js:31955:49 - error SC0001: The body of an 'if' statement cannot be the empty statement.
+
+  31954 |           var t3, r2 = 1;
+  31955 |           if (this.regexp_eatClassSetRange(e3)) ;
+        |                                                 ^
+  31956 |           else if (t3 = this.regexp_eatClassSetOperand(e3)) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:929:113 - error SC0001: Cannot find name 'window'.
+
+  928 | var webWorkerLike = typeof gt === "object" && gt != null && "importScripts" in gt && typeof gt["importScripts"] === "function";
+  929 | var isBrowserLike = webWorkerLike || typeof navigator !== "undefined" && "serviceWorker" in navigator || typeof window === "object" && typeof window.document !== "undefined";
+      |                                                                                                                 ^~~~~~
+  930 | var ClientSDK = class {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:929:143 - error SC0001: Cannot find name 'window'.
+
+  928 | var webWorkerLike = typeof gt === "object" && gt != null && "importScripts" in gt && typeof gt["importScripts"] === "function";
+  929 | var isBrowserLike = webWorkerLike || typeof navigator !== "undefined" && "serviceWorker" in navigator || typeof window === "object" && typeof window.document !== "undefined";
+      |                                                                                                                                               ^~~~~~
+  930 | var ClientSDK = class {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:1563:47 - error SC0001: Left side of comma operator is unused and has no side effects.
+
+  1562 |       default:
+  1563 |         throw SecurityError.unrecognizedType((spec, type));
+       |                                               ^~~~
+  1564 |     }
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:9418:33 - error SC0001: Base constructors must all have the same return type.
+
+  9417 | // ../../node_modules/@mistralai/mistralai/esm/lib/event-streams.js
+  9418 | var EventStream = class extends ReadableStream {
+       |                                 ^~~~~~~~~~~~~~
+  9419 |   constructor(responseBody, parse, opts) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/mistral-QUHC4A7R.js:9455:3 - error SC0001: Property '[Symbol.asyncIterator]' in type 'EventStream' is not assignable to the same property in base type 'ReadableStream<Uint8Array<ArrayBufferLike>>'.
+  Type '() => ReadableStreamAsyncIterator<any> | { next: () => Promise<{ done: boolean; value: undefined; } | { done: boolean; value: Uint8Array<ArrayBufferLike>; }>; throw: (e: any) => Promise<...>; return: () => Promise<...>; [Symbol.asyncIterator](): { ...; }; }' is not assignable to type '() => ReadableStreamAsyncIterator<Uint8Array<ArrayBufferLike>>'.
+    Type 'ReadableStreamAsyncIterator<any> | { next: () => Promise<{ done: boolean; value: undefined; } | { done: boolean; value: Uint8Array<ArrayBufferLike>; }>; throw: (e: any) => Promise<...>; return: () => Promise<...>; [Symbol.asyncIterator](): { ...; }; }' is not assignable to type 'ReadableStreamAsyncIterator<Uint8Array<ArrayBufferLike>>'.
+      Property '[Symbol.asyncDispose]' is missing in type '{ next: () => Promise<{ done: boolean; value: undefined; } | { done: boolean; value: Uint8Array<ArrayBufferLike>; }>; throw: (e: any) => Promise<{ done: boolean; value: undefined; }>; return: () => Promise<...>; [Symbol.asyncIterator](): { ...; }; }' but required in type 'ReadableStreamAsyncIterator<Uint8Array<ArrayBufferLike>>'.
+
+  9454 |   // Polyfill for older browsers
+  9455 |   [Symbol.asyncIterator]() {
+       |   ^~~~~~~~~~~~~~~~~~~~~~
+  9456 |     const fn = ReadableStream.prototype[Symbol.asyncIterator];
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/src-DUDR5FOZ.js:154:31 - error SC0001: Type 'Stream' must have a '[Symbol.asyncIterator]()' method that returns an async iterator.
+
+  153 |   try {
+  154 |     for await (const chunk of body) {
+      |                               ^~~~
+  155 |       if (data.size > 0 && accumBytes + chunk.length > data.size) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/src-DUDR5FOZ.js:529:8 - error SC0001: Property 'values' in type '_Headers' is not assignable to the same property in base type 'URLSearchParams'.
+  Type '() => Generator<string | null, void, unknown>' is not assignable to type '() => URLSearchParamsIterator<string>'.
+    Type 'Generator<string | null, void, unknown>' is not assignable to type 'URLSearchParamsIterator<string>'.
+      The types returned by 'next(...)' are incompatible between these types.
+        Type 'IteratorResult<string | null, void>' is not assignable to type 'IteratorResult<string, undefined>'.
+          Type 'IteratorReturnResult<void>' is not assignable to type 'IteratorResult<string, undefined>'.
+            Type 'IteratorReturnResult<void>' is not assignable to type 'IteratorReturnResult<undefined>'.
+              Type 'void' is not assignable to type 'undefined'.
+
+  528 |       }
+  529 |       *values() {
+      |        ^~~~~~
+  530 |         for (const name of this.keys()) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/src-DUDR5FOZ.js:537:8 - error SC0001: Property 'entries' in type '_Headers' is not assignable to the same property in base type 'URLSearchParams'.
+  Type '() => IterableIterator<[string, string]>' is not assignable to type '() => URLSearchParamsIterator<[string, string]>'.
+    Type 'IterableIterator<[string, string]>' is missing the following properties from type 'URLSearchParamsIterator<[string, string]>': map, filter, take, drop, and 9 more.
+
+  536 |        */
+  537 |       *entries() {
+      |        ^~~~~~~
+  538 |         for (const name of this.keys()) {
+
+/tmp/scriptc-prime-bundle-probe/packages/coding-agent/dist/bundle/src-DUDR5FOZ.js:542:7 - error SC0001: Property '[Symbol.iterator]' in type '_Headers' is not assignable to the same property in base type 'URLSearchParams'.
+  Type '() => IterableIterator<[string, string]>' is not assignable to type '() => URLSearchParamsIterator<[string, string]>'.
+    Type 'IterableIterator<[string, string]>' is missing the following properties from type 'URLSearchParamsIterator<[string, string]>': map, filter, take, drop, and 9 more.
+
+  541 |       }
+  542 |       [Symbol.iterator]() {
+      |       ^~~~~~~~~~~~~~~~~
+  543 |         return this.entries();
+
+432 errors.
+
+### smoke tail
+no executable

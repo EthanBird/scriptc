@@ -13,7 +13,7 @@ import { COMPOUND_ASSIGN_OPS, CompoundOp, STR_METHODS, UNSUPPORTED_STMT, isStdli
 import { isProvenanceSourceFile } from "../provenance-registry.js";
 import { ambientUndefVarRootOf, lowerImportEquals, nsUndefRead, nsWritableTarget, trapDeclRootOf } from "./lower-namespaces.js";
 import { expandoWritableTarget, lowerExpandoAssignStmt } from "./lower-expando.js";
-import { ForOfIterProjection, lowerForOfArrayIter, lowerForOfMap, lowerForOfSearchParams, lowerForOfSet, objectIterOverIndexShape, strCharsCall } from "./lower-containers.js";
+import { ForOfIterProjection, lowerForOfArrayIter, lowerForOfMap, lowerForOfObjectEntriesIndexRecord, lowerForOfSearchParams, lowerForOfSet, objectIterOverIndexShape, strCharsCall } from "./lower-containers.js";
 import { bindingContextualGenericFnNodeOf, bindingGenericFnAliasInfoOf, bindingGenericFnInfoOf, bindingGenericFnNodeOf, deadUnmappableBinding, implicitLocalFnInfoOf, implicitLocalFnNodeOf, nullishExprUnitOf, nullishGenericBindingUnitOf, recordKeysArrayCall } from "./lower-calls.js";
 import { isMixinFnBinding, mixinResultBindingClassOf } from "./lower-mixins.js";
 import type { ClassInfo, ClassIteratorInfo } from "./lower-classes.js";
@@ -5838,6 +5838,45 @@ function isEsModuleStamp(expr: ts.Expression): boolean {
         const state = sym ? L.numericIterators.get(sym) : undefined;
         if (state?.ctx === L.ctx) {
           return lowerForOfStoredNumericIterator(L, stmt, state, labels);
+        }
+      }
+    }
+    // `for (const [k, v] of Object.entries(r))` over a pure
+    // `Record<string, T>` consumes the entries view directly. The ordinary
+    // Object.entries lowering would need an Array<[string, T]> value (an
+    // array of tuple records); this head-only path preserves the observable
+    // key/value iteration without inventing that broader representation.
+    {
+      let src: ts.Expression = stmt.expression;
+      while (ts.isParenthesizedExpression(src)) src = src.expression;
+      if (
+        ts.isCallExpression(src) &&
+        src.arguments.length === 1 &&
+        !ts.isSpreadElement(src.arguments[0]!) &&
+        !src.questionDotToken &&
+        ts.isPropertyAccessExpression(src.expression) &&
+        !src.expression.questionDotToken &&
+        src.expression.name.text === "entries" &&
+        L.isStdlibGlobal(src.expression.expression, "Object")
+      ) {
+        const arg = src.arguments[0]!;
+        const mapped = L.mapTypeOf(L.typeOf(arg));
+        const probed = mapped?.kind === "record" ? null : probeLower(L, arg);
+        const recT = mapped?.kind === "record" ? mapped : probed?.type.kind === "record" ? probed.type : null;
+        if (recT) {
+          const shape = L.shapes.get(recT.shapeId);
+          if (shape?.indexValue && shape.fields.length === 0) {
+            const receiver = L.lowerExpr(arg);
+            if (receiver.type.kind === "record") {
+              const lowered = lowerForOfObjectEntriesIndexRecord(
+                L,
+                stmt,
+                receiver as IrExpr & { type: IrType & { kind: "record" } },
+                shape,
+              );
+              if (lowered) return lowered;
+            }
+          }
         }
       }
     }

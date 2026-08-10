@@ -15,8 +15,9 @@
  */
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
-import { globSync, mkdirSync, readFileSync, realpathSync } from "node:fs";
+import { globSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { tmpdir } from "node:os";
 import { promisify } from "node:util";
 import { describe, expect, test } from "vitest";
 import { compile } from "@scriptc/compiler";
@@ -159,6 +160,60 @@ describe(`typed-callback boundary (scriptc-only${sanitize ? ", sanitized" : ""})
         "false\n",
     );
     expect(res.exitCode).toBe(0);
+  }, 120_000);
+});
+
+
+describe(`workspace package type ownership (${sanitize ? "sanitized" : "plain"})`, () => {
+  test("workspace d.ts data aliases stay structural while runtime classes stay island", async () => {
+    const root = mkdtempSync(join(tmpdir(), "scriptc-workspace-alias-"));
+    try {
+      const pkgDir = join(root, "packages/workspace-data-alias");
+      const appDir = join(root, "app");
+      const modulesDir = join(appDir, "node_modules");
+      const outDir = join(root, "out");
+      mkdirSync(pkgDir, { recursive: true });
+      mkdirSync(modulesDir, { recursive: true });
+      mkdirSync(outDir, { recursive: true });
+      writeFileSync(join(pkgDir, "package.json"), JSON.stringify({ name: "workspace-data-alias", version: "1.0.0", type: "module", main: "./index.js", types: "./index.d.ts" }));
+      writeFileSync(join(pkgDir, "index.d.ts"), `
+export type ConfigValue = string | string[] | undefined;
+export type Config = Record<string, ConfigValue>;
+export declare function getConfig(): Config;
+export declare class Box { constructor(value: string); value(): string; }
+export type BoxAlias = Box;
+`);
+      writeFileSync(join(pkgDir, "index.js"), `
+export function getConfig() { return { alpha: "A", list: ["x", "y"] }; }
+export class Box { constructor(value) { this._value = value; } value() { return this._value; } }
+`);
+      symlinkSync(pkgDir, join(modulesDir, "workspace-data-alias"), process.platform === "win32" ? "junction" : "dir");
+      writeFileSync(join(appDir, "package.json"), JSON.stringify({ type: "module" }));
+      const entry = join(appDir, "main.ts");
+      writeFileSync(entry, `
+// @dynamic
+import { Box, getConfig } from "workspace-data-alias";
+import type { BoxAlias, Config } from "workspace-data-alias";
+const local: Config = {};
+local["save"] = "ctrl+s";
+local["open"] = ["ctrl+o", "alt+o"];
+for (const [key, value] of Object.entries(local)) {
+  if (value === undefined) console.log("local", key, "undefined");
+  else if (Array.isArray(value)) console.log("local", key, value.join("|"));
+  else console.log("local", key, value);
+}
+const remote: Config = getConfig();
+const alpha = remote["alpha"];
+console.log("remote", typeof alpha === "string" ? alpha : "bad", Array.isArray(remote["list"]));
+const box: BoxAlias = new Box("boxed");
+console.log("box", box.value());
+`);
+      const result = await compile(entry, { outPath: join(outDir, "program"), outDir, sanitize, dynamic: true });
+      if (!result.ok) throw new Error("workspace alias fixture failed to compile:\n" + result.diagnostics.map((d) => `${d.code}: ${d.message}`).join("\n"));
+      const [nodeRes, nativeRes] = await Promise.all([runBinary("node", [entry]), runBinary(result.binaryPath, [])]);
+      expect(nativeRes.stdout.toString("utf8")).toBe(nodeRes.stdout.toString("utf8"));
+      expect(nativeRes.exitCode).toBe(nodeRes.exitCode);
+    } finally { rmSync(root, { recursive: true, force: true }); }
   }, 120_000);
 });
 

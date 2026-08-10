@@ -4,7 +4,7 @@
  * package boundary fences for node_modules-declared symbols. */
 import * as ts from "../ts7/adapter.js";
 import type { Lowerer } from "./lowerer.js";
-import { BOOL, BYTES_U8, DYN, F64, IrExpr, IrStmt, IrType, JSVAL, MAX_ISLAND_CALLBACK_ARITY, STRING, VOID, canConvertToDyn, canMarshalTypedFuncIntoIsland, islandPromisePayloadTag, isUnitType } from "../../ir/nodes.js";
+import { BOOL, BYTES_U8, DYN, F64, IrExpr, IrStmt, IrType, JSVAL, MAX_ISLAND_CALLBACK_ARITY, STRING, VOID, canConvertToDyn, canMarshalTypedFuncIntoIsland, funcOf, islandPromisePayloadTag, isUnitType } from "../../ir/nodes.js";
 import { ISLAND_SURFACE, IslandFnEntry, STATIC_MATH_FNS, boundaryIntoIslandMsg } from "./surfaces.js";
 import { requiresDynamicApiDiag, requiresDynamicPackageDiag } from "../../diagnostics/diagnostic.js";
 import { isCjsJsFile, isJsSourceFile, locOf, npmPackageNameOf } from "../program.js";
@@ -3341,6 +3341,31 @@ export function lowerStaticReadableStreamReaderCall(
       const math: IrExpr = { kind: "jsOp", op: "globalGet", name: "Math", args: [], type: JSVAL, loc };
       const read: IrExpr = { kind: "jsOp", op: "getProp", name: member, args: [math], type: JSVAL, loc };
       return { kind: "jsExit", value: read, type: propType, loc };
+    }
+    if (member === "random" && own(STATIC_MATH_FNS, member) !== undefined) {
+      // Builtin function VALUES need stable JS identity, not a fresh
+      // closure on every property read. Zero-capture closures are interned
+      // by fnName in both backends, so one synthetic helper is the exact
+      // native representation of the singleton Math.random function.
+      const fnName = "%builtin.Math.random";
+      const fnT = funcOf([], F64);
+      if (!L.liftedFns.some((fn) => fn.name === fnName)) {
+        L.liftedFns.push({
+          name: fnName,
+          params: [],
+          returnType: F64,
+          locals: [],
+          body: [
+            {
+              kind: "return",
+              value: { kind: "libCall", fn: "math.random", args: [], type: F64, loc },
+              loc,
+            },
+          ],
+          loc,
+        });
+      }
+      return { kind: "closure", fnName, captures: [], type: fnT, loc };
     }
     if (
       own(ISLAND_SURFACE.math.fns, member) !== undefined ||

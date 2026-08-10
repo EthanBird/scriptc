@@ -2391,15 +2391,32 @@ function lowerOptionalDefaultArg(
     // `Array.from(s)` on a STRING: the string iterator's code-point walk
     // into a fresh string[] (astral characters stay whole, where a
     // charAt/index walk would truncate the surrogate halves) — the same
-    // interned helper `[...s]` lowers through.
+    // interned helper `[...s]` lowers through. A Set<T> is the other direct
+    // iterable with a native snapshot operation: toArray drains its current
+    // insertion order into a fresh T[] (later Set mutations cannot affect
+    // the returned Array, exactly Array.from's materialization semantics).
     if (args.length === 1 && !ts.isObjectLiteralExpression(args[0]!)) {
       const src = L.lowerExpr(args[0]!);
       if (src.type.kind === "string") return strCharsCall(L, src, loc);
+      if (src.type.kind === "set") {
+        const resultT = L.mapTypeOf(L.typeOf(call));
+        if (resultT?.kind !== "array" || !typeEquals(resultT.elem, src.type.elem)) {
+          L.badType(call, L.typeOf(call));
+        }
+        return {
+          kind: "setIntrinsic",
+          method: "toArray",
+          receiver: src,
+          args: [],
+          type: arrayOf(src.type.elem),
+          loc,
+        };
+      }
       L.noLowering(
         "Array.from with this argument shape",
         call,
-        "Array.from({ length: n }, (v, i) => ...) and Array.from(aString) are the lowered " +
-          "forms — copy arrays with [...a] and drain Map/Set iterators where they are made",
+        "Array.from({ length: n }, (v, i) => ...), Array.from(aString), and Array.from(aSet) " +
+          "are the lowered forms — copy arrays with [...a] and keep general iterator objects explicit",
       );
     }
     const n =
@@ -4455,6 +4472,171 @@ const ITER_TERMINALS = new Set(["toArray", "forEach", "reduce", "some", "every",
       return {
         kind: "block",
         body: [{ kind: "varDecl", localId: arr.id, init: iterable, loc }, loop],
+        loc,
+      };
+    } finally {
+      L.scopes.pop();
+    }
+  }
+
+  /** `for (const [k, v] of Object.entries(r))` over a PURE
+   * index-signature record (`Record<string, T>`): consume the entries view
+   * directly instead of materializing `Array<[string, T]>`. Arrays of tuple
+   * records are deliberately not a general ScriptC representation yet, but
+   * the iterator is fully observable without one: Object.entries snapshots
+   * own enumerable keys at the call, then each yielded pair contains the
+   * value read at snapshot-construction time. Pure index-signature records
+   * cannot add/delete keys through aliases while the snapshot is built by
+   * this lowering, so build a key snapshot and read the corresponding value
+   * before entering the user body for each row. The pair itself never
+   * materializes when the head is the dominant `[k, v]` identifier pattern.
+   *
+   * Kept intentionally narrow: hybrid records have declared-field/overflow
+   * ordering and heterogeneous value questions already handled by the full
+   * Object.entries helper, and non-plain heads retain that honest fence. */
+  export function lowerForOfObjectEntriesIndexRecord(
+    L: Lowerer,
+    stmt: ts.ForOfStatement,
+    iterable: IrExpr & { type: IrType & { kind: "record" } },
+    shape: IrRecordShape,
+  ): IrStmt | null {
+    if (!shape.indexValue || shape.fields.length !== 0) return null;
+    if (!ts.isVariableDeclarationList(stmt.initializer)) return null;
+    const list = stmt.initializer;
+    if ((list.flags & ts.NodeFlags.Using) !== 0) return null;
+    const isVar = (list.flags & ts.NodeFlags.BlockScoped) === 0;
+    if (isVar) return null;
+    const decl = list.declarations[0];
+    if (!decl || !ts.isArrayBindingPattern(decl.name) || decl.name.elements.length !== 2) return null;
+    const isPlainIdent = (el: ts.ArrayBindingElement): el is ts.BindingElement & { name: ts.Identifier } =>
+      ts.isBindingElement(el) && el.name !== undefined && ts.isIdentifier(el.name) && !el.initializer && !el.dotDotDotToken;
+    if (!decl.name.elements.every(isPlainIdent)) return null;
+    const els = decl.name.elements as readonly (ts.BindingElement & { name: ts.Identifier })[];
+    // The stdlib Object.entries overload over a pure string index signature
+    // guarantees `[string, V]` regardless of how richly V is spelled in the
+    // checker (template-literal unions such as Prime's KeyId can be too large
+    // or contextual to map a second time at the binding node). The source
+    // record already mapped V successfully as shape.indexValue, so that is
+    // the one authoritative runtime representation for the yielded value.
+    // Do not require an independent checker->IR remap of the two binding
+    // identifiers here; TypeScript has already typechecked the destructure.
+
+    const loc = locOf(stmt);
+    const recT = iterable.type;
+    const iv = shape.indexValue;
+    const keysT = arrayOf(STRING);
+    const valuesT = arrayOf(iv);
+    const isLet = (list.flags & ts.NodeFlags.Let) !== 0;
+    L.scopes.push(new Map());
+    try {
+      const src = L.declareHiddenLocal("%objEntriesSrc", recT);
+      const keys = L.declareHiddenLocal("%objEntriesKeys", keysT);
+      const values = L.declareHiddenLocal("%objEntriesValues", valuesT);
+      const snapI = L.declareHiddenLocal("%objEntriesSnapIndex", F64);
+      const i = L.declareHiddenLocal("%objEntriesIndex", F64);
+      snapI.mutable = true;
+      i.mutable = true;
+      const ref = (localId: string, type: IrType): IrExpr => ({ kind: "varRef", localId, type, loc });
+      const num = (value: number): IrExpr => ({ kind: "numLit", value, type: F64, loc });
+      const keyAt = (indexLocalId: string): IrExpr => ({
+        kind: "arrayGet",
+        arr: ref(keys.id, keysT),
+        index: ref(indexLocalId, F64),
+        type: STRING,
+        loc,
+      });
+      const keyRead = (): IrExpr => keyAt(i.id);
+      const valueRead = (): IrExpr => ({
+        kind: "arrayGet",
+        arr: ref(values.id, valuesT),
+        index: ref(i.id, F64),
+        type: iv,
+        loc,
+      });
+      const k = L.declareLocal(els[0]!.name, els[0]!.name.text, STRING, isLet);
+      const v = L.declareLocal(els[1]!.name, els[1]!.name.text, iv, isLet);
+      const binds: IrStmt[] = [
+        { kind: "varDecl", localId: k.id, init: keyRead(), loc },
+        { kind: "varDecl", localId: v.id, init: valueRead(), loc },
+      ];
+      // Object.entries creates its complete entries array before the
+      // consumer iterates. Snapshot values now, not lazily in the user
+      // loop, so mutating a later property inside an earlier iteration
+      // cannot change an already-created [key, value] pair.
+      const snapshotLoop: IrStmt = {
+        kind: "for",
+        init: { kind: "varDecl", localId: snapI.id, init: num(0), loc },
+        cond: {
+          kind: "bin",
+          op: "<",
+          left: ref(snapI.id, F64),
+          right: { kind: "arrIntrinsic", method: "length", receiver: ref(keys.id, keysT), args: [], type: F64, loc },
+          type: BOOL,
+          loc,
+        },
+        update: {
+          kind: "assign",
+          localId: snapI.id,
+          value: { kind: "bin", op: "+", left: ref(snapI.id, F64), right: num(1), type: F64, loc },
+          loc,
+        },
+        body: [{
+          kind: "exprStmt",
+          expr: {
+            kind: "arrIntrinsic",
+            method: "push",
+            receiver: ref(values.id, valuesT),
+            args: [{
+              kind: "recordKeyGet",
+              obj: ref(src.id, recT),
+              shapeId: recT.shapeId,
+              key: keyAt(snapI.id),
+              overflowOnly: true,
+              type: iv,
+              loc,
+            }],
+            type: F64,
+            loc,
+          },
+          loc,
+        }],
+        loc,
+      };
+      const body = L.inCtl("loop", () => L.lowerScopedBlock(stmt.statement));
+      const loop: IrStmt = {
+        kind: "for",
+        init: { kind: "varDecl", localId: i.id, init: num(0), loc },
+        cond: {
+          kind: "bin",
+          op: "<",
+          left: ref(i.id, F64),
+          right: { kind: "arrIntrinsic", method: "length", receiver: ref(keys.id, keysT), args: [], type: F64, loc },
+          type: BOOL,
+          loc,
+        },
+        update: {
+          kind: "assign",
+          localId: i.id,
+          value: { kind: "bin", op: "+", left: ref(i.id, F64), right: num(1), type: F64, loc },
+          loc,
+        },
+        body: [...binds, ...body],
+        loc,
+      };
+      return {
+        kind: "block",
+        body: [
+          { kind: "varDecl", localId: src.id, init: iterable, loc },
+          {
+            kind: "varDecl",
+            localId: keys.id,
+            init: { kind: "recordOvfKeys", obj: ref(src.id, recT), shapeId: recT.shapeId, type: keysT, loc },
+            loc,
+          },
+          { kind: "varDecl", localId: values.id, init: { kind: "arrayLit", elems: [], type: valuesT, loc }, loc },
+          snapshotLoop,
+          loop,
+        ],
         loc,
       };
     } finally {
