@@ -4219,6 +4219,7 @@ ScrJsval *scr_jsval_plus(ScrJsval *a); /* unary + (ToNumber) */
 int scr_jsval_truthy(ScrJsval *a);
 ScrStr *scr_jsval_typeof(ScrJsval *a);
 ScrStr *scr_jsval_to_str(ScrJsval *a); /* String(v); NULL = bridged */
+ScrStr *scr_jsval_error_message(ScrJsval *a); /* Error(message): undefined => empty */
 
 /* Property/element access and calls. Names are NUL-terminated ScrStr
  * (identifier property names from source); computed keys are jsvals. */

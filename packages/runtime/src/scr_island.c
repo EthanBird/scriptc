@@ -1476,6 +1476,12 @@ ScrStr *scr_jsval_to_str(ScrJsval *a) {
   return isl_js_to_str(a->v); /* NULL = bridged (e.g. a symbol) */
 }
 
+ScrStr *scr_jsval_error_message(ScrJsval *a) {
+  isl_entry();
+  if (JS_IsUndefined(a->v)) return scr_str_new("", 0);
+  return isl_js_to_str(a->v);
+}
+
 /* ── property/element access and calls ────────────────────────────────── */
 
 ScrJsval *scr_jsval_get_prop(ScrJsval *o, const ScrStr *name) {

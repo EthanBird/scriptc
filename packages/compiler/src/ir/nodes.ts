@@ -1651,6 +1651,7 @@ export type IrLibFn =
   | "fetch.streamFrom"
   | "fetch.readerRead"
   | "island.eval"
+  | "island.errorMessage"
   /** Load an embedded npm package's runtime entry in the island (cached by
    * the engine's module registry) and take one export: args are the entry
    * KEY (an embedded module's key, from IrModule.embedded) and the export
@@ -6799,6 +6800,7 @@ export const MAY_THROW_LIB_FNS: ReadonlySet<IrLibFn> = new Set([
   "https.requestFnCb",
   "rl.question",
   "island.eval",
+  "island.errorMessage",
   "island.import",
   "island.castFail",
   "json.parse",

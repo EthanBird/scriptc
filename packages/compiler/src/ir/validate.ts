@@ -100,6 +100,7 @@ export const LIB_FN_SIGS: Record<IrLibFn, { argTypes: (IrType | null)[]; result:
   // The chunk/result record depends on ReadableStream<T>; validated below.
   "fetch.readerRead": { argTypes: [DYN], result: VOID },
   "island.eval": { argTypes: [STRING], result: STRING },
+  "island.errorMessage": { argTypes: [JSVAL], result: STRING },
   "island.import": { argTypes: [STRING, STRING, STRING], result: JSVAL },
   "island.importDyn": { argTypes: [STRING], result: JSVAL },
   // Result is the cast's mapped PROMISE target (program-dependent) —

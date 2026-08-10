@@ -4668,6 +4668,15 @@ export function lowerClassMembers(L: Lowerer, info: ClassInfo): IrFunction[] {
     if (value.kind === "unitLit" && value.unit === "undefined") {
       return { kind: "strLit", value: "", type: STRING, loc };
     }
+    if (value.kind === "unitLit" && value.unit === "null") {
+      return { kind: "strLit", value: "null", type: STRING, loc };
+    }
+    if (value.type.kind === "f64" || value.type.kind === "bool") {
+      return L.ensureString(value, args[0]!);
+    }
+    if (value.type.kind === "jsval") {
+      return { kind: "libCall", fn: "island.errorMessage", args: [value], type: STRING, loc };
+    }
     L.unsupported(
       "SC1090",
       args[0]!,
