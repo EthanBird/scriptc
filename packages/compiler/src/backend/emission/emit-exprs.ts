@@ -2979,6 +2979,8 @@ export function emitExpr(E: CEmitter, e: IrExpr): Temp {
             // the source; returns +1 String(result), or bridges the island
             // exception into the cell (may-throw seed set).
             return finish(`scr_island_eval(${arg(0)})`);
+          case "island.errorMessage":
+            return finish(`scr_jsval_error_message(${arg(0)})`);
           case "island.import":
             // --dynamic builds only. Loads an EMBEDDED npm module (main
             // registered the table before %main ran) through the island's
