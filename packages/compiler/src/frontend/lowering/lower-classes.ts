@@ -5394,6 +5394,17 @@ export function lowerNew(L: Lowerer, expr: ts.NewExpression): IrExpr {
         }
         if (mapped?.kind === "set") return { kind: "setNew", type: mapped, loc };
         const targs = L.checker.getTypeArguments(tsType as ts.TypeReference);
+        // `new Set()` in generated JavaScript infers Set<any>. Mirror the
+        // existing Map<any, any>/WeakSet loose-JS posture: construct an
+        // opaque checked-dynamic identity value so the containing class or
+        // module can compile; reached methods still fence at their use.
+        if (
+          L.looseJs && isJsSourceFile(expr.getSourceFile()) &&
+          (expr.arguments?.length ?? 0) === 0 &&
+          targs.length > 0 && targs.every((t) => (t.flags & ts.TypeFlags.Any) !== 0)
+        ) {
+          return { kind: "dynObjLit", type: DYN, loc };
+        }
         if (targs[0]) {
           L.unsupported(
             "SC1090",
