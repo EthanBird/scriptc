@@ -1,6 +1,0 @@
-claimed compatibility task exited nonzero before producing tracked diagnostics
-execute outcome: failure
-execute status: 1
-claim commit: 3ea69b55b5ffb8d193e511015f9410db6ff7d324
---- task log tail ---
-expected one condition anchor, found 0
