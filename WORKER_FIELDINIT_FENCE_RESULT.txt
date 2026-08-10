@@ -1,0 +1,73 @@
+FIELDINIT_FENCE=PASS
+prime_build_status=1
+prime_smoke_status=125
+prime_diagnostic_count=67
+--- diagnostics ---
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:9:3 - error SC9001: internal compiler error: in %fn2862: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:34:3 - error SC9001: internal compiler error: in %fn2863: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:34:3 - error SC9001: internal compiler error: in %fn2863: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:34:3 - error SC9001: internal compiler error: in %fn2863: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-2T7M7VJ4.js:34:3 - error SC9001: internal compiler error: in %fn2863: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1367:3 - error SC9001: internal compiler error: in %fn4762: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:1367:3 - error SC9001: internal compiler error: in %fn4762: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3596:3 - error SC9001: internal compiler error: in %fn4799: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3596:3 - error SC9001: internal compiler error: in %fn4799: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3596:3 - error SC9001: internal compiler error: in %fn4799: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3596:3 - error SC9001: internal compiler error: in %fn4799: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3596:3 - error SC9001: internal compiler error: in %fn4799: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3596:3 - error SC9001: internal compiler error: in %fn4799: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:3596:3 - error SC9001: internal compiler error: in %fn4799: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4606:3 - error SC9001: internal compiler error: in %fn4855: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:4606:3 - error SC9001: internal compiler error: in %fn4855: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-EEFPTOXD.js:10651:3 - error SC9001: internal compiler error: in %fn4949: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/chunk-ENTVCTJV.js:511:9 - error SC9001: internal compiler error: in %fn4681: arraySet on non-array dyn — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/code-highlighter-MVLOIDOV.js:43512:3 - error SC9001: internal compiler error: in %fn11103: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/code-highlighter-MVLOIDOV.js:43512:3 - error SC9001: internal compiler error: in %fn11103: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/code-highlighter-MVLOIDOV.js:43512:3 - error SC9001: internal compiler error: in %fn11103: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/code-highlighter-MVLOIDOV.js:43512:3 - error SC9001: internal compiler error: in %fn11103: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/code-highlighter-MVLOIDOV.js:43512:3 - error SC9001: internal compiler error: in %fn11103: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/code-highlighter-MVLOIDOV.js:43737:3 - error SC9001: internal compiler error: in %fn11110: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/code-highlighter-MVLOIDOV.js:43737:3 - error SC9001: internal compiler error: in %fn11110: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/dist-WOIMTDM3.js:13:3 - error SC9001: internal compiler error: in %fn12200: local "%setVal" has bare unit type undefinedT — please report this
+/tmp/prime-fieldinit-fence/packages/coding-agent/dist/bundle/dist-WOIMTDM3.js:13:3 - error SC9001: internal compiler error: in %fn12200: local "%setVal" has bare unit type undefinedT — please report this
+--- smoke ---

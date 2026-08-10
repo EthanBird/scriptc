@@ -4318,6 +4318,7 @@ export function lowerClassMembers(L: Lowerer, info: ClassInfo): IrFunction[] {
       if (!f.initializer) continue;
       L.stats.statementsTotal++;
       L.bumpFileStat(locOf(f.initializer).file, "total");
+      const diagsBefore = L.diags.length;
       try {
         const value = L.lowerExprExpecting(f.initializer, f.type);
         out.push({
@@ -4332,6 +4333,33 @@ export function lowerClassMembers(L: Lowerer, info: ClassInfo): IrFunction[] {
         if (!(e instanceof PoisonError)) throw e;
         L.stats.statementsFailed++;
         L.bumpFileStat(locOf(f.initializer).file, "failed");
+        // JS statements already defer unsupported lowering to a runtimeFence.
+        // Class field initializers are executable statements too, but historically
+        // left their poison diagnostic on the build. Under --loose-js mirror the
+        // statement rule: constructing this class reaches the fence; a program
+        // that never constructs it can still compile and run. ICEs remain build
+        // failures, and regular JS/TS keeps the historical posture.
+        if (L.looseJs && isJsSourceFile(f.initializer.getSourceFile()) && L.diagSink === null) {
+          const captured = L.diags.splice(diagsBefore);
+          const ice = captured.filter((d) => d.code === "SC9001");
+          if (ice.length > 0) {
+            L.diags.push(...captured);
+          } else {
+            L.runtimeFences.push(...captured);
+            const first = captured[0];
+            const floc = first?.loc ?? locOf(f.initializer);
+            const fsf = L.program.getSourceFile(floc.file) ?? f.initializer.getSourceFile();
+            const pos = ts.getLineAndCharacterOfPosition(fsf, floc.start);
+            out.push({
+              kind: "runtimeFence",
+              code: first?.code ?? "SC1090",
+              message: first
+                ? `${first.message} [${first.code} at ${floc.file}:${pos.line + 1}]`
+                : `this class field initializer has no static lowering [SC1090 at ${floc.file}:${pos.line + 1}]`,
+              loc: locOf(f.initializer),
+            });
+          }
+        }
       }
     }
     return out;
