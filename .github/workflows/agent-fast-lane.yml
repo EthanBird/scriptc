@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - agent/prime-compat-phase1
+      - agent/prime-worker-**
 
 concurrency:
-  group: agent-fast-lane-prime-compat
+  group: agent-fast-lane-${{ github.ref_name }}
   cancel-in-progress: false
 
 permissions:
@@ -19,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: EthanBird/scriptc
-          ref: agent/prime-compat-phase1
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Claim staged task first
@@ -39,7 +40,7 @@ jobs:
           git add -A
           git diff --cached --check
           git commit -m "Claim staged compatibility task"
-          git push origin HEAD:agent/prime-compat-phase1
+          git push origin "HEAD:${{ github.ref_name }}"
           echo "claimed=true" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v4
@@ -85,6 +86,7 @@ jobs:
             if [ "${{ steps.execute.outcome }}" != "success" ]; then
               {
                 echo "claimed compatibility task exited nonzero before producing tracked diagnostics"
+                echo "worker branch: ${{ github.ref_name }}"
                 echo "execute outcome: ${{ steps.execute.outcome }}"
                 echo "execute status: ${{ steps.execute.outputs.status }}"
                 echo "claim commit: $(git rev-parse HEAD)"
@@ -98,11 +100,8 @@ jobs:
             fi
           fi
           git commit -m "Advance Prime Agent compatibility"
-          # A diagnostic/oracle commit may have landed while this task was
-          # executing. Rebase the validated result instead of overwriting it;
-          # a real source conflict fails loudly and leaves the branch intact.
-          git pull --rebase origin agent/prime-compat-phase1
-          git push origin HEAD:agent/prime-compat-phase1
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"
 
       - name: Enforce task execution
         if: always() && steps.claim.outputs.claimed == 'true'
