@@ -1,0 +1,166 @@
+$ pnpm build
+$ pnpm -r --filter "./packages/*" run build
+Scope: 3 of 4 workspace projects
+packages/runtime build$ true
+packages/runtime build: Done
+packages/compiler build$ node node_modules/typescript5/bin/tsc -p tsconfig.json
+packages/compiler build: Done
+packages/cli build$ node ../../node_modules/typescript/bin/tsc -p tsconfig.json
+packages/cli build: Done
+[exit 0]
+$ pnpm lint
+$ eslint packages/compiler/src packages/cli/src
+[exit 0]
+$ pnpm exec vitest run tests/harness/differential.test.ts -t 3011-dynamic-package-data-alias
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90m/home/runner/work/scriptc/scriptc[39m
+
+ [32m✓[39m tests/harness/differential.test.ts [2m([22m[2m1073 tests[22m[2m | [22m[33m1072 skipped[39m[2m)[22m[33m 33530[2mms[22m[39m
+   [33m[2m✓[22m[39m differential corpus (1073 programs)[2m > [22m3011-dynamic-package-data-alias/main.ts [33m 33524[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m1072 skipped[39m[90m (1073)[39m
+[2m   Start at [22m 00:03:06
+[2m   Duration [22m 37.01s[2m (transform 2.26s, setup 0ms, collect 3.18s, tests 33.53s, environment 0ms, prepare 57ms)[22m
+
+[exit 0]
+$ pnpm exec vitest run tests/harness/differential.test.ts -t 3011-dynamic-package-data-alias
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90m/home/runner/work/scriptc/scriptc[39m
+
+ [32m✓[39m tests/harness/differential.test.ts [2m([22m[2m1073 tests[22m[2m | [22m[33m1072 skipped[39m[2m)[22m[33m 21213[2mms[22m[39m
+   [33m[2m✓[22m[39m differential corpus (1073 programs, sanitized)[2m > [22m3011-dynamic-package-data-alias/main.ts [33m 21207[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m1072 skipped[39m[90m (1073)[39m
+[2m   Start at [22m 00:03:44
+[2m   Duration [22m 24.64s[2m (transform 2.23s, setup 0ms, collect 3.12s, tests 21.21s, environment 0ms, prepare 57ms)[22m
+
+[exit 0]
+$ pnpm exec vitest run tests/harness/llvm-differential.test.ts -t 3011-dynamic-package-data-alias
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90m/home/runner/work/scriptc/scriptc[39m
+
+[90mstdout[2m | tests/harness/llvm-differential.test.ts[2m > [22m[2mllvm differential corpus (1073 programs)
+[22m[39mllvm tier: 0/1073 corpus programs claimed; top refusals: npmEmbedding×1
+
+ [32m✓[39m tests/harness/llvm-differential.test.ts [2m([22m[2m1075 tests[22m[2m | [22m[33m1074 skipped[39m[2m)[22m[33m 1038[2mms[22m[39m
+   [33m[2m✓[22m[39m llvm differential corpus (1073 programs)[2m > [22m3011-dynamic-package-data-alias/main.ts [33m 1031[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m1074 skipped[39m[90m (1075)[39m
+[2m   Start at [22m 00:04:10
+[2m   Duration [22m 4.54s[2m (transform 2.27s, setup 0ms, collect 3.18s, tests 1.04s, environment 0ms, prepare 57ms)[22m
+
+[exit 0]
+$ pnpm exec vitest run tests/harness/llvm-differential.test.ts -t 3011-dynamic-package-data-alias
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90m/home/runner/work/scriptc/scriptc[39m
+
+[90mstdout[2m | tests/harness/llvm-differential.test.ts[2m > [22m[2mllvm differential corpus (1073 programs, sanitized)
+[22m[39mllvm tier: 0/1073 corpus programs claimed; top refusals: npmEmbedding×1
+
+ [32m✓[39m tests/harness/llvm-differential.test.ts [2m([22m[2m1075 tests[22m[2m | [22m[33m1074 skipped[39m[2m)[22m[33m 1226[2mms[22m[39m
+   [33m[2m✓[22m[39m llvm differential corpus (1073 programs, sanitized)[2m > [22m3011-dynamic-package-data-alias/main.ts [33m 1219[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m1074 skipped[39m[90m (1075)[39m
+[2m   Start at [22m 00:04:15
+[2m   Duration [22m 4.68s[2m (transform 2.25s, setup 0ms, collect 3.15s, tests 1.23s, environment 0ms, prepare 68ms)[22m
+
+[exit 0]
+$ pnpm exec vitest run tests/harness/npm.test.ts -t workspace d.ts data aliases stay structural
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90m/home/runner/work/scriptc/scriptc[39m
+
+ [31m❯[39m tests/harness/npm.test.ts [2m([22m[2m61 tests[22m[2m | [22m[31m1 failed[39m[2m | [22m[33m60 skipped[39m[2m)[22m[32m 257[2mms[22m[39m
+   [2m[90m↓[39m[22m typed-callback boundary (scriptc-only)[2m > [22ma lying engine argument throws a TypeError into the package
+   [2m[90m↓[39m[22m typed-callback boundary (scriptc-only)[2m > [22mrequire of an unshimmed builtin throws the island's lazy error at the call
+   [2m[90m↓[39m[22m typed-callback boundary (scriptc-only)[2m > [22mrequire of a .node native addon throws ERR_DLOPEN_FAILED at the call
+   [2m[90m↓[39m[22m typed-callback boundary (scriptc-only)[2m > [22mWebAssembly is a rejecting stub with real error classes
+[31m   [31m×[31m workspace package type ownership (plain)[2m > [22mworkspace d.ts data aliases stay structural while runtime classes stay island[39m[32m 256[2mms[22m[39m
+[31m     → workspace alias fixture failed to compile:
+SC1090: '??' on 'string[] | string | undefined' (the non-nullish result is a sub-union; check a discriminant field first) is not supported yet[39m
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mabandoned-handles
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22many-chaining
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22massert-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mbuffer-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mbuiltin-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mbytes-exit
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcallbacks
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mchain
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcjs-esm-named
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcjs-lexer-aligned
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcjs-lexer-invisible
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcjs-named
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mclass-construct
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcreate-require
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcrypto-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mdual-entry
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mdual-package-kinds
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mdynamic-import-local
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mdynamic-import
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mesbuild-require
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mesm-entries
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mesm-missing-default
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mesm-missing-export
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mfs-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mhoisted-workspace
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mimport-refusal
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22misland-array-exits
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22misland-instanceof-regexp
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22misland-json-stringify
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22misland-registry
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22misland-timers
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22misland-web-plumbing
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mjsval-into-dyn
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mjsval-iterate
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mlazy-traps
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mmisc-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mnamespace
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mnpm-reexport
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mpromise-bridge-forever
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mpromise-bridge-unhandled
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mpromise-bridge
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mscoped-nested
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mself-name
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mside-effect-order
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mstream-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mtop-level-await-pending-exit-code
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mtop-level-await-pending-exit-listener
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mtyped-callbacks
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mutil-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mweb-streams
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mworkspace-copied
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mworkspace-linked
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mworkspace-unclean
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mzlib-shims
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcommander-calc
+   [2m[90m↓[39m[22m npm differential (56 programs)[2m > [22mcommander-calc-async
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/harness/npm.test.ts[2m > [22mworkspace package type ownership (plain)[2m > [22mworkspace d.ts data aliases stay structural while runtime classes stay island
+[31m[1mError[22m: workspace alias fixture failed to compile:
+SC1090: '??' on 'string[] | string | undefined' (the non-nullish result is a sub-union; check a discriminant field first) is not supported yet[39m
+[36m [2m❯[22m tests/harness/npm.test.ts:[2m220:15[22m[39m
+    [90m218| [39m      })[33m;[39m
+    [90m219| [39m      [35mif[39m ([33m![39mresult[33m.[39mok) {
+    [90m220| [39m        throw new Error("workspace alias fixture failed to compile:\n"…
+    [90m   | [39m              [31m^[39m
+    [90m221| [39m      }
+    [90m222| [39m      [35mconst[39m [nodeRes[33m,[39m nativeRes] [33m=[39m [35mawait[39m [33mPromise[39m[33m.[39m[34mall[39m([
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m60 skipped[39m[90m (61)[39m
+[2m   Start at [22m 00:04:21
+[2m   Duration [22m 3.67s[2m (transform 2.29s, setup 0ms, collect 3.12s, tests 257ms, environment 0ms, prepare 61ms)[22m
+
+
+::error file=/home/runner/work/scriptc/scriptc/tests/harness/npm.test.ts,title=tests/harness/npm.test.ts > workspace package type ownership (plain) > workspace d.ts data aliases stay structural while runtime classes stay island,line=220,column=15::Error: workspace alias fixture failed to compile:%0ASC1090: '??' on 'string[] | string | undefined' (the non-nullish result is a sub-union; check a discriminant field first) is not supported yet%0A ❯ tests/harness/npm.test.ts:220:15%0A%0A
+[exit 1]
+
+WORKSPACE_ALIAS_REFINEMENT=FAIL; source/tests reverted
