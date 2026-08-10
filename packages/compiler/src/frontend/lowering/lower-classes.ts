@@ -716,6 +716,53 @@ export function collectClassShape(L: Lowerer, decl: ts.ClassDeclaration): void {
     }
   }
 
+
+/** `--loose-js` whole-program dead field elimination for generated JS
+ * aliases such as Marked's `options = this.setOptions`. A prototype method
+ * read is side-effect-free. Elide only when no property/element access in
+ * the non-declaration program resolves back to this exact field declaration.
+ * A real use disables the optimization and preserves the method-value fence. */
+function looseJsDeadMethodAliasField(
+  L: Lowerer,
+  decl: ts.ClassLikeDeclaration,
+  member: ts.PropertyDeclaration,
+): boolean {
+  if (!L.looseJs || !isJsSourceFile(decl.getSourceFile())) return false;
+  if (!ts.isIdentifier(member.name) || member.initializer === undefined) return false;
+  const fieldName = member.name.text;
+  let init: ts.Expression = member.initializer;
+  while (ts.isParenthesizedExpression(init)) init = init.expression;
+  if (!ts.isPropertyAccessExpression(init) || init.expression.kind !== ts.SyntaxKind.ThisKeyword) return false;
+  const methodSym = L.checker.getSymbolAtLocation(init.name);
+  if (!methodSym) return false;
+  const realOwnMethod = L.checker.declarationsOf(methodSym).some(
+    (d) => ts.isMethodDeclaration(d) && d.parent === decl && !d.modifiers?.some((m) => m.kind === ts.SyntaxKind.StaticKeyword),
+  );
+  if (!realOwnMethod) return false;
+  const isThisField = (sym: ts.Symbol | undefined | null): boolean =>
+    !!sym && L.checker.declarationsOf(sym).some((d) => d === member);
+  let referenced = false;
+  for (const sf of L.program.getSourceFiles()) {
+    if (sf.isDeclarationFile || referenced) continue;
+    ts.walkPreorder(sf, (node) => {
+      if (referenced) return "skip";
+      if (ts.isPropertyAccessExpression(node) && node.name.text === fieldName) {
+        const prop = L.checker.getPropertyOfType(L.typeOf(node.expression), fieldName);
+        if (isThisField(prop)) { referenced = true; return "skip"; }
+      }
+      if (
+        ts.isElementAccessExpression(node) && node.argumentExpression !== undefined &&
+        ts.isStringLiteralLike(node.argumentExpression) && node.argumentExpression.text === fieldName
+      ) {
+        const prop = L.checker.getPropertyOfType(L.typeOf(node.expression), fieldName);
+        if (isThisField(prop)) { referenced = true; return "skip"; }
+      }
+      return undefined;
+    });
+  }
+  return !referenced;
+}
+
 export function collectClassShapeInner(L: Lowerer, decl: ts.ClassLikeDeclaration, jsNameOverride?: string,
     inst?: { family: ClassInfo; name: string; bindings: Map<ts.Symbol, IrType>; typeArgsText: string; ordinal: number },
     /** MIXIN instantiation mode (lower-mixins.ts): the class inside a
@@ -1474,6 +1521,7 @@ export function collectClassShapeInner(L: Lowerer, decl: ts.ClassLikeDeclaration
           // undefined arm (undefFieldInitLineC — Node defines the property
           // as undefined on construction, verified), and reads/writes ride
           // the ordinary undefined-armed union machinery.
+          if (looseJsDeadMethodAliasField(L, decl, member)) continue;
           const type = L.irTypeOf(member.name);
           if (type.kind === "void") L.badType(member.name, L.typeOf(member.name));
           // dyn stays out of class fields (KEEP NARROW; record
