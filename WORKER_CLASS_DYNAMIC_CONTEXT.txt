@@ -1,0 +1,226 @@
+build_status=1
+file=/tmp/prime-classdyn-context/packages/coding-agent/dist/bundle/chunk-GDOWJLS4.js
+line=26007
+
+=== context 25907-26127 ===
+025907:    * Sends a complete JSON-RPC result payload.
+025908:    */
+025909:   respondWithResult(result) {
+025910:     if (this.didRespond) {
+025911:       return rejectedPromise(new Error("JSON-RPC request already responded"));
+025912:     }
+025913:     this.didRespond = true;
+025914:     return this.sendResult(result).finally(() => {
+025915:       this.finishRequest?.();
+025916:     });
+025917:   }
+025918: };
+025919: var HandlerRegistration = class {
+025920:   disposeHandler;
+025921:   active = true;
+025922:   constructor(disposeHandler) {
+025923:     this.disposeHandler = disposeHandler;
+025924:   }
+025925:   /**
+025926:    * Unregisters the associated handler.
+025927:    */
+025928:   dispose() {
+025929:     if (!this.active) {
+025930:       return;
+025931:     }
+025932:     this.active = false;
+025933:     this.disposeHandler();
+025934:   }
+025935:   /**
+025936:    * Supports explicit resource management with `using`.
+025937:    */
+025938:   [Symbol.dispose]() {
+025939:     this.dispose();
+025940:   }
+025941:   /**
+025942:    * Returns this registration for call sites that intentionally keep it active.
+025943:    */
+025944:   runIndefinitely() {
+025945:     return this;
+025946:   }
+025947: };
+025948: var ConnectionContext = class {
+025949:   connection;
+025950:   constructor(connection) {
+025951:     this.connection = connection;
+025952:   }
+025953:   /**
+025954:    * Sends a request over the connection.
+025955:    */
+025956:   sendRequest(method, params, mapResponse, options) {
+025957:     return this.connection.sendRequest(method, params, mapResponse, options);
+025958:   }
+025959:   /**
+025960:    * Sends a notification over the connection.
+025961:    */
+025962:   sendNotification(method, params) {
+025963:     return this.connection.sendNotification(method, params);
+025964:   }
+025965:   /**
+025966:    * Sends a non-empty JSON-RPC batch in one transport message.
+025967:    */
+025968:   sendBatch(entries) {
+025969:     return this.connection.sendBatch(entries);
+025970:   }
+025971:   /**
+025972:    * Sends a protocol-level request cancellation notification.
+025973:    */
+025974:   sendCancelRequest(requestId) {
+025975:     return this.connection.sendCancelRequest(requestId);
+025976:   }
+025977:   /**
+025978:    * Registers a handler that can be disposed independently.
+025979:    */
+025980:   addDynamicHandler(handler) {
+025981:     return this.connection.addDynamicHandler(handler);
+025982:   }
+025983:   /**
+025984:    * AbortSignal that aborts when the connection closes.
+025985:    */
+025986:   get signal() {
+025987:     return this.connection.signal;
+025988:   }
+025989:   /**
+025990:    * Promise that resolves when the connection closes.
+025991:    */
+025992:   get closed() {
+025993:     return this.connection.closed;
+025994:   }
+025995: };
+025996: var Connection = class {
+025997:   pendingResponses = /* @__PURE__ */ new Map();
+025998:   incomingRequests = /* @__PURE__ */ new Map();
+025999:   nextRequestId = 0;
+026000:   staticHandlers = [];
+026001:   dynamicHandlers = /* @__PURE__ */ new Set();
+026002:   stream;
+026003:   writeQueue = Promise.resolve();
+026004:   abortController = new AbortController();
+026005:   closedPromise;
+026006:   retryQueue = [];
+026007:   context = new ConnectionContext(this);
+026008:   receiveReader;
+026009:   allowBatches = true;
+026010:   constructor(requestHandlerOrStream, notificationHandlerOrHandlers, streamOrOptions, options) {
+026011:     if (typeof requestHandlerOrStream === "function") {
+026012:       const requestHandler = requestHandlerOrStream;
+026013:       const notificationHandler = notificationHandlerOrHandlers;
+026014:       const stream2 = streamOrOptions;
+026015:       this.initialize(stream2, [
+026016:         ...options?.handlers ?? [],
+026017:         this.legacyHandler(requestHandler, notificationHandler)
+026018:       ], options);
+026019:       return;
+026020:     }
+026021:     const stream = requestHandlerOrStream;
+026022:     const handlers = notificationHandlerOrHandlers;
+026023:     const connectionOptions = streamOrOptions;
+026024:     this.initialize(stream, [...connectionOptions?.handlers ?? [], ...handlers], connectionOptions);
+026025:   }
+026026:   /**
+026027:    * Creates a builder for configuring a handler-based connection.
+026028:    */
+026029:   static builder() {
+026030:     return new ConnectionBuilder();
+026031:   }
+026032:   /**
+026033:    * Runs an operation while the connection is open, then closes the connection.
+026034:    *
+026035:    * If the stream closes before `op` settles, the returned promise rejects with
+026036:    * the connection close reason.
+026037:    */
+026038:   runUntil(op) {
+026039:     let opSettled = false;
+026040:     const opPromise = Promise.resolve().then(() => op(this.context)).finally(() => {
+026041:       opSettled = true;
+026042:     });
+026043:     const closedPromise = this.closed.then(() => {
+026044:       if (opSettled) {
+026045:         return new Promise(() => {
+026046:         });
+026047:       }
+026048:       throw this.closedReason();
+026049:     });
+026050:     return Promise.race([opPromise, closedPromise]).finally(() => {
+026051:       opSettled = true;
+026052:       this.close();
+026053:     });
+026054:   }
+026055:   /**
+026056:    * Adds a handler after the connection has started.
+026057:    *
+026058:    * Any messages queued with `Handled.no(message, true)` are retried after the
+026059:    * handler is added.
+026060:    */
+026061:   addDynamicHandler(handler) {
+026062:     this.dynamicHandlers.add(handler);
+026063:     if (this.retryQueue.length > 0) {
+026064:       for (const message of this.retryQueue.splice(0)) {
+026065:         void this.processIncomingMessage(message).catch((error) => this.close(error));
+026066:       }
+026067:     }
+026068:     return new HandlerRegistration(() => {
+026069:       this.dynamicHandlers.delete(handler);
+026070:     });
+026071:   }
+026072:   /**
+026073:    * AbortSignal that aborts when the connection closes.
+026074:    */
+026075:   get signal() {
+026076:     return this.abortController.signal;
+026077:   }
+026078:   /**
+026079:    * Promise that resolves when the connection closes.
+026080:    */
+026081:   get closed() {
+026082:     return this.closedPromise;
+026083:   }
+026084:   /** @internal */
+026085:   getContext() {
+026086:     return this.context;
+026087:   }
+026088:   /**
+026089:    * Sends a JSON-RPC request.
+026090:    *
+026091:    * `mapResponse` can convert the raw result before the returned promise
+026092:    * resolves.
+026093:    */
+026094:   sendRequest(method, params, mapResponse, options = {}) {
+026095:     if (this.abortController.signal.aborted) {
+026096:       return rejectedPromise(this.closedReason());
+026097:     }
+026098:     const request = this.prepareRequest(method, params, mapResponse, options);
+026099:     const requestSent = this.sendWireMessage(request.message);
+026100:     void requestSent.catch(() => {
+026101:     });
+026102:     if (options.cancellationSignal?.aborted) {
+026103:       request.cancel();
+026104:     }
+026105:     return request.response;
+026106:   }
+026107:   /**
+026108:    * Sends a non-empty JSON-RPC batch in one transport message.
+026109:    *
+026110:    * Requests and notifications are processed independently by the peer. The
+026111:    * returned tuple preserves the input order: request entries resolve to their
+026112:    * mapped response, while notification entries resolve to `undefined`.
+026113:    */
+026114:   sendBatch(entries) {
+026115:     if (this.abortController.signal.aborted) {
+026116:       return rejectedPromise(this.closedReason());
+026117:     }
+026118:     if (!this.allowBatches) {
+026119:       return rejectedPromise(new TypeError("JSON-RPC batches are not supported on this connection"));
+026120:     }
+026121:     if (entries.length === 0) {
+026122:       return rejectedPromise(new TypeError("JSON-RPC batch must contain at least one entry"));
+026123:     }
+026124:     const messages = [];
+026125:     const cancellations = [];
+026126:     const outputs = [];
+026127:     for (const entry of entries) {
