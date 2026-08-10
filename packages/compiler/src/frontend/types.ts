@@ -3,6 +3,7 @@ import type { IrRecordShape, IrType, IrUnionDef } from "../ir/nodes.js";
 import { arrayOf, BOOL, bytesOf, canConvertToDyn, CHILD_T, DATE_T, DYN, F64, funcOf, isSupportedIndexValue, isSupportedMapKey, isSupportedMapValue, isSupportedSetElem, isUnitType, JSVAL, mapOf, NULL_T, PROCSTREAM_T, RUNTIME_EMITTER_CLASS, RUNTIME_ERROR_CLASSES, RUNTIME_STREAM_CLASSES, setOf, STRING, SYMBOL_T, typeEquals, typeKey, UNDEFINED_T, VOID } from "../ir/nodes.js";
 
 import { isJsSourceFile, isNodeTypesPath } from "./program.js";
+import { workspacePackageOfPath } from "./shared.js";
 import { accessorSlotProp } from "../ir/nodes.js";
 // typeKey moved to ir/nodes.ts (the backend needs it too, for per-type
 // helper interning); re-exported here so frontend call sites keep their
@@ -860,11 +861,31 @@ function mapTypeInner(type: ts.Type, ctx: TypeMapperCtx): IrType | null {
   // map above/below. Standard-library declarations and --external-types are
   // carved out exactly as before. Without --dynamic, runtime-identity .d.ts
   // symbols remain unmapped and produce the package-specific diagnostic.
+  // Erased aliases from EXTERNAL npm packages still describe values whose
+  // implementation lives in the island. Registered WORKSPACE packages are
+  // different: their dist/*.d.ts commonly exports data aliases shared with
+  // the compiled application. Ignore workspace alias provenance and map the
+  // underlying type structurally; keep external aliases dynamic.
+  const npmAliasSym = widened.getAliasSymbol();
+  const npmAliasDecls = npmAliasSym ? checker.declarationsOf(npmAliasSym) : undefined;
+  if (
+    npmAliasDecls && npmAliasDecls.length > 0 &&
+    npmAliasDecls.every((d) => {
+      const sf = d.getSourceFile();
+      return sf.isDeclarationFile && !ctx.isStdlibFile(sf) &&
+        !ctx.isExternalTypeFile(sf) && workspacePackageOfPath(sf.fileName) === null;
+    })
+  ) {
+    return ctx.dynamic ? JSVAL : null;
+  }
+
+  // Runtime-bearing declaration symbols (classes/interfaces/module objects)
+  // keep the existing island rule even for workspace packages. Thus an alias
+  // to a workspace class remains jsval through the underlying class symbol.
   const npmSym = widened.getSymbol();
   const npmDecls = npmSym ? checker.declarationsOf(npmSym) : undefined;
   if (
-    npmDecls &&
-    npmDecls.length > 0 &&
+    npmDecls && npmDecls.length > 0 &&
     npmDecls.every((d) => {
       const sf = d.getSourceFile();
       return sf.isDeclarationFile && !ctx.isStdlibFile(sf) && !ctx.isExternalTypeFile(sf);
