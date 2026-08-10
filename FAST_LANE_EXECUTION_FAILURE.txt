@@ -1,0 +1,9 @@
+claimed compatibility task exited nonzero before producing tracked diagnostics
+execute outcome: failure
+execute status: 1
+claim commit: 0f8c1883ad1dd731970265a38ab92a74b706dc01
+--- task log tail ---
+  File "/tmp/scriptc-next.py", line 124
+    for cmd in ([\"pnpm\",\"build\"],[\"pnpm\",\"lint\"]):
+                  ^
+SyntaxError: unexpected character after line continuation character
