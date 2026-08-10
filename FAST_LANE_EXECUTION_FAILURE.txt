@@ -1,0 +1,9 @@
+claimed compatibility task exited nonzero before producing tracked diagnostics
+execute outcome: failure
+execute status: 1
+claim commit: 64c283a00f3b075a27db6726713ae95d5d8d6334
+--- task log tail ---
+  File "/tmp/scriptc-next.py", line 81
+    PRIME.write_text('\n'.join([\n        'head_task=JS Error(any) coercion + Math.random validation',\n        f'build_status={build_status}',\n        f'smoke_status={smoke_status}',\n        f'diagnostic_count={len(diags)}',\n        '--- diagnostics ---', *diags,\n        '--- smoke tail ---', *smoke_out.splitlines()[-120:],\n    ])+'\n',encoding='utf-8')
+                                 ^
+SyntaxError: unexpected character after line continuation character
